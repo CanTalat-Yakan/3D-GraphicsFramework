@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CWindow" Collapsed="true">
+    <Position X="4.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAgAAACAAAAAAAgAAAAgAAAAAAAIAAAQAAAAAAAA=</HashCode>
+      <FileName>CWindow.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CDirect" Collapsed="true">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EEAAAAAAAAACACAACAAQBQAACBAAAAIAAAAEAAAAAAE=</HashCode>
+      <FileName>CDirect.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CCamera" Collapsed="true">
+    <Position X="3" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>FAAAAAAAACEAAAAAACAABAAAAAACAAMAAAAAABAEEAA=</HashCode>
+      <FileName>CCamera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMaterial" Collapsed="true">
+    <Position X="4.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EAARAAAAACAAEAgAIAAAAAgABACAAAMAAAAAgQAQACE=</HashCode>
+      <FileName>CMaterial.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CMesh" Collapsed="true">
+    <Position X="3" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBAAACAIADAAAHAAAAAQAAACAAABAAJAAAAAAAEUAAI=</HashCode>
+      <FileName>CMesh.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CTime" Collapsed="true">
+    <Position X="4.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBAAEAABAAAAAAAAAAACCAAAAAAAAAYAAIAgAAEEAAA=</HashCode>
+      <FileName>CTime.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="CLight" Collapsed="true">
+    <Position X="3" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAIAAAAAAAAAIAAAAACAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CLight.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="CVertex" Collapsed="true">
+    <Position X="4.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAACAIgAAAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>CVertex.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
