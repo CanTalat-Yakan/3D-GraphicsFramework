@@ -8,7 +8,7 @@ class CCamera
 {
 public:
 	int init(RECT _rect);
-	void update();
+	void update(RECT _rect);
 	void release();
 
 	inline XMMATRIX getView() { return m_view; }
@@ -18,12 +18,12 @@ public:
 private:
 	XMFLOAT3 m_position = {};
 
-
 	XMVECTOR m_camPos = {};
 	XMVECTOR m_camTarget = {};
 	XMVECTOR m_camUp = {};
 	XMMATRIX m_view = {};
 	XMMATRIX m_projection = {};
+	XMFLOAT2 m_mouseRot = {};
 
 };
 

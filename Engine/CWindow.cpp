@@ -10,7 +10,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_KEYDOWN:
-		if (wParam == VK_ESCAPE) PostQuitMessage(0);
+		if (wParam == VK_ESCAPE)
+			PostQuitMessage(0);
 		return 0;
 
 	default:
@@ -26,15 +27,15 @@ int CWindow::init(HINSTANCE _hInstance, INT _width, INT _height, INT _nCmdShow)
 	wc.cbClsExtra = NULL;				//Extra bytes after our wc structure
 	wc.cbSize = sizeof(WNDCLASSEX);		//Size of our windows class
 	wc.cbWndExtra = NULL;				//Extra bytes after our windows instance
-	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW - 2);	//Window bg color
+	wc.hbrBackground = (HBRUSH)(COLOR_WINDOW - 3);	//Window bg color
 	wc.hCursor = LoadCursor(NULL, IDC_ARROW);		//Default mouse Icon
-	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);		//Title bar Icon
+	wc.hIcon = LoadIcon(NULL, IDI_WINLOGO);			//Title bar Icon
 	wc.hIconSm = LoadIcon(NULL, IDI_WINLOGO);		//Icon in your taskbar
 	wc.hInstance = _hInstance;			//Instance to current application
 	wc.lpfnWndProc = WndProc;			//Default windows procedure function
-	wc.lpszClassName = L"3D_Engine";		//Name of our windows class
+	wc.lpszClassName = L"3D_Engine";	//Name of our windows class
 	wc.lpszMenuName = NULL;				//Name of the menu attached to our window
-	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	//class styles
+	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC ;	//class styles
 #pragma endregion
 
 #pragma region //Calculate window size
@@ -50,7 +51,7 @@ int CWindow::init(HINSTANCE _hInstance, INT _width, INT _height, INT _nCmdShow)
 #pragma region //Create window instance
 	m_hWnd = CreateWindowEx(
 		NULL, wc.lpszClassName, wc.lpszClassName,	//Extended style //Name of our windows class //Name in the title bar of our window
-		style,			//Style of our window
+		style,							//Style of our window
 		CW_USEDEFAULT, CW_USEDEFAULT,	//Window default pos
 		m_rect.right - m_rect.left,		//Width of our window
 		m_rect.bottom - m_rect.top,		//Height of our window

@@ -36,6 +36,12 @@
     <ClCompile Include="CMaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CInput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CObjLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EngineClassDiagram.cd" />
@@ -63,6 +69,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CObjLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

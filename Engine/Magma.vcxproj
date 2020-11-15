@@ -150,8 +150,10 @@
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CDirect.cpp" />
+    <ClCompile Include="CInput.cpp" />
     <ClCompile Include="CMaterial.cpp" />
     <ClCompile Include="CMesh.cpp" />
+    <ClCompile Include="CObjLoader.cpp" />
     <ClCompile Include="CTime.cpp" />
     <ClCompile Include="CWindow.cpp" />
     <ClCompile Include="main.cpp" />
@@ -162,12 +164,15 @@
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CDirect.h" />
+    <ClInclude Include="CInput.h" />
     <ClInclude Include="CLight.h" />
     <ClInclude Include="CMaterial.h" />
     <ClInclude Include="CMesh.h" />
+    <ClInclude Include="CObjLoader.h" />
     <ClInclude Include="CTime.h" />
     <ClInclude Include="CVertex.h" />
     <ClInclude Include="CWindow.h" />
+    <ClInclude Include="CObj.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

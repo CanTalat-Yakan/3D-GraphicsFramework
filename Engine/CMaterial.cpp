@@ -62,13 +62,13 @@ int CMaterial::createVertexShader(ID3D11Device* _pd3dDev)
 {
 	ID3DBlob* pVS_Buffer = {};
 	HRESULT hr = D3DX11CompileFromFile(
-		L"Shader.hlsl",	// shader filename
-		0, 0,			// optional macros & includes
-		"VS",			// entry point function
-		"vs_4_0",		// shader type & version
-		0, 0, 0,		// optional flags
-		&pVS_Buffer,	// compiled blob target
-		0, 0);			// optional blob for all compile errors
+		L"S_Standard.hlsl",	// shader filename
+		0, 0,				// optional macros & includes
+		"VS",				// entry point function
+		"vs_4_0",			// shader type & version
+		0, 0, 0,			// optional flags
+		&pVS_Buffer,		// compiled blob target
+		0, 0);				// optional blob for all compile errors
 	
 	if (FAILED(hr)) return 50;
 
@@ -87,7 +87,7 @@ int CMaterial::createVertexShader(ID3D11Device* _pd3dDev)
 int CMaterial::createPixelShader(ID3D11Device* _pd3dDev)
 {
 	ID3DBlob* pPS_Buffer = {};
-	HRESULT hr = D3DX11CompileFromFile(L"Shader.hlsl", 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
+	HRESULT hr = D3DX11CompileFromFile(L"S_Standard.hlsl", 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
 	if (FAILED(hr)) return 57;
 
 	hr = _pd3dDev->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &m_ppixelShader);

@@ -9,7 +9,7 @@ public:
 	void release();
 
 	inline HWND getHWND() { return m_hWnd; }
-	inline RECT getRECT() { return m_rect; }
+	inline RECT getRECT() { GetWindowRect(m_hWnd, &m_rect); return m_rect; }
 
 private:
 	HWND m_hWnd = nullptr;

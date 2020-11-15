@@ -1,6 +1,7 @@
 struct Light
 {
     float3 direction;
+    float intensity;
     float4 ambient;
     float4 diffuse;
 };
@@ -43,13 +44,11 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
 {
     input.normal = normalize(input.normal);
 
-    float4 diffuse = ObjTexture.Sample(ObjSamplerState, input.UV);
-
-    float3 finalColor;
-
-    finalColor = diffuse * light.ambient;
-    finalColor += saturate(dot(light.direction, input.normal) * light.diffuse * diffuse);
+    float d = dot(light.direction, input.normal);
     
-    return float4(finalColor, diffuse.a);
+    float4 col = ObjTexture.Sample(ObjSamplerState, input.UV);
+    float4 diffuse = saturate(d * light.diffuse);
+    
 
+    return (diffuse + light.ambient) * col;
 }
