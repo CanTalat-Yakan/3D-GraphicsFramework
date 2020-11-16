@@ -1,8 +1,8 @@
 #pragma once
+#include "CLight.h"
 #include <d3d11.h>
 #include <D3DX11.h>
 #include <DirectXMath.h>
-#include "CLight.h"
 
 #pragma comment(lib, "d3dcompiler.lib")
 #pragma comment(lib, "d3dx11.lib")
@@ -12,19 +12,20 @@ using namespace DirectX;
 class CMaterial
 {
 public:
-	int init(ID3D11Device* _pd3dDev, LPCWSTR _textureName);
+	int init(ID3D11Device* _pd3dDev, LPCWSTR _textureName, LPCWSTR _shaderName);
 	void render(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
 	void release();
 
 	void setLight(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light);
 
 private:
-	int createVertexShader(ID3D11Device* _pd3dDev);
-	int createPixelShader(ID3D11Device* _pd3dDev);
-	int createInputLayout(ID3D11Device* _pd3dDev, ID3DBlob* _pBlob);
-	int createMatrixBuffer(ID3D11Device* _pd3dDev);
-	int createPixelShaderBuffer(ID3D11Device* _pd3dDev);
-	int createTextureAndSampler(ID3D11Device* _pd3dDev, LPCWSTR _textureName);
+	ID3D11Device* m_pd3dDev;
+	int createVertexShader(LPCWSTR _shaderName);
+	int createPixelShader(LPCWSTR _shaderName);
+	int createInputLayout(ID3DBlob* _pBlob);
+	int createMatrixBuffer();
+	int createPixelShaderBuffer();
+	int createTextureAndSampler(LPCWSTR _textureName);
 
 	void setMatrixBuffer(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
 

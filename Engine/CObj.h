@@ -1,7 +1,7 @@
 #pragma once
+#include "CVertex.h"
 #include <vector> 
 #include <d3d11.h>
-#include "CVertex.h"
 
 struct CObj 
 {

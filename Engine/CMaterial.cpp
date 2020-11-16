@@ -1,15 +1,17 @@
 #include "CMaterial.h"
 #include <d3dcompiler.h>
 
-int CMaterial::init(ID3D11Device* _pd3dDev, LPCWSTR _textureName)
+int CMaterial::init(ID3D11Device* _pd3dDev, LPCWSTR _textureName, LPCWSTR _shaderName)
 {
 	int error = 0;
 
-	if (error = createVertexShader(_pd3dDev) > 0) return error;
-	if (error = createPixelShader(_pd3dDev) > 0) return error;
-	if (error = createMatrixBuffer(_pd3dDev) > 0) return error;
-	if (error = createPixelShaderBuffer(_pd3dDev) > 0) return error;
-	if (error = createTextureAndSampler(_pd3dDev, _textureName) > 0) return error;
+	m_pd3dDev = _pd3dDev;
+
+	if (error = createVertexShader(_shaderName) > 0) return error;
+	if (error = createPixelShader(_shaderName) > 0) return error;
+	if (error = createMatrixBuffer() > 0) return error;
+	if (error = createPixelShaderBuffer() > 0) return error;
+	if (error = createTextureAndSampler(_textureName) > 0) return error;
 
 	return 0;
 }
@@ -58,11 +60,11 @@ void CMaterial::setLight(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light)
 	_pd3dDevCon->PSSetConstantBuffers(0, 1, &m_pcbPerFrame);
 }
 
-int CMaterial::createVertexShader(ID3D11Device* _pd3dDev)
+int CMaterial::createVertexShader(LPCWSTR _shaderName)
 {
 	ID3DBlob* pVS_Buffer = {};
 	HRESULT hr = D3DX11CompileFromFile(
-		L"S_Standard.hlsl",	// shader filename
+		_shaderName,		// shader filename
 		0, 0,				// optional macros & includes
 		"VS",				// entry point function
 		"vs_4_0",			// shader type & version
@@ -72,10 +74,10 @@ int CMaterial::createVertexShader(ID3D11Device* _pd3dDev)
 	
 	if (FAILED(hr)) return 50;
 
-	hr = _pd3dDev->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &m_pvertexShader);
+	hr = m_pd3dDev->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &m_pvertexShader);
 	if (FAILED(hr)) return 53;
 
-	int error = createInputLayout(_pd3dDev, pVS_Buffer);
+	int error = createInputLayout(pVS_Buffer);
 	if (error > 0) return error;
 
 	pVS_Buffer->Release();
@@ -84,13 +86,13 @@ int CMaterial::createVertexShader(ID3D11Device* _pd3dDev)
 	return 0;
 }
 
-int CMaterial::createPixelShader(ID3D11Device* _pd3dDev)
+int CMaterial::createPixelShader(LPCWSTR _shaderName)
 {
 	ID3DBlob* pPS_Buffer = {};
-	HRESULT hr = D3DX11CompileFromFile(L"S_Standard.hlsl", 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
+	HRESULT hr = D3DX11CompileFromFile(_shaderName, 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
 	if (FAILED(hr)) return 57;
 
-	hr = _pd3dDev->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &m_ppixelShader);
+	hr = m_pd3dDev->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &m_ppixelShader);
 	if (FAILED(hr)) return 59;
 
 	pPS_Buffer->Release();
@@ -99,7 +101,7 @@ int CMaterial::createPixelShader(ID3D11Device* _pd3dDev)
 	return 0;
 }
 
-int CMaterial::createInputLayout(ID3D11Device* _pd3dDev, ID3DBlob* _pBlob)
+int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 {
 	D3D11_INPUT_ELEMENT_DESC elements[3] = {};
 	/*{
@@ -125,13 +127,13 @@ int CMaterial::createInputLayout(ID3D11Device* _pd3dDev, ID3DBlob* _pBlob)
 	elements[2].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
 	elements[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	
-	HRESULT hr = _pd3dDev->CreateInputLayout(elements, 3, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &m_pinputLayout);
+	HRESULT hr = m_pd3dDev->CreateInputLayout(elements, 3, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &m_pinputLayout);
 	if (FAILED(hr)) return 55;
 
 	return 0;
 }
 
-int CMaterial::createMatrixBuffer(ID3D11Device* _pd3dDev)
+int CMaterial::createMatrixBuffer()
 {
 	D3D11_BUFFER_DESC cbDESC = {};
 	cbDESC.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -140,13 +142,13 @@ int CMaterial::createMatrixBuffer(ID3D11Device* _pd3dDev)
 	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr = _pd3dDev->CreateBuffer(&cbDESC, nullptr, &m_pcbPerObj);
+	HRESULT hr = m_pd3dDev->CreateBuffer(&cbDESC, nullptr, &m_pcbPerObj);
 	if (FAILED(hr)) return 58;
 
 	return 0;
 }
 
-int CMaterial::createPixelShaderBuffer(ID3D11Device* _pd3dDev)
+int CMaterial::createPixelShaderBuffer()
 {
 	D3D11_BUFFER_DESC cbDESC = {};
 	cbDESC.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -155,16 +157,16 @@ int CMaterial::createPixelShaderBuffer(ID3D11Device* _pd3dDev)
 	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr = _pd3dDev->CreateBuffer(&cbDESC, nullptr, &m_pcbPerFrame);
+	HRESULT hr = m_pd3dDev->CreateBuffer(&cbDESC, nullptr, &m_pcbPerFrame);
 	if (FAILED(hr)) return 51;
 
 	return 0;
 }
 
-int CMaterial::createTextureAndSampler(ID3D11Device* _pd3dDev, LPCWSTR _textureName)
+int CMaterial::createTextureAndSampler(LPCWSTR _textureName)
 {
 	// create texture
-	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(_pd3dDev, _textureName, NULL, NULL, &m_ptexture_SRV, NULL);
+	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(m_pd3dDev, _textureName, NULL, NULL, &m_ptexture_SRV, NULL);
 	if (FAILED(hr)) return 56;
 
 	// create sampler state
@@ -177,7 +179,7 @@ int CMaterial::createTextureAndSampler(ID3D11Device* _pd3dDev, LPCWSTR _textureN
 	sDESC.MinLOD = 0;
 	sDESC.MaxLOD = D3D11_FLOAT32_MAX;
 
-	hr = _pd3dDev->CreateSamplerState(&sDESC, &m_ptexture_SS);
+	hr = m_pd3dDev->CreateSamplerState(&sDESC, &m_ptexture_SS);
 	if (FAILED(hr)) return 54;
 
 	return 0;

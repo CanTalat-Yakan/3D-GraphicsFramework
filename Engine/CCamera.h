@@ -7,6 +7,10 @@ using namespace DirectX;
 class CCamera
 {
 public:
+	static CCamera& getInstance() { static CCamera instance; return instance; }
+	CCamera(CCamera const&) = delete;
+	void operator=(CCamera const&) = delete;
+
 	int init(RECT _rect);
 	void update(RECT _rect);
 	void release();
@@ -14,8 +18,11 @@ public:
 	inline XMMATRIX getView() { return m_view; }
 	inline XMMATRIX getProjection() { return m_projection; }
 	inline XMMATRIX getViewProjectionMatrix() { return	m_view * m_projection; }
+	inline XMVECTOR getCamPos() { return m_camPos; }
 
 private:
+	CCamera() {}
+
 	XMFLOAT3 m_position = {};
 
 	XMVECTOR m_camPos = {};
