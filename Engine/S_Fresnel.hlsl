@@ -24,6 +24,7 @@ SamplerState ObjSamplerState;
 struct VS_OUTPUT
 {
     float4 Pos : SV_POSITION;
+    float3 WorldPos : POSITION;
     float2 UV : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -38,6 +39,8 @@ VS_OUTPUT VS(float4 inPos : POSITION, float2 inTexCoord : TEXCOORD, float3 norma
 
     output.UV = inTexCoord;
 
+    output.WorldPos = mul(inPos, World);
+    
     return output;
 }
 
@@ -45,11 +48,10 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
 {
     input.normal = normalize(input.normal);
 
-    float d = dot(input.normal,  light.direction);
-    
     float4 col = ObjTexture.Sample(ObjSamplerState, input.UV);
-    float4 diffuse = saturate(d * light.diffuse);
-    
-    
-    return (diffuse + light.ambient) * col;
+	
+    float3 viewDirection = normalize(WCP - input.WorldPos);
+    float4 fresnel = 2 * pow(1 + dot(viewDirection, input.normal), 0.75);
+
+    return (fresnel) * col;
 }

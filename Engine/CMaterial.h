@@ -16,7 +16,7 @@ public:
 	void render(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
 	void release();
 
-	void setLight(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light);
+	void setLightBuffer(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light);
 
 private:
 	ID3D11Device* m_pd3dDev;
@@ -44,8 +44,9 @@ private:
 	ID3D11Buffer* m_pcbPerObj = nullptr;
 	struct cbPerObject
 	{
-		XMFLOAT4X4 WVP;
-		XMFLOAT4X4 World;
+		XMMATRIX WVP;
+		XMMATRIX World;
+		XMVECTOR WCP;
 	};
 
 	ID3D11Buffer* m_pcbPerFrame = nullptr;

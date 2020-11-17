@@ -1,12 +1,13 @@
 #include "CObjLoader.h"
 #include <fstream>
+#include <vector>
 
 CObj CObjLoader::load(LPCWSTR _fileName)
 {
 	loadFile(_fileName);
 
-	loadVertices();
-	loadIndices();
+	//loadVertices();
+	//loadIndices();
 
 	return m_obj;
 }
@@ -81,13 +82,95 @@ void CObjLoader::loadIndices()
 
 void CObjLoader::loadFile(LPCWSTR _fileName)
 {
-	std::ifstream input(_fileName);
-	if (!input.is_open())
+	std::ifstream fileStream(_fileName);
+	if (!fileStream.is_open())
 		return;
 
-	std::string line;
-	while (std::getline(input, line))
-		m_file.append(line.c_str());
+	readFile(&fileStream);
 
-	input.close();
+	fileStream.close();
+}
+
+void CObjLoader::readFile(std::ifstream* _fileStream)
+{
+	std::vector<XMFLOAT3> positions;
+	std::vector<XMFLOAT2> uv;
+	std::vector<XMFLOAT3> normals;
+	std::vector<XMFLOAT3> faceIndices;
+	std::vector<CVertex> vertices;
+
+	std::string line;
+	while (std::getline(*_fileStream, line))
+	{
+		std::vector<std::string> split = splitString(line, " ");
+		//Vertex
+		if (split[0] == "v") 
+			positions.push_back(
+				XMFLOAT3(std::stof(split[1]), std::stof(split[2]), std::stof(split[3])));
+		//UV
+		if (split[0] == "vt") 
+			uv.push_back(
+				XMFLOAT2(std::stof(split[1]), std::stof(split[2])));
+		//Normal
+		if (split[0] == "vn") 
+			normals.push_back(
+				XMFLOAT3(std::stof(split[1]), std::stof(split[2]), std::stof(split[3])));
+		//Face
+		if (split[0] == "f")
+		{
+			std::vector<std::string> split_f = splitString(split[1], "/");
+			faceIndices.push_back(
+				XMFLOAT3(std::stof(split_f[0]), std::stof(split_f[1]), std::stof(split_f[2])));
+
+			split_f = splitString(split[2], "/");
+			faceIndices.push_back(
+				XMFLOAT3(std::stof(split_f[0]), std::stof(split_f[1]), std::stof(split_f[2])));
+
+			split_f = splitString(split[3], "/");
+			faceIndices.push_back(
+				XMFLOAT3(std::stof(split_f[0]), std::stof(split_f[1]), std::stof(split_f[2])));
+
+			split_f = splitString(split[4], "/");
+			faceIndices.push_back(
+				XMFLOAT3(std::stof(split_f[0]), std::stof(split_f[1]), std::stof(split_f[2])));
+
+			for (int i = 0; i < 4; i++)
+			{
+				vertices.push_back(CVertex(
+					positions[faceIndices[i].x].x,
+					positions[faceIndices[i].x].y,
+					positions[faceIndices[i].x].z,
+					uv[faceIndices[i].y].x,
+					uv[faceIndices[i].y].y,
+					normals[faceIndices[i].z].x,
+					normals[faceIndices[i].z].y,
+					normals[faceIndices[i].z].z));
+			}
+		}
+	}
+	m_obj.vertices = vertices;
+
+	for (int i = 0; i < 6; i++)
+	{
+		m_obj.indices.push_back(1 + (i * 6));
+		m_obj.indices.push_back(3 + (i * 6));
+		m_obj.indices.push_back(2 + (i * 6));
+		m_obj.indices.push_back(1 + (i * 6));
+		m_obj.indices.push_back(2 + (i * 6));
+		m_obj.indices.push_back(0 + (i * 6));
+	}
+}
+
+std::vector<std::string> CObjLoader::splitString(std::string _s, std::string _delim) {
+	std::vector<std::string> list;
+	size_t pos = 0;
+	std::string token;
+
+	while ((pos = _s.find(_delim)) != std::string::npos) {
+		token = _s.substr(0, pos);
+		list.push_back(token);
+		_s.erase(0, pos + _delim.length());
+	}
+	list.push_back(_s);
+	return list;
 }

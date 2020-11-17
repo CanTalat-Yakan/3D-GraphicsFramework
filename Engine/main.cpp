@@ -53,7 +53,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 
 
 	CLight light = {};
-	light.direction = { -0.7f, -0.5f, 1.0f };
+	light.direction = { -0.7f, -0.5f, 0.5f };
 	light.ambient = { 0.1f, 0.1f, 0.1f, 1.0f };
 	light.diffuse = { 1.0f, 0.9f, 0.9f, 1.0f };
 	light.intensity = 0.7f;
@@ -61,9 +61,9 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 
 #pragma region //Start
 	mesh.setPosition(-0.8f, 0.0f, 0.0f);
-	material.setLight(d3d.getDeviceContext(), light);
+	material.setLightBuffer(d3d.getDeviceContext(), light);
 	mesh2.setPosition(0.8f, 0.0f, 0.0f);
-	material2.setLight(d3d.getDeviceContext(), light);
+	material2.setLightBuffer(d3d.getDeviceContext(), light);
 #pragma endregion
 #pragma region //Update
 	while (window.run()) 

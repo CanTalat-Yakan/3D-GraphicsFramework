@@ -10,6 +10,7 @@ cbuffer cbPerObject
 {
     float4x4 WVP;
     float4x4 World;
+    float3 WCP;
 };
 
 cbuffer cbPerFrame
@@ -23,6 +24,7 @@ SamplerState ObjSamplerState;
 struct VS_OUTPUT
 {
     float4 Pos : SV_POSITION;
+    float3 WorldPos : POSITION;
     float2 UV : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -37,6 +39,8 @@ VS_OUTPUT VS(float4 inPos : POSITION, float2 inTexCoord : TEXCOORD, float3 norma
 
     output.UV = inTexCoord;
 
+    output.WorldPos = mul(inPos, World);
+
     return output;
 }
 
@@ -44,11 +48,16 @@ float4 PS(VS_OUTPUT input) : SV_TARGET
 {
     input.normal = normalize(input.normal);
 
-    float d = dot(light.direction, input.normal);
+    float d = dot(input.normal, light.direction);
     
     float4 col = ObjTexture.Sample(ObjSamplerState, input.UV);
-    float4 diffuse = saturate(normalize(d) * light.diffuse);
-    
+    float4 diffuse = saturate(d * light.diffuse);
+	
+    float3 viewDirection = normalize(WCP - input.WorldPos);
+    float3 halfVec = viewDirection + light.direction;
+    float d2 = saturate(dot(halfVec, input.normal));
+    //float4 specular = saturate(dot(viewDirection, input.normal));
+    float4 specular =  d2;
 
-    return (diffuse + light.ambient) * col;
+    return (diffuse + specular) * col;
 }

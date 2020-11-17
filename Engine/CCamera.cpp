@@ -27,7 +27,7 @@ void CCamera::update(RECT _rect)
 
 	XMStoreFloat3(&m_position, m_camPos);
 
-	float movementspeed = time->getDeltaTime();
+	float movementspeed = time->getDeltaTime() * 2;
 	if (input->getKeyboardState(DIK_LSHIFT) & 0x80) movementspeed *= 2;
 	if (input->getKeyboardState(DIK_LCONTROL) & 0x80) movementspeed *= 0.5f;
 	if (input->getKeyboardState(DIK_A) & 0x80) m_position.x -= movementspeed;
@@ -48,7 +48,6 @@ void CCamera::update(RECT _rect)
 		m_mouseRot.x += input->getMouseState().lX * 0.002f;
 	if (m_mouseRot.x > 2) m_mouseRot.x = 2;
 	else if (m_mouseRot.x < -2) m_mouseRot.x = -2;
-
 
 	m_camPos = XMVectorSet(m_position.x, m_position.y, m_position.z, 0);
 	m_camTarget = XMVectorSet(m_position.x + m_mouseRot.x, m_position.y - m_mouseRot.y, m_position.z + 1, 0);

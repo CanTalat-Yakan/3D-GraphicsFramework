@@ -1,4 +1,5 @@
 #include "CMaterial.h"
+#include "CCamera.h"
 #include <d3dcompiler.h>
 
 int CMaterial::init(ID3D11Device* _pd3dDev, LPCWSTR _textureName, LPCWSTR _shaderName)
@@ -46,7 +47,8 @@ void CMaterial::release()
 	m_pcbPerFrame = nullptr;
 }
 
-void CMaterial::setLight(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light)
+
+void CMaterial::setLightBuffer(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
 	HRESULT hr = _pd3dDevCon->Map(m_pcbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
@@ -59,6 +61,27 @@ void CMaterial::setLight(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light)
 
 	_pd3dDevCon->PSSetConstantBuffers(0, 1, &m_pcbPerFrame);
 }
+
+void CMaterial::setMatrixBuffer(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix)
+{
+	D3D11_MAPPED_SUBRESOURCE data = {};
+	HRESULT hr = _pd3dDevCon->Map(m_pcbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	if (FAILED(hr)) return;
+	cbPerObject* buffer = reinterpret_cast<cbPerObject*>(data.pData);
+
+	XMMATRIX wvp = XMMatrixTranspose(_worldMatrix * _viewProjectionMatrix);
+	_worldMatrix = XMMatrixTranspose(_worldMatrix);
+
+	buffer->WVP = wvp;
+	buffer->World = _worldMatrix;
+	CCamera* camera;
+	camera = &camera->getInstance();
+	buffer->WCP = camera->getCamPos();
+
+	_pd3dDevCon->Unmap(m_pcbPerObj, 0);
+	_pd3dDevCon->VSSetConstantBuffers(0, 1, &m_pcbPerObj);
+}
+
 
 int CMaterial::createVertexShader(LPCWSTR _shaderName)
 {
@@ -133,6 +156,7 @@ int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 	return 0;
 }
 
+
 int CMaterial::createMatrixBuffer()
 {
 	D3D11_BUFFER_DESC cbDESC = {};
@@ -183,24 +207,4 @@ int CMaterial::createTextureAndSampler(LPCWSTR _textureName)
 	if (FAILED(hr)) return 54;
 
 	return 0;
-}
-
-void CMaterial::setMatrixBuffer(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix)
-{
-	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = _pd3dDevCon->Map(m_pcbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
-	if (FAILED(hr)) return;
-
-	XMMATRIX wvp = XMMatrixTranspose(_worldMatrix * _viewProjectionMatrix);
-	_worldMatrix = XMMatrixTranspose(_worldMatrix);
-
-	cbPerObject* buffer = reinterpret_cast<cbPerObject*>(data.pData);
-
-
-	XMStoreFloat4x4(&(buffer->WVP), wvp);
-	XMStoreFloat4x4(&(buffer->World), _worldMatrix);
-
-	_pd3dDevCon->Unmap(m_pcbPerObj, 0);
-
-	_pd3dDevCon->VSSetConstantBuffers(0, 1, &m_pcbPerObj);
 }
