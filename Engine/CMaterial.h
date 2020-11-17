@@ -1,5 +1,6 @@
 #pragma once
 #include "CLight.h"
+#include "CDirect.h"
 #include <d3d11.h>
 #include <D3DX11.h>
 #include <DirectXMath.h>
@@ -12,14 +13,15 @@ using namespace DirectX;
 class CMaterial
 {
 public:
-	int init(ID3D11Device* _pd3dDev, LPCWSTR _textureName, LPCWSTR _shaderName);
-	void render(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
+	int init(LPCWSTR _textureName, LPCWSTR _shaderName);
+	void render(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
 	void release();
 
-	void setLightBuffer(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light);
+	void setLightBuffer(const CLight& _light);
 
 private:
-	ID3D11Device* m_pd3dDev;
+	CDirect* m_d3d;
+
 	int createVertexShader(LPCWSTR _shaderName);
 	int createPixelShader(LPCWSTR _shaderName);
 	int createInputLayout(ID3DBlob* _pBlob);
@@ -27,7 +29,7 @@ private:
 	int createPixelShaderBuffer();
 	int createTextureAndSampler(LPCWSTR _textureName);
 
-	void setMatrixBuffer(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
+	void setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
 
 	// shader
 	ID3D11VertexShader* m_pvertexShader = nullptr;

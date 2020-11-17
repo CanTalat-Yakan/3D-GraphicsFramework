@@ -1,11 +1,17 @@
 #include "CDirect.h"
 
-int CDirect::init(HWND _hWnd, RECT _rect, bool _isWindowed)
+int CDirect::init(bool _isWindowed)
 {
+#pragma region //Get Window Variables
+	m_window = &m_window->getInstance();
+	HWND hWnd = m_window->getHWND(); 
+	RECT rect = m_window->getRect();
+#pragma endregion
+
 #pragma region //Create bufferDESC for swapChainDESC
 	DXGI_MODE_DESC bufferDESC = {};
-	bufferDESC.Width = _rect.right - _rect.left;
-	bufferDESC.Height = _rect.bottom - _rect.top;
+	bufferDESC.Width = rect.right - rect.left;
+	bufferDESC.Height = rect.bottom - rect.top;
 	bufferDESC.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	bufferDESC.RefreshRate.Numerator = 60;
 	bufferDESC.RefreshRate.Denominator = 1;
@@ -18,7 +24,7 @@ int CDirect::init(HWND _hWnd, RECT _rect, bool _isWindowed)
 	swapChainDESC.BufferCount = 1;
 	swapChainDESC.BufferDesc = bufferDESC;
 	swapChainDESC.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDESC.OutputWindow = _hWnd;
+	swapChainDESC.OutputWindow = hWnd;
 	swapChainDESC.SampleDesc.Count = 1;
 	swapChainDESC.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	swapChainDESC.Windowed = _isWindowed;
@@ -53,8 +59,8 @@ int CDirect::init(HWND _hWnd, RECT _rect, bool _isWindowed)
 	D3D11_TEXTURE2D_DESC bufferDesc = {};
 	bufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	bufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	bufferDesc.Width = _rect.right - _rect.left;
-	bufferDesc.Height = _rect.bottom - _rect.top;
+	bufferDesc.Width = rect.right - rect.left;
+	bufferDesc.Height = rect.bottom - rect.top;
 	bufferDesc.ArraySize = 1;
 	bufferDesc.SampleDesc.Count = 1;
 
@@ -82,8 +88,8 @@ int CDirect::init(HWND _hWnd, RECT _rect, bool _isWindowed)
 #pragma endregion
 
 #pragma region //Set viewport
-	m_viewPort.Width = _rect.right - _rect.left;
-	m_viewPort.Height = _rect.bottom - _rect.top;
+	m_viewPort.Width = rect.right - rect.left;
+	m_viewPort.Height = rect.bottom - rect.top;
 	m_viewPort.TopLeftX = 0;
 	m_viewPort.TopLeftY = 0;
 	m_viewPort.MinDepth = 0;

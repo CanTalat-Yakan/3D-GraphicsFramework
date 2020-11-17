@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d9.h>
 #include <DirectXMath.h>
+#include "CWindow.h"
 
 using namespace DirectX;
 
@@ -11,26 +12,32 @@ public:
 	CCamera(CCamera const&) = delete;
 	void operator=(CCamera const&) = delete;
 
-	int init(RECT _rect);
-	void update(RECT _rect);
+	int init();
+	void update();
 	void release();
 
 	inline XMMATRIX getView() { return m_view; }
 	inline XMMATRIX getProjection() { return m_projection; }
 	inline XMMATRIX getViewProjectionMatrix() { return	m_view * m_projection; }
-	inline XMVECTOR getCamPos() { return m_camPos; }
+	inline XMVECTOR getCamPos() { return m_position; }
+	inline float getAspectRatio() { RECT _rect = m_window->getRect(); return (float)(_rect.right - _rect.left) / (float)(_rect.bottom - _rect.top); }
 
 private:
 	CCamera() {}
 
-	XMFLOAT3 m_position = {};
+	CWindow* m_window;
 
-	XMVECTOR m_camPos = {};
-	XMVECTOR m_camTarget = {};
-	XMVECTOR m_camUp = {};
+	void UpdateCameraVectors();
+
+	XMVECTOR m_position = {};
+	XMFLOAT2 m_mouseRot = {};
+
+	XMVECTOR m_front = { 0, 0, 1 };
+	XMVECTOR m_right = { 1, 0, 0 };
+	XMVECTOR m_up = { 0, 1, 0 };
+
 	XMMATRIX m_view = {};
 	XMMATRIX m_projection = {};
-	XMFLOAT2 m_mouseRot = {};
 
 };
 

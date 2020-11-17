@@ -6,8 +6,8 @@ CObj CObjLoader::load(LPCWSTR _fileName)
 {
 	loadFile(_fileName);
 
-	//loadVertices();
-	//loadIndices();
+	loadVertices();
+	loadIndices();
 
 	return m_obj;
 }

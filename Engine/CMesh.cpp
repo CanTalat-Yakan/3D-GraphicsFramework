@@ -2,12 +2,13 @@
 #include "CVertex.h"
 #include "CTime.h"
 
-int CMesh::init(ID3D11Device* pD3DDevice, CObj _obj)
+int CMesh::init(CObj _obj)
 {
-	int error = 0;
+	m_d3d = &m_d3d->getInstance();
 
-	if (error = initVertexBuffer(pD3DDevice, &_obj.vertices[0]) > 0) return error;
-	if (error = initIndexBuffer(pD3DDevice, &_obj.indices[0]) > 0) return error;
+	int error = 0;
+	if (error = initVertexBuffer(&_obj.vertices[0]) > 0) return error;
+	if (error = initIndexBuffer(&_obj.indices[0]) > 0) return error;
 
 	return 0;
 }
@@ -29,13 +30,13 @@ void CMesh::update()
 	m_worldMatrix = scale * rotation * translation;
 }
 
-void CMesh::render(ID3D11DeviceContext* pD3DDeviceContext)
+void CMesh::render()
 {
 	static UINT offset = 0;
 
-	pD3DDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &m_vertexStride, &offset);
-	pD3DDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-	pD3DDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &m_vertexStride, &offset);
+	m_d3d->getDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	m_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void CMesh::release()
@@ -49,7 +50,7 @@ void CMesh::release()
 	m_pIndexBuffer = nullptr;
 }
 
-int CMesh::initVertexBuffer(ID3D11Device* pD3DDevice, CVertex _vertices[])
+int CMesh::initVertexBuffer(CVertex _vertices[])
 {
 	m_vertexCount = 4 * 6;
 	m_vertexStride = sizeof(CVertex);
@@ -62,13 +63,13 @@ int CMesh::initVertexBuffer(ID3D11Device* pD3DDevice, CVertex _vertices[])
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _vertices;
 
-	HRESULT hr = pD3DDevice->CreateBuffer(&desc, &data, &m_pVertexBuffer);
+	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&desc, &data, &m_pVertexBuffer);
 	if (FAILED(hr)) return 30;
 
 	return 0;
 }
 
-int CMesh::initIndexBuffer(ID3D11Device* pD3DDevice, WORD _indices[])
+int CMesh::initIndexBuffer(WORD _indices[])
 {
 	m_indexCount = 6 * 6;
 
@@ -79,7 +80,7 @@ int CMesh::initIndexBuffer(ID3D11Device* pD3DDevice, WORD _indices[])
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _indices;
 
-	HRESULT hr = pD3DDevice->CreateBuffer(&desc, &data, &m_pIndexBuffer);
+	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&desc, &data, &m_pIndexBuffer);
 	if (FAILED(hr)) return 30;
 
 

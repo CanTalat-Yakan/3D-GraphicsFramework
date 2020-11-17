@@ -1,6 +1,7 @@
 #pragma once
 #include "CObj.h"
 #include "CVertex.h"
+#include "CDirect.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
 
@@ -9,9 +10,9 @@ using namespace DirectX;
 class CMesh
 {
 public:
-	int init(ID3D11Device* m_pd3dDevice, CObj _obj);
+	int init(CObj _obj);
 	void update();
-	void render(ID3D11DeviceContext* m_pd3dDevCon);
+	void render();
 	void release();
 
 	inline XMMATRIX getWorldMatrix() { return m_worldMatrix; }
@@ -19,8 +20,10 @@ public:
 	inline void setPosition(float x, float y, float z) { m_position = { x, y, z }; }
 
 private:
-	int initVertexBuffer(ID3D11Device* pd3dDevice, CVertex _vertices[]);
-	int initIndexBuffer(ID3D11Device* pd3dDevice, WORD _indices[]);
+	CDirect* m_d3d;
+
+	int initVertexBuffer(CVertex _vertices[]);
+	int initIndexBuffer(WORD _indices[]);
 
 	ID3D11Buffer* m_pVertexBuffer = nullptr;
 	ID3D11Buffer* m_pIndexBuffer = nullptr;

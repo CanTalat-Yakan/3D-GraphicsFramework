@@ -1,5 +1,6 @@
 #pragma once
 #include <dinput.h>
+#include "CWindow.h";
 
 #pragma comment(lib, "dinput8.lib")
 
@@ -16,12 +17,13 @@ public:
 
 	inline DIMOUSESTATE getMouseState() { return m_mouseState; }
 	inline BYTE getKeyboardState(BYTE _keyCode) { return m_keyboardState[_keyCode]; }
+	inline void hideMouse() { CWindow* window; window = &window->getInstance(); m_diMouse->SetCooperativeLevel(window->getHWND(), DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND); };
 
 private:
 	CInput() {}
 
-	IDirectInputDevice8* DIMouse = nullptr;
-	IDirectInputDevice8* DIKeyboard = nullptr;
+	IDirectInputDevice8* m_diMouse = nullptr;
+	IDirectInputDevice8* m_diKeyboard = nullptr;
 
 	LPDIRECTINPUT8  m_directInput;
 

@@ -2,12 +2,11 @@
 #include "CCamera.h"
 #include <d3dcompiler.h>
 
-int CMaterial::init(ID3D11Device* _pd3dDev, LPCWSTR _textureName, LPCWSTR _shaderName)
+int CMaterial::init(LPCWSTR _textureName, LPCWSTR _shaderName)
 {
+	m_d3d = &m_d3d->getInstance();
+
 	int error = 0;
-
-	m_pd3dDev = _pd3dDev;
-
 	if (error = createVertexShader(_shaderName) > 0) return error;
 	if (error = createPixelShader(_shaderName) > 0) return error;
 	if (error = createMatrixBuffer() > 0) return error;
@@ -17,16 +16,16 @@ int CMaterial::init(ID3D11Device* _pd3dDev, LPCWSTR _textureName, LPCWSTR _shade
 	return 0;
 }
 
-void CMaterial::render(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix)
+void CMaterial::render(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix)
 {
-	_pd3dDevCon->IASetInputLayout(m_pinputLayout);
-	_pd3dDevCon->VSSetShader(m_pvertexShader, nullptr, 0);
-	_pd3dDevCon->PSSetShader(m_ppixelShader, nullptr, 0);
+	m_d3d->getDeviceContext()->IASetInputLayout(m_pinputLayout);
+	m_d3d->getDeviceContext()->VSSetShader(m_pvertexShader, nullptr, 0);
+	m_d3d->getDeviceContext()->PSSetShader(m_ppixelShader, nullptr, 0);
 
-	setMatrixBuffer(_pd3dDevCon, _worldMatrix, _viewProjectionMatrix);
+	setMatrixBuffer(_worldMatrix, _viewProjectionMatrix);
 
-	_pd3dDevCon->PSSetShaderResources(0, 1, &m_ptexture_SRV);
-	_pd3dDevCon->PSSetSamplers(0, 1, &m_ptexture_SS);
+	m_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &m_ptexture_SRV);
+	m_d3d->getDeviceContext()->PSSetSamplers(0, 1, &m_ptexture_SS);
 }
 
 void CMaterial::release()
@@ -48,24 +47,24 @@ void CMaterial::release()
 }
 
 
-void CMaterial::setLightBuffer(ID3D11DeviceContext* _pd3dDevCon, const CLight& _light)
+void CMaterial::setLightBuffer(const CLight& _light)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = _pd3dDevCon->Map(m_pcbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	HRESULT hr = m_d3d->getDeviceContext()->Map(m_pcbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 
 	cbPerFrame* buffer = reinterpret_cast<cbPerFrame*>(data.pData);
 	buffer->Light = _light;
 
-	_pd3dDevCon->Unmap(m_pcbPerFrame, 0);
+	m_d3d->getDeviceContext()->Unmap(m_pcbPerFrame, 0);
 
-	_pd3dDevCon->PSSetConstantBuffers(0, 1, &m_pcbPerFrame);
+	m_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &m_pcbPerFrame);
 }
 
-void CMaterial::setMatrixBuffer(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix)
+void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = _pd3dDevCon->Map(m_pcbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	HRESULT hr = m_d3d->getDeviceContext()->Map(m_pcbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 	cbPerObject* buffer = reinterpret_cast<cbPerObject*>(data.pData);
 
@@ -78,8 +77,8 @@ void CMaterial::setMatrixBuffer(ID3D11DeviceContext* _pd3dDevCon, XMMATRIX _worl
 	camera = &camera->getInstance();
 	buffer->WCP = camera->getCamPos();
 
-	_pd3dDevCon->Unmap(m_pcbPerObj, 0);
-	_pd3dDevCon->VSSetConstantBuffers(0, 1, &m_pcbPerObj);
+	m_d3d->getDeviceContext()->Unmap(m_pcbPerObj, 0);
+	m_d3d->getDeviceContext()->VSSetConstantBuffers(0, 1, &m_pcbPerObj);
 }
 
 
@@ -97,7 +96,7 @@ int CMaterial::createVertexShader(LPCWSTR _shaderName)
 	
 	if (FAILED(hr)) return 50;
 
-	hr = m_pd3dDev->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &m_pvertexShader);
+	hr = m_d3d->getDevice()->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &m_pvertexShader);
 	if (FAILED(hr)) return 53;
 
 	int error = createInputLayout(pVS_Buffer);
@@ -115,7 +114,7 @@ int CMaterial::createPixelShader(LPCWSTR _shaderName)
 	HRESULT hr = D3DX11CompileFromFile(_shaderName, 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
 	if (FAILED(hr)) return 57;
 
-	hr = m_pd3dDev->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &m_ppixelShader);
+	hr = m_d3d->getDevice()->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &m_ppixelShader);
 	if (FAILED(hr)) return 59;
 
 	pPS_Buffer->Release();
@@ -150,7 +149,7 @@ int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 	elements[2].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
 	elements[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 	
-	HRESULT hr = m_pd3dDev->CreateInputLayout(elements, 3, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &m_pinputLayout);
+	HRESULT hr = m_d3d->getDevice()->CreateInputLayout(elements, 3, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &m_pinputLayout);
 	if (FAILED(hr)) return 55;
 
 	return 0;
@@ -166,7 +165,7 @@ int CMaterial::createMatrixBuffer()
 	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr = m_pd3dDev->CreateBuffer(&cbDESC, nullptr, &m_pcbPerObj);
+	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &m_pcbPerObj);
 	if (FAILED(hr)) return 58;
 
 	return 0;
@@ -181,7 +180,7 @@ int CMaterial::createPixelShaderBuffer()
 	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr = m_pd3dDev->CreateBuffer(&cbDESC, nullptr, &m_pcbPerFrame);
+	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &m_pcbPerFrame);
 	if (FAILED(hr)) return 51;
 
 	return 0;
@@ -190,7 +189,7 @@ int CMaterial::createPixelShaderBuffer()
 int CMaterial::createTextureAndSampler(LPCWSTR _textureName)
 {
 	// create texture
-	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(m_pd3dDev, _textureName, NULL, NULL, &m_ptexture_SRV, NULL);
+	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(m_d3d->getDevice(), _textureName, NULL, NULL, &m_ptexture_SRV, NULL);
 	if (FAILED(hr)) return 56;
 
 	// create sampler state
@@ -203,7 +202,7 @@ int CMaterial::createTextureAndSampler(LPCWSTR _textureName)
 	sDESC.MinLOD = 0;
 	sDESC.MaxLOD = D3D11_FLOAT32_MAX;
 
-	hr = m_pd3dDev->CreateSamplerState(&sDESC, &m_ptexture_SS);
+	hr = m_d3d->getDevice()->CreateSamplerState(&sDESC, &m_ptexture_SS);
 	if (FAILED(hr)) return 54;
 
 	return 0;
