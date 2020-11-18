@@ -11,9 +11,9 @@ public:
 	CInput(CInput const&) = delete;
 	void operator=(CInput const&) = delete;
 
-	int init();
+	int Init();
 	void Update();
-	void release();
+	void Release();
 
 	inline DIMOUSESTATE getMouseState() { return m_mouseState; }
 	inline BYTE getKeyboardState(BYTE _keyCode) { return m_keyboardState[_keyCode]; }

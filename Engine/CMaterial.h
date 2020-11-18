@@ -1,6 +1,7 @@
 #pragma once
 #include "CLight.h"
 #include "CDirect.h"
+#include "CCamera.h"
 #include <d3d11.h>
 #include <D3DX11.h>
 #include <DirectXMath.h>
@@ -13,14 +14,16 @@ using namespace DirectX;
 class CMaterial
 {
 public:
-	int init(LPCWSTR _textureName, LPCWSTR _shaderName);
-	void render(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
-	void release();
+	int Init(LPCWSTR _shaderName, LPCWSTR _textureName);
+	void Render(XMMATRIX _worldMatrix);
+	void Release();
 
-	void setLightBuffer(const CLight& _light);
+	void SetLightBuffer(const CLight& _light);
 
 private:
 	CDirect* m_d3d;
+	CCamera* m_camera;
+
 
 	int createVertexShader(LPCWSTR _shaderName);
 	int createPixelShader(LPCWSTR _shaderName);

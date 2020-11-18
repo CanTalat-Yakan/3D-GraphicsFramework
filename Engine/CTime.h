@@ -9,9 +9,9 @@ public:
 	CTime(CTime const&) = delete;
 	void operator=(CTime const&) = delete;
 
-	int init();
+	int Init();
 	void Update();
-	void release();
+	void Release();
 
 	double getDeltaTime() { return m_deltaTime; }
 	double getTime() { return m_time; }

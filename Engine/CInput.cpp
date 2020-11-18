@@ -1,6 +1,6 @@
 #include "CInput.h"
 
-int CInput::init()
+int CInput::Init()
 {
 #pragma region //get instance of window
 	m_window = &m_window->getInstance();
@@ -38,8 +38,8 @@ void CInput::Update()
 	return;
 }
 
-void CInput::release()
+void CInput::Release()
 {
-	m_window->release();
+	m_window->Release();
 	m_window = nullptr;
 }

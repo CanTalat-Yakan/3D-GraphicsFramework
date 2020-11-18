@@ -19,10 +19,10 @@ public:
 	CDirect(CDirect const&) = delete;
 	void operator=(CDirect const&) = delete;
 
-	int init(bool _isWindowed);
-	void release();
-	void clear();
-	void present();
+	int Init(bool _isWindowed);
+	void Release();
+	void Clear();
+	void Present();
 
 	ID3D11Device* getDevice() { return m_pd3dDev; }
 	ID3D11DeviceContext* getDeviceContext() { return m_pd3dDevCon; }

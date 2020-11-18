@@ -1,26 +1,20 @@
 #include "CCamera.h"
 
-int CCamera::init()
+int CCamera::Init()
 {
-#pragma region get Instances of Time, Input and Window
+#pragma region Get Instances of Time, Input and Window
 	m_time = &m_time->getInstance();
 	m_input = &m_input->getInstance();
 	m_window = &m_window->getInstance();
 #pragma endregion
 
 #pragma region Create initial CameraMatrix
-	XMVECTOR m_camPos = XMVectorSet(0, 0, -1.5f, 0);
-	XMVECTOR m_camTarget = XMVectorSet(0, 0, 1, 0);
-	XMVECTOR m_camUp = XMVectorSet(0, 1, 0, 0);
-
-	m_view = XMMatrixLookAtLH(m_camPos, m_camTarget, m_camUp);
+	m_view = XMMatrixLookAtLH(m_position, m_position + m_front, m_up);
 	m_projection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(80), //FOV in rad (optional: 0.5f * 3.141f)
-		getAspectRatio(),	//Aspect ratio
+		getAspectRatio(),		//Aspect ratio
 		0.1f, 1000);			//near & far clipping plane
 #pragma endregion
-
-	m_position = m_camPos;
 
 	return 0;
 }
@@ -38,8 +32,12 @@ void CCamera::Update()
 	if (m_input->getKeyboardState(DIK_S) & 0x80) m_position -= movementspeed * m_front; //vertical keyboard input
 	if (m_input->getKeyboardState(DIK_E) & 0x80) m_position += movementspeed * m_up; //height keyboard input
 	if (m_input->getKeyboardState(DIK_Q) & 0x80) m_position -= movementspeed * m_up; //height keyboard input
+	if (m_input->getKeyboardState(DIK_E) & 0x80 && m_input->getKeyboardState(DIK_W) & 0x80) //horizontal and height input
+		m_position += movementspeed * XMVector3Cross(m_right, m_front); //fix movement
+	if (m_input->getKeyboardState(DIK_Q) & 0x80 && m_input->getKeyboardState(DIK_S) & 0x80) //horizontal and height input
+		m_position -= movementspeed * XMVector3Cross(m_right, m_front); //fix movement
 
-	if (m_input->getMouseState().rgbButtons[0] != 0)
+	if (m_input->getMouseState().rgbButtons[1] != 0)
 	{
 		//m_window->showCursor(false);
 		m_mouseRot.x -= m_input->getMouseState().lX * 0.2f; //horizontal mouse input
@@ -63,13 +61,13 @@ void CCamera::Update()
 		0.1f, 1000);
 }
 
-void CCamera::release()
+void CCamera::Release()
 {
-	m_window->release();
+	m_window->Release();
 	m_window = nullptr;
-	m_time->release(); 
+	m_time->Release();
 	m_time = nullptr;
-	m_input->release();
+	m_input->Release();
 	m_input = nullptr;
 }
 
@@ -86,6 +84,8 @@ void CCamera::UpdateCameraVectors()
 	//update rightVector
 	m_right = XMVector3Normalize(XMVector3Cross(m_front, m_up));
 
+	//m_up = XMVector3Normalize(XMVector3Cross(m_right, m_front));
 	//update viewMatrix
 	m_view = XMMatrixLookAtLH(m_position, m_position + m_front, m_up);
+
 }

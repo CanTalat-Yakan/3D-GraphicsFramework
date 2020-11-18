@@ -7,4 +7,8 @@ struct CObj
 {
 	std::vector<CVertex> vertices;
 	std::vector<WORD> indices;
+
+	UINT vertexCount = 0;
+	UINT vertexStride = 0;
+	UINT indexCount = 0;
 };

@@ -1,6 +1,6 @@
 #include "CDirect.h"
 
-int CDirect::init(bool _isWindowed)
+int CDirect::Init(bool _isWindowed)
 {
 #pragma region //Get Window Variables
 	m_window = &m_window->getInstance();
@@ -8,7 +8,7 @@ int CDirect::init(bool _isWindowed)
 	RECT rect = m_window->getRect();
 #pragma endregion
 
-#pragma region //Create bufferDESC for swapChainDESC
+#pragma region //Create buffer description for swapChain description
 	DXGI_MODE_DESC bufferDESC = {};
 	bufferDESC.Width = rect.right - rect.left;
 	bufferDESC.Height = rect.bottom - rect.top;
@@ -77,11 +77,11 @@ int CDirect::init(bool _isWindowed)
 #pragma endregion
 
 #pragma region 	//Create rasterizer state
-	D3D11_RASTERIZER_DESC rsDesc = {};
-	rsDesc.FillMode = D3D11_FILL_SOLID;
-	rsDesc.CullMode = D3D11_CULL_NONE;
+	D3D11_RASTERIZER_DESC rsDESC = {};
+	rsDESC.FillMode = D3D11_FILL_SOLID;
+	rsDESC.CullMode = D3D11_CULL_BACK;
 
-	hr = m_pd3dDev->CreateRasterizerState(&rsDesc, &m_pRasterizerState);
+	hr = m_pd3dDev->CreateRasterizerState(&rsDESC, &m_pRasterizerState);
 	if (FAILED(hr)) return 16;
 
 	m_pd3dDevCon->RSSetState(m_pRasterizerState);
@@ -101,7 +101,7 @@ int CDirect::init(bool _isWindowed)
 	return 0;
 }
 
-void CDirect::clear()
+void CDirect::Clear()
 {
 	//Clear back buffer with solid color
 	const FLOAT color[] = { 0.1f, 0.1f, 0.1f, 1.0f};
@@ -109,13 +109,13 @@ void CDirect::clear()
 	m_pd3dDevCon->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-void CDirect::present()
+void CDirect::Present()
 {
 	//Swap front and back buffer
 	m_pd3dSwapChain->Present(0, 0);
 }
 
-void CDirect::release()
+void CDirect::Release()
 {
 	m_pRasterizerState->Release();
 	m_pRasterizerState = nullptr;
@@ -129,6 +129,6 @@ void CDirect::release()
 	m_pd3dDevCon = nullptr;
 	m_pd3dDev->Release();
 	m_pd3dDev = nullptr;
-	m_window->release();
+	m_window->Release();
 	m_window = nullptr;
 }

@@ -19,7 +19,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 }
 
-int CWindow::init(HINSTANCE _hInstance, INT _width, INT _height, INT _nCmdShow)
+int CWindow::Init(INT _width, INT _height, HINSTANCE _hInstance, INT _nCmdShow)
 {
 #pragma region //Get hInstance
 	m_hInstance = _hInstance;
@@ -72,7 +72,7 @@ int CWindow::init(HINSTANCE _hInstance, INT _width, INT _height, INT _nCmdShow)
 	return 0;
 }
 
-bool CWindow::run()
+bool CWindow::Run()
 {
 #pragma region //MessagePump
 	MSG msg;//Create a new message structure
@@ -94,6 +94,6 @@ bool CWindow::run()
 	return true;
 }
 
-void CWindow::release()
+void CWindow::Release()
 {
 }

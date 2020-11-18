@@ -175,7 +175,7 @@
     <ClInclude Include="CWindow.h" />
     <ClInclude Include="CObj.h" />
     <ClInclude Include="GScene.h" />
-    <ClInclude Include="Mono.h" />
+    <ClInclude Include="IMono.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -86,7 +86,7 @@
     <ClInclude Include="GScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Mono.h">
+    <ClInclude Include="IMono.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

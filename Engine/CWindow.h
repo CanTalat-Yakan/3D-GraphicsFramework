@@ -8,9 +8,9 @@ public:
 	CWindow(CWindow const&) = delete;
 	void operator=(CWindow const&) = delete;
 
-	int init(HINSTANCE _hInstance, INT _width, INT _height, INT _nCmdShow);
-	bool run();
-	void release();
+	int Init(INT _width, INT _height, HINSTANCE _hInstance, INT _nCmdShow);
+	bool Run();
+	void Release();
 
 	inline HWND getHWND() { return m_hWnd; }
 	inline RECT getRect() { GetWindowRect(m_hWnd, &m_rect); return m_rect; }

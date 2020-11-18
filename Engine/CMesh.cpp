@@ -1,27 +1,32 @@
 #include "CMesh.h"
 #include "CVertex.h"
-#include "CTime.h"
 
-int CMesh::init(CObj _obj)
+int CMesh::Init(CObj _obj)
 {
-	m_d3d = &m_d3d->getInstance();
+#pragma region //Get Instance of DirectX and Time
+	m_d3d = &m_d3d->getInstance(); 
+	m_time = &m_time->getInstance();
+#pragma endregion
 
+#pragma region //Create Buffer
 	int error = 0;
 	if (error = initVertexBuffer(&_obj.vertices[0]) > 0) return error;
 	if (error = initIndexBuffer(&_obj.indices[0]) > 0) return error;
+#pragma endregion
+
+#pragma region //Set Variables
+	m_vertexCount = _obj.vertexCount;
+	m_vertexStride = _obj.vertexStride;
+	m_indexCount = _obj.indexCount;
+#pragma endregion
+
 
 	return 0;
 }
 
 void CMesh::Update()
 {
-	CTime* m_time;
-	m_time = &m_time->getInstance();
-
 	XMVECTOR quaternion = XMLoadFloat4(&m_rotation);
-	float rotationspeed = m_time->getDeltaTime() * 0.1f;
-	quaternion = XMQuaternionMultiply(quaternion, XMQuaternionRotationRollPitchYaw(rotationspeed, rotationspeed, rotationspeed));
-	XMStoreFloat4(&m_rotation, quaternion);
 
 	XMMATRIX translation = XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
 	XMMATRIX rotation = XMMatrixRotationQuaternion(quaternion);
@@ -30,16 +35,17 @@ void CMesh::Update()
 	m_worldMatrix = scale * rotation * translation;
 }
 
-void CMesh::render()
+void CMesh::Render()
 {
 	static UINT offset = 0;
 
 	m_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &m_vertexStride, &offset);
 	m_d3d->getDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	m_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_d3d->getDeviceContext()->DrawIndexed(getIndexCount(), 0, 0);
 }
 
-void CMesh::release()
+void CMesh::Release()
 {
 	if (m_pVertexBuffer != NULL)
 		m_pVertexBuffer->Release();
@@ -50,11 +56,11 @@ void CMesh::release()
 	m_pIndexBuffer = nullptr;
 }
 
+
 int CMesh::initVertexBuffer(CVertex _vertices[])
 {
 	m_vertexCount = 4 * 6;
 	m_vertexStride = sizeof(CVertex);
-
 
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // buffer type
@@ -72,6 +78,7 @@ int CMesh::initVertexBuffer(CVertex _vertices[])
 int CMesh::initIndexBuffer(WORD _indices[])
 {
 	m_indexCount = 6 * 6;
+
 
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_INDEX_BUFFER; // buffer type

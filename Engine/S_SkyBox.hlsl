@@ -52,21 +52,5 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 {
     float4 col = ObjTexture.Sample(ObjSamplerState, i.UV);
 
-    //normalize normal
-    float3 normal = normalize(i.normal);
-
-    //calculate diffuse 
-    float d = dot(normal, light.direction); //by calculating the angle of the normal and the light direction with the dot method
-    float4 diffuse = saturate(d * light.diffuse); //then saturating the diffuse so the backsite does not get values below 1
-	
-    //calculate specular
-    float3 viewDir = normalize(WCP - i.WorldPos);
-    float3 halfVec = viewDir + light.direction;
-    float d2 = saturate(dot(normalize(halfVec), normal));
-    d2 = pow(d2, 30);
-    d2 /= 2.25;
-    float4 specular = d * d2 * float4(0.8, 0.8, 0.8, 1);
-
-
-    return (diffuse + light.ambient) * col;
+    return col;
 }

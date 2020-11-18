@@ -2,7 +2,7 @@
 #include <Windows.h>
 #include <string>
 
-int CTime::init()
+int CTime::Init()
 {
     m_lastTimeStamp = timeGetTime();
 
@@ -23,6 +23,6 @@ void CTime::Update()
     OutputDebugString(output.c_str());
 }
 
-void CTime::release()
+void CTime::Release()
 {
 }

@@ -23,33 +23,34 @@ SamplerState ObjSamplerState;
 
 struct VS_OUTPUT
 {
-    float4 Pos : SV_POSITION;
+    float4 pos : SV_POSITION;
+    float3 WorldPos : POSITION;
     float2 UV : TEXCOORD;
     float3 normal : NORMAL;
 };
 
-VS_OUTPUT VS(float4 inPos : POSITION, float2 inTexCoord : TEXCOORD, float3 normal : NORMAL)
+VS_OUTPUT VS(float4 _vertex : POSITION, float2 _uv : TEXCOORD, float3 _normal : NORMAL)
 {
-    VS_OUTPUT output;
+    VS_OUTPUT o;
 
-    output.Pos = mul(inPos, WVP);
+    o.pos = mul(WVP, _vertex);
+    o.normal = mul(World, _normal);
+    o.WorldPos = mul(World, _vertex);
+    o.UV = _uv;
 
-    output.normal = mul(normal, World);
-
-    output.UV = inTexCoord;
-
-    return output;
+    return o;
 }
 
-float4 PS(VS_OUTPUT input) : SV_TARGET
+float4 PS(VS_OUTPUT _i) : SV_TARGET
 {
-    input.normal = normalize(input.normal);
+    float4 col = ObjTexture.Sample(ObjSamplerState, _i.UV);
 
-    float d = dot(input.normal,  light.direction);
-    
-    float4 col = ObjTexture.Sample(ObjSamplerState, input.UV);
-    float4 diffuse = saturate(d * light.diffuse);
-    
-    
-    return (diffuse + light.ambient) * col;
+    //normalize normal
+    float3 normal = normalize(_i.normal);
+
+    //calculate diffuse 
+    float d = dot(normal, light.direction); //by calculating the angle of the normal and the light direction with the dot method
+    float4 diffuse = saturate(d * light.diffuse); //then saturating the diffuse so the backsite does not get values below 1
+	
+    return (light.ambient + diffuse) * col;
 }

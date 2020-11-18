@@ -2,33 +2,38 @@
 #include "CCamera.h"
 #include <d3dcompiler.h>
 
-int CMaterial::init(LPCWSTR _textureName, LPCWSTR _shaderName)
+int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 {
+#pragma region //Get Instances of DirectX and Camera
 	m_d3d = &m_d3d->getInstance();
+	m_camera = &m_camera->getInstance();
+#pragma endregion
 
+#pragma region //Create Material
 	int error = 0;
 	if (error = createVertexShader(_shaderName) > 0) return error;
 	if (error = createPixelShader(_shaderName) > 0) return error;
 	if (error = createMatrixBuffer() > 0) return error;
 	if (error = createPixelShaderBuffer() > 0) return error;
 	if (error = createTextureAndSampler(_textureName) > 0) return error;
+#pragma endregion
 
 	return 0;
 }
 
-void CMaterial::render(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix)
+void CMaterial::Render(XMMATRIX _worldMatrix)
 {
 	m_d3d->getDeviceContext()->IASetInputLayout(m_pinputLayout);
 	m_d3d->getDeviceContext()->VSSetShader(m_pvertexShader, nullptr, 0);
 	m_d3d->getDeviceContext()->PSSetShader(m_ppixelShader, nullptr, 0);
 
-	setMatrixBuffer(_worldMatrix, _viewProjectionMatrix);
+	setMatrixBuffer(_worldMatrix, m_camera->getViewProjectionMatrix());
 
 	m_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &m_ptexture_SRV);
 	m_d3d->getDeviceContext()->PSSetSamplers(0, 1, &m_ptexture_SS);
 }
 
-void CMaterial::release()
+void CMaterial::Release()
 {
 	m_pvertexShader->Release();
 	m_pvertexShader = nullptr;
@@ -44,10 +49,12 @@ void CMaterial::release()
 	m_pcbPerObj = nullptr;
 	m_pcbPerFrame->Release();
 	m_pcbPerFrame = nullptr;
+	m_d3d = nullptr;
+	m_camera = nullptr;
 }
 
 
-void CMaterial::setLightBuffer(const CLight& _light)
+void CMaterial::SetLightBuffer(const CLight& _light)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
 	HRESULT hr = m_d3d->getDeviceContext()->Map(m_pcbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
@@ -68,14 +75,13 @@ void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionM
 	if (FAILED(hr)) return;
 	cbPerObject* buffer = reinterpret_cast<cbPerObject*>(data.pData);
 
-	XMMATRIX wvp = XMMatrixTranspose(_worldMatrix * _viewProjectionMatrix);
-	_worldMatrix = XMMatrixTranspose(_worldMatrix);
+	XMMATRIX wvp = _worldMatrix * _viewProjectionMatrix;
+	_worldMatrix = _worldMatrix;
+
 
 	buffer->WVP = wvp;
 	buffer->World = _worldMatrix;
-	CCamera* camera;
-	camera = &camera->getInstance();
-	buffer->WCP = camera->getCamPos();
+	buffer->WCP = m_camera->getCamPos();
 
 	m_d3d->getDeviceContext()->Unmap(m_pcbPerObj, 0);
 	m_d3d->getDeviceContext()->VSSetConstantBuffers(0, 1, &m_pcbPerObj);
@@ -126,23 +132,16 @@ int CMaterial::createPixelShader(LPCWSTR _shaderName)
 int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 {
 	D3D11_INPUT_ELEMENT_DESC elements[3] = {};
-	/*{
-		{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"TEXCOORD",0,DXGI_FORMAT_R32G32_FLOAT,0,12,D3D11_INPUT_PER_VERTEX_DATA,0},
-		{"NORMAL",0,  DXGI_FORMAT_R32G32B32_FLOAT,0,20,D3D11_INPUT_PER_VERTEX_DATA,0},
-	};*/
 
 	// position
 	elements[0].SemanticName = "POSITION"; // element type
 	elements[0].Format = DXGI_FORMAT_R32G32B32_FLOAT; // element format/size
 	elements[0].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
-
 	// uv
 	elements[1].SemanticName = "TEXCOORD";
 	elements[1].Format = DXGI_FORMAT_R32G32_FLOAT;
 	elements[1].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
 	elements[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-
 	// normal
 	elements[2].SemanticName = "NORMAL";
 	elements[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
