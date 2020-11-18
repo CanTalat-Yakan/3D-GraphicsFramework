@@ -129,4 +129,6 @@ void CDirect::release()
 	m_pd3dDevCon = nullptr;
 	m_pd3dDev->Release();
 	m_pd3dDev = nullptr;
+	m_window->release();
+	m_window = nullptr;
 }

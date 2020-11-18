@@ -42,6 +42,9 @@
     <ClCompile Include="CObjLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EngineClassDiagram.cd" />
@@ -78,6 +81,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CObj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GScene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mono.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

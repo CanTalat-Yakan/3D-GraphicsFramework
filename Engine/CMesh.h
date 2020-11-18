@@ -11,7 +11,7 @@ class CMesh
 {
 public:
 	int init(CObj _obj);
-	void update();
+	void Update();
 	void render();
 	void release();
 

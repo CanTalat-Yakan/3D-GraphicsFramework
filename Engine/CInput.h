@@ -11,16 +11,17 @@ public:
 	CInput(CInput const&) = delete;
 	void operator=(CInput const&) = delete;
 
-	int init(HINSTANCE hInstance, HWND _hWnd);
-	void update();
+	int init();
+	void Update();
 	void release();
 
 	inline DIMOUSESTATE getMouseState() { return m_mouseState; }
 	inline BYTE getKeyboardState(BYTE _keyCode) { return m_keyboardState[_keyCode]; }
-	inline void hideMouse() { CWindow* window; window = &window->getInstance(); m_diMouse->SetCooperativeLevel(window->getHWND(), DISCL_EXCLUSIVE | DISCL_NOWINKEY | DISCL_FOREGROUND); };
 
 private:
 	CInput() {}
+
+	CWindow* m_window;
 
 	IDirectInputDevice8* m_diMouse = nullptr;
 	IDirectInputDevice8* m_diKeyboard = nullptr;

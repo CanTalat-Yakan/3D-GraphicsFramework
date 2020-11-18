@@ -23,13 +23,13 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	window = &window->getInstance(); //Singleton
 	if (error = window->init(_hInstance, width, height, _nCmdShow) > 0) return error;
 
-	CTime* time = {}; //Create DeltaTime and Timer
-	time = &time->getInstance(); //Singleton
-	if (error = time->init() > 0) return error;
+	CTime* m_time = {}; //Create DeltaTime and Timer
+	m_time = &m_time->getInstance(); //Singleton
+	if (error = m_time->init() > 0) return error;
 
-	CInput* input = {}; //Create InputManger
-	input = &input->getInstance(); //Singleton
-	if (error = input->init(_hInstance, window->getHWND()) > 0) return error;
+	CInput* m_input = {}; //Create InputManger
+	m_input = &m_input->getInstance(); //Singleton
+	if (error = m_input->init() > 0) return error;
 
 	CCamera* camera = {}; //Create CameraView
 	camera = &camera->getInstance();//Singleton
@@ -73,17 +73,17 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	{
 		d3d->clear();
 
-		time->update();
-		input->update();
-		camera->update();
+		m_time->Update();
+		m_input->Update();
+		camera->Update();
 
 
-		mesh.update();
+		mesh.Update();
 		material.render(mesh.getWorldMatrix(), camera->getViewProjectionMatrix());
 		mesh.render();
 		d3d->getDeviceContext()->DrawIndexed(mesh.getIndexCount(), 0, 0);
 
-		mesh2.update();
+		mesh2.Update();
 		material2.render(mesh2.getWorldMatrix(), camera->getViewProjectionMatrix());
 		mesh2.render();
 		d3d->getDeviceContext()->DrawIndexed(mesh2.getIndexCount(), 0, 0);
@@ -96,8 +96,8 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 #pragma region //release
 	window->release();
 	camera->release();
-	time->release();
-	input->release();
+	m_time->release();
+	m_input->release();
 	d3d->release();
 	mesh.release();
 	material.release();

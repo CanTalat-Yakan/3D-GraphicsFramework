@@ -14,11 +14,14 @@ public:
 
 	inline HWND getHWND() { return m_hWnd; }
 	inline RECT getRect() { GetWindowRect(m_hWnd, &m_rect); return m_rect; }
+	inline HINSTANCE getHInstance() { return m_hInstance; }
+	inline void showCursor(bool _show) { ShowCursor(_show); }
 
 private:
 	CWindow() {}
 
-	HWND m_hWnd = nullptr;
+	HWND m_hWnd = {};
 	RECT m_rect = {};
+	HINSTANCE m_hInstance = {};
 };
 

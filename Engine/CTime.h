@@ -10,7 +10,7 @@ public:
 	void operator=(CTime const&) = delete;
 
 	int init();
-	void update();
+	void Update();
 	void release();
 
 	double getDeltaTime() { return m_deltaTime; }

@@ -156,6 +156,7 @@
     <ClCompile Include="CObjLoader.cpp" />
     <ClCompile Include="CTime.cpp" />
     <ClCompile Include="CWindow.cpp" />
+    <ClCompile Include="GScene.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +174,8 @@
     <ClInclude Include="CVertex.h" />
     <ClInclude Include="CWindow.h" />
     <ClInclude Include="CObj.h" />
+    <ClInclude Include="GScene.h" />
+    <ClInclude Include="Mono.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

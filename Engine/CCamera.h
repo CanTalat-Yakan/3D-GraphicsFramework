@@ -1,6 +1,8 @@
 #pragma once
 #include <d3d9.h>
 #include <DirectXMath.h>
+#include "CTime.h"
+#include "CInput.h"
 #include "CWindow.h"
 
 using namespace DirectX;
@@ -13,7 +15,7 @@ public:
 	void operator=(CCamera const&) = delete;
 
 	int init();
-	void update();
+	void Update();
 	void release();
 
 	inline XMMATRIX getView() { return m_view; }
@@ -26,6 +28,8 @@ private:
 	CCamera() {}
 
 	CWindow* m_window;
+	CTime* m_time;
+	CInput* m_input;
 
 	void UpdateCameraVectors();
 

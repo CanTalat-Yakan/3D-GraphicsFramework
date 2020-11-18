@@ -1,81 +1,96 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="CCamera" Collapsed="true">
-    <Position X="4.5" Y="1" Width="1.5" />
+    <Position X="5.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAAACACMAAAAAACAAAAAAAATCIAcAAAAgQBAGAAA=</HashCode>
+      <HashCode>GBQAAAACACMAAAAAACAAAAAAAATCIAcQAAAgQBACAAA=</HashCode>
       <FileName>CCamera.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CDirect" Collapsed="true">
-    <Position X="6.25" Y="1" Width="1.5" />
+    <Position X="7.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EEAAAAAAAAACACAACAAQBQAACBAAAAIAAAAEAAAAAAE=</HashCode>
+      <HashCode>GEAAAAAAAAACACAACAAQBQAAGBAAAAYAAAAkAAAAAAE=</HashCode>
       <FileName>CDirect.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CInput" Collapsed="true">
-    <Position X="8" Y="1" Width="1.5" />
+    <Position X="9.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAAABCAAAAAAAEQAAAAAACAAAAA4AAAAgAAAMEAA=</HashCode>
+      <HashCode>GAQAAAQAAAAAAAAAEQAAAAAACAAAAA4AAAAgAAAJEAA=</HashCode>
       <FileName>CInput.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CMaterial" Collapsed="true">
-    <Position X="4.5" Y="2" Width="1.5" />
+    <Position X="5.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EAARAAAAACAAEAgAIAAAAAgABBCAgAMAAAAAgQAQAAE=</HashCode>
+      <HashCode>EAATAAAAACAAEAgAIAAAAAgABACAgAMAAAAAgQAQAAE=</HashCode>
       <FileName>CMaterial.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CMesh" Collapsed="true">
-    <Position X="6.25" Y="2" Width="1.5" />
+    <Position X="7.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EBAAACAIADAAAHAAAAAQAAACAAABAAJAAAAAAAEUAAI=</HashCode>
+      <HashCode>EBQCACAIADAAAHAAAAAQAAACAAABAAJAAAAAAAEQAAI=</HashCode>
       <FileName>CMesh.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CObjLoader" Collapsed="true">
-    <Position X="8" Y="2" Width="1.5" />
+    <Position X="9.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEAABAgIQAAAAAAAAAAACAAAAAAAAACAAAAAAAgAA=</HashCode>
       <FileName>CObjLoader.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CTime" Collapsed="true">
-    <Position X="4.5" Y="3" Width="1.5" />
+    <Position X="5.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EBAAEAABAAAAAAAAAAACCAAAAAAAAAYAAIAgAAEEAAA=</HashCode>
+      <HashCode>EBQAEAABAAAAAAAAAAACCAAAAAAAAAYAAIAgAAEAAAA=</HashCode>
       <FileName>CTime.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CWindow">
-    <Position X="6.25" Y="3" Width="1.5" />
+  <Class Name="CWindow" Collapsed="true">
+    <Position X="7.5" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAgAAACAAAAAAAgAAAAgAAAAAAAIAAAQAAAAAAAA=</HashCode>
+      <HashCode>EAAAAgAAACAAAAgAAkAAAAAAAAAAAA4AAAQgAAAAAAQ=</HashCode>
       <FileName>CWindow.h</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="GScene" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="9.25" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GScene.h</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.122" Collapsed="true" />
+  </Class>
   <Struct Name="CLight" Collapsed="true">
-    <Position X="4.5" Y="4.25" Width="1.5" />
+    <Position X="5.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAAAAAIAAAAAAAAAIAAAAACAAAAAAAAAAAAAA=</HashCode>
       <FileName>CLight.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="CVertex" Collapsed="true">
-    <Position X="8" Y="4.25" Width="1.5" />
+    <Position X="9.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAACAIgAAAAAAAAAAAIAAAAAAAA=</HashCode>
       <FileName>CVertex.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="CObj" Collapsed="true">
-    <Position X="6.25" Y="4.25" Width="1.5" />
+    <Position X="7.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAQAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA=</HashCode>
       <FileName>CObj.h</FileName>
     </TypeIdentifier>
   </Struct>
+  <Interface Name="IMonoBehaviour" Collapsed="true">
+    <Position X="5.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAACAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Mono.h</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

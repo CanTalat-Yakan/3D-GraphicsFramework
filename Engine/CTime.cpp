@@ -9,7 +9,7 @@ int CTime::init()
     return 0;
 }
 
-void CTime::update()
+void CTime::Update()
 {
     double actualTimestamp = timeGetTime();
     m_deltaTime = actualTimestamp - m_lastTimeStamp;

@@ -1,22 +1,34 @@
 #include "CInput.h"
 
-int CInput::init(HINSTANCE hInstance, HWND _hWnd)
+int CInput::init()
 {
-	DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, NULL);
+#pragma region //get instance of window
+	m_window = &m_window->getInstance();
+#pragma endregion
 
+#pragma region //Create Input
+	DirectInput8Create(m_window->getHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, NULL);
+#pragma endregion
+
+#pragma region // Create Keyboard and Mouse Inputdevices
 	m_directInput->CreateDevice(GUID_SysKeyboard, &m_diKeyboard, NULL);
 	m_directInput->CreateDevice(GUID_SysMouse, &m_diMouse, NULL);
+#pragma endregion
 
+#pragma region // Setup Keyboard
 	m_diKeyboard->SetDataFormat(&c_dfDIKeyboard);
-	m_diKeyboard->SetCooperativeLevel(_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+	m_diKeyboard->SetCooperativeLevel(m_window->getHWND(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+#pragma endregion
 
+#pragma region //Setup Mouse
 	m_diMouse->SetDataFormat(&c_dfDIMouse);
-	m_diMouse->SetCooperativeLevel(_hWnd, DISCL_EXCLUSIVE | DISCL_NOWINKEY);// | DISCL_FOREGROUND);
+	m_diMouse->SetCooperativeLevel(m_window->getHWND(), DISCL_EXCLUSIVE | DISCL_NOWINKEY);
+#pragma endregion
 
 	return 0;
 }
 
-void CInput::update()
+void CInput::Update()
 {
 	m_diMouse->Acquire();
 	m_diMouse->GetDeviceState(sizeof(DIMOUSESTATE), &m_mouseState);
@@ -28,4 +40,6 @@ void CInput::update()
 
 void CInput::release()
 {
+	m_window->release();
+	m_window = nullptr;
 }

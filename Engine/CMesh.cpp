@@ -13,13 +13,13 @@ int CMesh::init(CObj _obj)
 	return 0;
 }
 
-void CMesh::update()
+void CMesh::Update()
 {
-	CTime* time;
-	time = &time->getInstance();
+	CTime* m_time;
+	m_time = &m_time->getInstance();
 
 	XMVECTOR quaternion = XMLoadFloat4(&m_rotation);
-	float rotationspeed = time->getDeltaTime() * 0.1f;
+	float rotationspeed = m_time->getDeltaTime() * 0.1f;
 	quaternion = XMQuaternionMultiply(quaternion, XMQuaternionRotationRollPitchYaw(rotationspeed, rotationspeed, rotationspeed));
 	XMStoreFloat4(&m_rotation, quaternion);
 

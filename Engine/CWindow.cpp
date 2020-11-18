@@ -21,6 +21,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 int CWindow::init(HINSTANCE _hInstance, INT _width, INT _height, INT _nCmdShow)
 {
+#pragma region //Get hInstance
+	m_hInstance = _hInstance;
+#pragma endregion
+
 #pragma region //Describe windows class
 	WNDCLASSEX wc;
 
