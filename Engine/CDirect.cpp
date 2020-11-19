@@ -79,7 +79,7 @@ int CDirect::Init(bool _isWindowed)
 #pragma region 	//Create rasterizer state
 	D3D11_RASTERIZER_DESC rsDESC = {};
 	rsDESC.FillMode = D3D11_FILL_SOLID;
-	rsDESC.CullMode = D3D11_CULL_BACK;
+	rsDESC.CullMode = D3D11_CULL_NONE;
 
 	hr = m_pd3dDev->CreateRasterizerState(&rsDESC, &m_pRasterizerState);
 	if (FAILED(hr)) return 16;

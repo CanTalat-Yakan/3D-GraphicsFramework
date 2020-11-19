@@ -16,11 +16,18 @@ private:
 	CMesh m_skyBox = {};
 	CMesh m_plane = {};
 	CMesh m_cube = {};
-	CMesh m_cube2 = {};
-	CMaterial m_material00 = {};
-	CMaterial m_material01 = {};
-	CMaterial m_material02 = {};
-	CMaterial m_material03 = {};
+	CMesh m_cylinder = {};
+	CMesh m_sphere = {};
+	CMesh m_sphere2 = {};
+	CMesh m_sphere3 = {};
+	CMesh m_sphere4 = {};
+	CMesh m_bird = {};
+	CMaterial m_material_Sky = {};
+	CMaterial m_material_Proto = {};
+	CMaterial m_material_Cells = {};
+	CMaterial m_material_CellShader = {};
+	CMaterial m_material_Fresnel = {};
+	CMaterial m_material_Bird = {};
 	CLight m_light = {};
 	CObjLoader m_obj = {};
 

@@ -18,17 +18,18 @@ public:
 	void Update();
 	void Release();
 
-	inline XMMATRIX getView() { return m_view; }
-	inline XMMATRIX getProjection() { return m_projection; }
-	inline XMMATRIX getViewProjectionMatrix() { return	m_view * m_projection; }
-	inline XMVECTOR getCamPos() { return m_position; }
-	inline XMFLOAT3 getCamPosFloat3() { XMFLOAT3 r; XMStoreFloat3(&r, m_position); return r; }
-	inline float getAspectRatio() { RECT _rect = m_window->getRect(); return (float)(_rect.right - _rect.left) / (float)(_rect.bottom - _rect.top); }
+	inline XMMATRIX GetView() { return m_view; }
+	inline XMMATRIX GetProjection() { return m_projection; }
+	inline XMMATRIX GetViewProjectionMatrix() { return	m_view * m_projection; }
+	inline XMVECTOR GetCamPos() { return m_position; }
+	inline XMFLOAT3 GetCamPosFloat3() { XMFLOAT3 r; XMStoreFloat3(&r, m_position); return r; }
+	inline float GetAspectRatio() { RECT _rect = m_window->getRect(); return (float)(_rect.right - _rect.left) / (float)(_rect.bottom - _rect.top); }
+	inline void SetPosition(float _x, float _y, float _z) { m_position = XMVectorSet(_x, _y, _z, 1); }
 
 private:
 	CCamera() {}
 
-	void UpdateCameraVectors();
+	void updateCameraVectors();
 
 	CWindow* m_window;
 	CTime* m_time;

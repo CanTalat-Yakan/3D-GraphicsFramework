@@ -32,7 +32,7 @@ private:
 	int createPixelShaderBuffer();
 	int createTextureAndSampler(LPCWSTR _textureName);
 
-	void setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix);
+	void setMatrixBuffer(XMMATRIX _worldMatrix);
 
 	// shader
 	ID3D11VertexShader* m_pvertexShader = nullptr;
@@ -51,7 +51,7 @@ private:
 	{
 		XMMATRIX WVP;
 		XMMATRIX World;
-		XMVECTOR WCP;
+		XMFLOAT3 WCP;
 	};
 
 	ID3D11Buffer* m_pcbPerFrame = nullptr;

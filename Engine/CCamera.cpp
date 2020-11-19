@@ -9,7 +9,7 @@ int CCamera::Init()
 #pragma endregion
 
 	//Update variables, viewMatrix and projectionMatrix
-	UpdateCameraVectors();
+	updateCameraVectors();
 
 	return 0;
 }
@@ -46,7 +46,7 @@ void CCamera::Update()
 #pragma endregion
 
 	//Update variables, viewMatrix and projectionMatrix
-	UpdateCameraVectors();
+	updateCameraVectors();
 }
 
 void CCamera::Release()
@@ -59,7 +59,7 @@ void CCamera::Release()
 	m_input = nullptr;
 }
 
-void CCamera::UpdateCameraVectors()
+void CCamera::updateCameraVectors()
 {
 	//360 degree horizontal rotation
 	XMFLOAT3 front = {
@@ -76,6 +76,6 @@ void CCamera::UpdateCameraVectors()
 	//Update projectionMatrix
 	m_projection = XMMatrixPerspectiveFovLH(
 		XMConvertToRadians(80),
-		getAspectRatio(),
+		GetAspectRatio(),
 		0.1f, 1000);
 }

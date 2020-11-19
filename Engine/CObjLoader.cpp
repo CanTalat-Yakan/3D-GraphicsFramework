@@ -74,10 +74,10 @@ void CObjLoader::loadPrimVertices()
 		// quad - with uv & normals
 		m_obj.vertices = {
 			// Face
-			CVertex(-hs, hs, 0, 0, 1, 0, -1, 0),	//Top		Right
-			CVertex(-hs, hs, 0, 0, 0, 0, -1, 0),	//Bottom	Right
-			CVertex(hs, hs, 0, 1, 0, 0, -1, 0),		//Bottom	Left
-			CVertex(hs, hs, 0, 1, 1, 0, -1, 0),		//Top		Left
+			CVertex(-hs, 0, -hs, 0, 1, 0, -1, 0),	//Bottom	Left
+			CVertex(-hs, 0, hs, 0, 0, 0, -1, 0),	//Top		Left
+			CVertex(hs, 0, hs, 1, 0, 0, -1, 0),		//Top		Right
+			CVertex(hs, 0, -hs, 1, 1, 0, -1, 0),	//Bottom	Right
 		};
 		m_obj.vertexCount = 1 * 4;
 		m_obj.vertexStride = sizeof(CVertex);
@@ -177,80 +177,107 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 	std::vector<std::string> split_l = {};
 	std::string line = {};
 	int faceCount = 0;
-	int vertexCount = 0;
-	int indexCount = 0;
+	bool triangle = false;
+	int faceFactor = 4;
+	int vertexFactor = 0;
 
 	while (std::getline(*_fileStream, line))
 	{
 		split_l = splitString(line, " ");
-		//Vertex
+#pragma region //Vertex
 		if (split_l[0] == "v")
 		{
-			if (split_l[1] != "")
-				positions.push_back(
-					XMFLOAT3(std::stof(split_l[1]), std::stof(split_l[2]), std::stof(split_l[3])));
-			else
-				positions.push_back(
-					XMFLOAT3(std::stof(split_l[2]), std::stof(split_l[3]), std::stof(split_l[4])));
+			int i = (split_l[1] == "") ? 1 : 0;
+			positions.push_back(
+				XMFLOAT3(std::stof(split_l[1 + i]), std::stof(split_l[2 + i]), std::stof(split_l[3 + i])));
 		}
-		//UV
+#pragma endregion
+#pragma region //UV
 		if (split_l[0] == "vt")
 			uv.push_back(
 				XMFLOAT2(std::stof(split_l[1]), std::stof(split_l[2])));
-		//Normal
+#pragma endregion
+#pragma region //Normal
 		if (split_l[0] == "vn")
 			normals.push_back(
 				XMFLOAT3(std::stof(split_l[1]), std::stof(split_l[2]), std::stof(split_l[3])));
-		//Face
+#pragma endregion
+#pragma region //Face
 		if (split_l[0] == "f")
 		{
-			//Vertex
-			for (int i = 1; i <= 4; i++)
+#pragma region //Check if face is triangle
+
+			triangle = false;
+			faceFactor = 4;
+			if (split_l.size() == 4)
+			{
+				triangle = true;
+				faceFactor = 3;
+			}
+			if (split_l.size() == 5)
+				if (split_l[4] == "")
+				{
+					triangle = true;
+					faceFactor = 3;
+				}
+
+			if (uv.size() == 0)
+				uv.push_back(
+					XMFLOAT2(0, 0));
+#pragma endregion
+#pragma region //Vertex Conception
+			for (int i = 1; i <= faceFactor; i++)
 			{
 				split_f = splitString(split_l[i], "/");
-				if (split_f[0] == "")
-					continue;
+				for (int j = 0; j < 3; j++)
+				{
+					if (split_f[j] == "")
+						split_f[j] = "1";
+				}
 				faceInfo.push_back(
 					XMFLOAT3(std::stof(split_f[0]), std::stof(split_f[1]), std::stof(split_f[2])));
 			}
-			//Set Vertices
-			for (int i = 0; i < 4; i++)
+#pragma endregion
+#pragma region //Set Vertices
+			for (int i = 0; i < faceFactor; i++)
 			{
-				//Current Vertex in Face
-				int j = i + faceCount * 4;
-				//FaceInfo = float3[4]
+				//FaceInfo = float3[3]
 				//.x = pos; .y = uv; .z = normal;
 				vertices.push_back(CVertex(
-					-positions[faceInfo[j].x - 1].x,
-					-positions[faceInfo[j].x - 1].y,
-					-positions[faceInfo[j].x - 1].z,
-					-uv[faceInfo[j].y - 1].x,
-					uv[faceInfo[j].y - 1].y,
-					normals[faceInfo[j].z - 1].x,
-					normals[faceInfo[j].z - 1].y,
-					normals[faceInfo[j].z - 1].z));
-				vertexCount++;
+					-positions[faceInfo[vertexFactor].x - 1].x,
+					-positions[faceInfo[vertexFactor].x - 1].y,
+					-positions[faceInfo[vertexFactor].x - 1].z,
+					uv[faceInfo[vertexFactor].y - 1].x,
+					-uv[faceInfo[vertexFactor].y - 1].y,
+					normals[faceInfo[vertexFactor].z - 1].x,
+					normals[faceInfo[vertexFactor].z - 1].y,
+					normals[faceInfo[vertexFactor].z - 1].z));
+				vertexFactor++;
 			}
+#pragma endregion
+#pragma region //Set Indices
+			indices.push_back(0 + (faceCount * faceFactor));
+			indices.push_back(2 + (faceCount * faceFactor));
+			indices.push_back(1 + (faceCount * faceFactor));
+			if (!triangle)
+			{
+				indices.push_back(0 + (faceCount * faceFactor));
+				indices.push_back(3 + (faceCount * faceFactor));
+				indices.push_back(2 + (faceCount * faceFactor));
+			}
+#pragma endregion
 			faceCount++;
 		}
-	}
-	//Set Indices
-	for (int i = 0; i < faceCount; i++)
-	{
-		indices.push_back(0 + (i * 4));
-		indices.push_back(2 + (i * 4));
-		indices.push_back(1 + (i * 4));
-		indices.push_back(0 + (i * 4));
-		indices.push_back(3 + (i * 4));
-		indices.push_back(2 + (i * 4));
+#pragma endregion
 	}
 
 	m_obj.vertices = vertices;
 	m_obj.indices = indices;
-	m_obj.vertexCount = vertexCount;
+	m_obj.vertexCount = vertices.size();
+	m_obj.indexCount = indices.size();
 	m_obj.vertexStride = sizeof(CVertex);
-	m_obj.indexCount = 6 * faceCount;
 }
+
 
 std::vector<std::string> CObjLoader::splitString(std::string _s, std::string _delim) {
 	std::vector<std::string> list;

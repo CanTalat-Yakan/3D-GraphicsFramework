@@ -27,7 +27,7 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 	m_d3d->getDeviceContext()->VSSetShader(m_pvertexShader, nullptr, 0);
 	m_d3d->getDeviceContext()->PSSetShader(m_ppixelShader, nullptr, 0);
 
-	setMatrixBuffer(_worldMatrix, m_camera->getViewProjectionMatrix());
+	setMatrixBuffer(_worldMatrix);
 
 	m_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &m_ptexture_SRV);
 	m_d3d->getDeviceContext()->PSSetSamplers(0, 1, &m_ptexture_SS);
@@ -70,20 +70,16 @@ void CMaterial::SetLightBuffer(const CLight& _light)
 	m_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &m_pcbPerFrame);
 }
 
-void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _viewProjectionMatrix)
+void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
 	HRESULT hr = m_d3d->getDeviceContext()->Map(m_pcbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 	cbPerObject* buffer = reinterpret_cast<cbPerObject*>(data.pData);
 
-	XMMATRIX wvp = _worldMatrix * _viewProjectionMatrix;
-	_worldMatrix = _worldMatrix;
-
-
-	buffer->WVP = wvp;
+	buffer->WVP = _worldMatrix * m_camera->GetViewProjectionMatrix();
 	buffer->World = _worldMatrix;
-	buffer->WCP = m_camera->getCamPos();
+	buffer->WCP = m_camera->GetCamPosFloat3();
 
 	m_d3d->getDeviceContext()->Unmap(m_pcbPerObj, 0);
 	m_d3d->getDeviceContext()->VSSetConstantBuffers(0, 1, &m_pcbPerObj);

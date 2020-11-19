@@ -54,9 +54,10 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 
     float4 col = ObjTexture.Sample(ObjSamplerState, i.UV);
 	
-    float3 viewDirection = normalize(WCP - i.WorldPos);
-    float4 fresnel = 2 * pow(1 + dot(viewDirection, normal), 0.75);
+    float3 viewDirection = normalize(i.WorldPos - WCP);
+    float d = saturate(dot(normal, viewDirection));
+    float4 fresnel = pow(d, 10);
 
 
-    return (fresnel) * col;
+    return (light.ambient + fresnel) * col;
 }

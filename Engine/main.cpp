@@ -17,7 +17,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 
 	CWindow* window = {}; //Create Window
 	window = &window->GetInstance(); //Singleton
-	if (error = window->Init(1000, 550, _hInstance, _nCmdShow) > 0) return error;
+	if (error = window->Init(1500, 800, _hInstance, _nCmdShow) > 0) return error;
 
 	CTime* m_time = {}; //Create DeltaTime and Timer
 	m_time = &m_time->GetInstance(); //Singleton
