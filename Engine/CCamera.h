@@ -10,7 +10,7 @@ using namespace DirectX;
 class CCamera
 {
 public:
-	static CCamera& getInstance() { static CCamera instance; return instance; }
+	static CCamera& GetInstance() { static CCamera instance; return instance; }
 	CCamera(CCamera const&) = delete;
 	void operator=(CCamera const&) = delete;
 

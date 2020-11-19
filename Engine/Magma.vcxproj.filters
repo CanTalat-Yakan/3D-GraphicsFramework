@@ -47,9 +47,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="EngineClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="CWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -89,5 +86,10 @@
     <ClInclude Include="IMono.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EngineClassDiagram.cd">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

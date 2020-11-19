@@ -2,14 +2,14 @@
 #include <fstream>
 #include <vector>
 
-CObj CObjLoader::load(LPCWSTR _fileName)
+CObj CObjLoader::Load(LPCWSTR _fileName)
 {
 	loadFile(_fileName);
 
 	return m_obj;
 }
 
-CObj CObjLoader::load(EPrimitives _primitiveType)
+CObj CObjLoader::Load(EPrimitives _primitiveType)
 {
 	m_prim = _primitiveType;
 
@@ -53,16 +53,16 @@ void CObjLoader::loadPrimVertices()
 			CVertex(hs, -hs, hs, 1, 1, -1, 0, 0),	//Bottom	Right
 
 			// Top Face
-			CVertex(-hs, hs, -hs, 1, 1, 0, -1, 0),	//Top		Right
-			CVertex(-hs, hs, hs, 0, 1, 0, -1, 0),	//Bottom	Right
-			CVertex(hs, hs, hs, 0, 0, 0, -1, 0),	//Bottom	Left
-			CVertex(hs, hs, -hs, 1, 0, 0, -1, 0),	//Top		Left
+			CVertex(-hs, hs, -hs, 0, 0, 0, -1, 0),	//Top		Right
+			CVertex(-hs, hs, hs, 1, 0, 0, -1, 0),	//Bottom	Right
+			CVertex(hs, hs, hs, 1, 1, 0, -1, 0),	//Bottom	Left
+			CVertex(hs, hs, -hs, 0, 1, 0, -1, 0),	//Top		Left
 
 			// Base Face					 	
-			CVertex(-hs, -hs, hs, 0, 0, 0, 1, 0),	//Bottom	Left
-			CVertex(-hs, -hs, -hs, 1, 0, 0, 1, 0),	//Top		Left
-			CVertex(hs, -hs, -hs, 1, 1, 0, 1, 0),	//Top		Right
-			CVertex(hs, -hs, hs, 0, 1, 0, 1, 0),	//Bottom	Right
+			CVertex(-hs, -hs, hs, 1, 1, 0, 1, 0),	//Bottom	Left
+			CVertex(-hs, -hs, -hs, 0, 1, 0, 1, 0),	//Top		Left
+			CVertex(hs, -hs, -hs, 0, 0, 0, 1, 0),	//Top		Right
+			CVertex(hs, -hs, hs, 1, 0, 0, 1, 0),	//Bottom	Right
 		};
 		m_obj.vertexCount = 4 * 6;
 		m_obj.vertexStride = sizeof(CVertex);
@@ -172,9 +172,10 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 	std::vector<XMFLOAT3> normals = {};
 	std::vector<XMFLOAT3> faceInfo = {};
 	std::vector<CVertex> vertices = {};
+	std::vector<WORD> indices = {};
 	std::vector<std::string> split_f = {};
 	std::vector<std::string> split_l = {};
-	std::string line;
+	std::string line = {};
 	int faceCount = 0;
 	int vertexCount = 0;
 	int indexCount = 0;
@@ -208,29 +209,31 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 			//Set Vertices
 			for (int i = 0; i < 4; i++)
 			{
+				vertexCount++;
 				vertices.push_back(CVertex(
-					positions[faceInfo[i].x].x,
-					positions[faceInfo[i].x].y,
-					positions[faceInfo[i].x].z,
-					uv[faceInfo[i].y].x,
-					uv[faceInfo[i].y].y,
-					normals[faceInfo[i].z].x,
-					normals[faceInfo[i].z].y,
-					normals[faceInfo[i].z].z));
+					positions[faceInfo[i].x - 1].x,
+					positions[faceInfo[i].x - 1].y,
+					positions[faceInfo[i].x - 1].z,
+					uv[faceInfo[i].y - 1].x,
+					uv[faceInfo[i].y - 1].y,
+					normals[faceInfo[i].z - 1].x,
+					normals[faceInfo[i].z - 1].y,
+					normals[faceInfo[i].z - 1].z));
 			}
 		}
 	}
 	for (int i = 0; i < faceCount; i++)
 	{
-		m_obj.indices.push_back(1 + (i * 6));
-		m_obj.indices.push_back(2 + (i * 6));
-		m_obj.indices.push_back(3 + (i * 6));
-		m_obj.indices.push_back(1 + (i * 6));
-		m_obj.indices.push_back(3 + (i * 6));
-		m_obj.indices.push_back(4 + (i * 6));
+		indices.push_back(1 + (i * 4));
+		indices.push_back(2 + (i * 4));
+		indices.push_back(3 + (i * 4));
+		indices.push_back(1 + (i * 4));
+		indices.push_back(3 + (i * 4));
+		indices.push_back(4 + (i * 4));
 	}
 
 	m_obj.vertices = vertices;
+	m_obj.indices = indices;
 	m_obj.vertexCount = vertexCount;
 	m_obj.vertexStride = sizeof(CVertex);
 	m_obj.indexCount = 6 * faceCount;

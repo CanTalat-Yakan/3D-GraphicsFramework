@@ -4,7 +4,7 @@
 class CWindow
 {
 public:
-	static CWindow& getInstance() { static CWindow instance; return instance; }
+	static CWindow& GetInstance() { static CWindow instance; return instance; }
 	CWindow(CWindow const&) = delete;
 	void operator=(CWindow const&) = delete;
 

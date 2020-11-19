@@ -4,14 +4,8 @@
 int CMesh::Init(CObj _obj)
 {
 #pragma region //Get Instance of DirectX and Time
-	m_d3d = &m_d3d->getInstance(); 
-	m_time = &m_time->getInstance();
-#pragma endregion
-
-#pragma region //Create Buffer
-	int error = 0;
-	if (error = initVertexBuffer(&_obj.vertices[0]) > 0) return error;
-	if (error = initIndexBuffer(&_obj.indices[0]) > 0) return error;
+	m_d3d = &m_d3d->GetInstance(); 
+	m_time = &m_time->GetInstance();
 #pragma endregion
 
 #pragma region //Set Variables
@@ -20,6 +14,11 @@ int CMesh::Init(CObj _obj)
 	m_indexCount = _obj.indexCount;
 #pragma endregion
 
+#pragma region //Create Buffer
+	int error = 0;
+	if (error = initVertexBuffer(&_obj.vertices[0]) > 0) return error;
+	if (error = initIndexBuffer(&_obj.indices[0]) > 0) return error;
+#pragma endregion
 
 	return 0;
 }
@@ -42,7 +41,7 @@ void CMesh::Render()
 	m_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &m_vertexStride, &offset);
 	m_d3d->getDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	m_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_d3d->getDeviceContext()->DrawIndexed(getIndexCount(), 0, 0);
+	m_d3d->getDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
 }
 
 void CMesh::Release()
@@ -59,9 +58,6 @@ void CMesh::Release()
 
 int CMesh::initVertexBuffer(CVertex _vertices[])
 {
-	m_vertexCount = 4 * 6;
-	m_vertexStride = sizeof(CVertex);
-
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // buffer type
 	desc.ByteWidth = m_vertexCount * m_vertexStride; // buffer size
@@ -77,9 +73,6 @@ int CMesh::initVertexBuffer(CVertex _vertices[])
 
 int CMesh::initIndexBuffer(WORD _indices[])
 {
-	m_indexCount = 6 * 6;
-
-
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_INDEX_BUFFER; // buffer type
 	desc.ByteWidth = m_indexCount * sizeof(WORD); // buffer size
@@ -89,7 +82,6 @@ int CMesh::initIndexBuffer(WORD _indices[])
 
 	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&desc, &data, &m_pIndexBuffer);
 	if (FAILED(hr)) return 30;
-
 
 	return 0;
 }

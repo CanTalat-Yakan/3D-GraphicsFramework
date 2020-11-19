@@ -3,7 +3,7 @@
 int CInput::Init()
 {
 #pragma region //get instance of window
-	m_window = &m_window->getInstance();
+	m_window = &m_window->GetInstance();
 #pragma endregion
 
 #pragma region //Create Input

@@ -3,8 +3,8 @@
 int CDirect::Init(bool _isWindowed)
 {
 #pragma region //Get Window Variables
-	m_window = &m_window->getInstance();
-	HWND hWnd = m_window->getHWND(); 
+	m_window = &m_window->GetInstance();
+	HWND hWnd = m_window->getHWND();
 	RECT rect = m_window->getRect();
 #pragma endregion
 
@@ -104,7 +104,7 @@ int CDirect::Init(bool _isWindowed)
 void CDirect::Clear()
 {
 	//Clear back buffer with solid color
-	const FLOAT color[] = { 0.1f, 0.1f, 0.1f, 1.0f};
+	const FLOAT color[] = { 1, 1, 1, 1 };
 	m_pd3dDevCon->ClearRenderTargetView(m_pRenderTargetView, color);
 	m_pd3dDevCon->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }

@@ -16,23 +16,23 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	int error = 0;
 
 	CWindow* window = {}; //Create Window
-	window = &window->getInstance(); //Singleton
+	window = &window->GetInstance(); //Singleton
 	if (error = window->Init(1000, 550, _hInstance, _nCmdShow) > 0) return error;
 
 	CTime* m_time = {}; //Create DeltaTime and Timer
-	m_time = &m_time->getInstance(); //Singleton
+	m_time = &m_time->GetInstance(); //Singleton
 	if (error = m_time->Init() > 0) return error;
 
 	CInput* m_input = {}; //Create InputManger
-	m_input = &m_input->getInstance(); //Singleton
+	m_input = &m_input->GetInstance(); //Singleton
 	if (error = m_input->Init() > 0) return error;
 
 	CCamera* camera = {}; //Create CameraView
-	camera = &camera->getInstance();//Singleton
+	camera = &camera->GetInstance();//Singleton
 	if (error = camera->Init() > 0) return error;
 
 	CDirect* d3d = {}; //Create Direct3D 11
-	d3d = &d3d->getInstance(); //Singleton
+	d3d = &d3d->GetInstance(); //Singleton
 	if (error = d3d->Init(true) > 0) return error;
 
 	GScene mainScene = {};

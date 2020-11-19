@@ -15,7 +15,7 @@
 class CDirect
 {
 public:
-	static CDirect& getInstance() { static CDirect instance; return instance; }
+	static CDirect& GetInstance() { static CDirect instance; return instance; }
 	CDirect(CDirect const&) = delete;
 	void operator=(CDirect const&) = delete;
 

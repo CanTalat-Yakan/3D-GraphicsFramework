@@ -7,7 +7,7 @@
 class CInput
 {
 public:
-	static CInput& getInstance() { static CInput instance; return instance; }
+	static CInput& GetInstance() { static CInput instance; return instance; }
 	CInput(CInput const&) = delete;
 	void operator=(CInput const&) = delete;
 

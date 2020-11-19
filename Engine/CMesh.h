@@ -16,19 +16,20 @@ public:
 	void Render();
 	void Release();
 
-	inline XMMATRIX getWorldMatrix() { return m_worldMatrix; }
-	inline UINT getVertexCount() { return m_vertexCount; }
-	inline UINT getVertexStride() { return m_vertexStride; }
-	inline UINT getIndexCount() { return m_indexCount; }
-	inline void setPosition(float x, float y, float z) { m_position = { x, y, z }; }
-	inline void setPosition(XMFLOAT3 _pos) { m_position = { _pos.x, _pos.y, _pos.z }; }
-	inline void setScale(float x, float y, float z) { m_scale = { x, y, z }; }
-	inline void setScale(XMFLOAT3 _scale) { m_scale = _scale; }
-	inline void setRotation(float x, float y, float z) { m_rotation = { x, y, z, 1 }; }
-	inline void setRotation(XMFLOAT4 _rot) { m_rotation = _rot; }
-	inline void setRotation(XMVECTOR _quaternion) { XMStoreFloat4(&m_rotation, _quaternion); }
-	inline XMVECTOR getRotation() { return XMLoadFloat4(&m_rotation); }
-	inline XMFLOAT4 getRotationFloat4() { return m_rotation; }
+	inline XMMATRIX GetWorldMatrix() { return m_worldMatrix; }
+	inline UINT GetVertexCount() { return m_vertexCount; }
+	inline UINT GetVertexStride() { return m_vertexStride; }
+	inline UINT GetIndexCount() { return m_indexCount; }
+	inline void SetPosition(float _x, float _y, float _z) { m_position = { _x, _y, _z }; }
+	inline void SetPosition(XMFLOAT3 _pos) { m_position = { _pos.x, _pos.y, _pos.z }; }
+	inline void SetScale(float _x, float _y, float _z) { m_scale = { _x, _y, _z }; }
+	inline void SetScale(XMFLOAT3 _scale) { m_scale = _scale; }
+	inline void SetRotation(float _x, float _y, float _z) { SetRotation(XMQuaternionMultiply(GetRotation(), XMQuaternionRotationRollPitchYaw(_x, _y, _z))); }
+	inline void SetRotation(float _x) { SetRotation(_x, _x, _x); }
+	inline void SetRotation(XMFLOAT4 _rot) { m_rotation = _rot; }
+	inline void SetRotation(XMVECTOR _quaternion) { XMStoreFloat4(&m_rotation, _quaternion); }
+	inline XMVECTOR GetRotation() { return XMLoadFloat4(&m_rotation); }
+	inline XMFLOAT4 GetRotationFloat4() { return m_rotation; }
 
 private:
 	CDirect* m_d3d;

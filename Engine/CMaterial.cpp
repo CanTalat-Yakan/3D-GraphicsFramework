@@ -5,8 +5,8 @@
 int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 {
 #pragma region //Get Instances of DirectX and Camera
-	m_d3d = &m_d3d->getInstance();
-	m_camera = &m_camera->getInstance();
+	m_d3d = &m_d3d->GetInstance();
+	m_camera = &m_camera->GetInstance();
 #pragma endregion
 
 #pragma region //Create Material
@@ -35,17 +35,17 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 
 void CMaterial::Release()
 {
+	if (m_ptexture_SRV)
+		m_ptexture_SRV->Release();
+	m_ptexture_SRV = nullptr;
+	if (m_ptexture_SS)
+		m_ptexture_SS->Release();
 	m_pvertexShader->Release();
 	m_pvertexShader = nullptr;
 	m_ppixelShader->Release();
 	m_ppixelShader = nullptr;
 	m_pinputLayout->Release();
 	m_pinputLayout = nullptr;
-	if (m_ptexture_SRV)
-		m_ptexture_SRV->Release();
-	m_ptexture_SRV = nullptr;
-	if (m_ptexture_SS)
-		m_ptexture_SS->Release();
 	m_ptexture_SS = nullptr;
 	m_pcbPerObj->Release();
 	m_pcbPerObj = nullptr;

@@ -13,8 +13,8 @@ enum class EPrimitives
 class CObjLoader
 {
 public:
-	CObj load(LPCWSTR _fileName);
-	CObj load(EPrimitives _primitiveType);
+	CObj Load(LPCWSTR _fileName);
+	CObj Load(EPrimitives _primitiveType);
 
 private:
 	void loadPrimVertices();

@@ -5,7 +5,7 @@
 class CTime
 {
 public:
-	static CTime& getInstance() { static CTime instance; return instance; }
+	static CTime& GetInstance() { static CTime instance; return instance; }
 	CTime(CTime const&) = delete;
 	void operator=(CTime const&) = delete;
 

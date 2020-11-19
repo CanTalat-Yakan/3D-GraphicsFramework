@@ -3,25 +3,19 @@
 int CCamera::Init()
 {
 #pragma region Get Instances of Time, Input and Window
-	m_time = &m_time->getInstance();
-	m_input = &m_input->getInstance();
-	m_window = &m_window->getInstance();
+	m_time = &m_time->GetInstance();
+	m_input = &m_input->GetInstance();
+	m_window = &m_window->GetInstance();
 #pragma endregion
 
-#pragma region Create initial CameraMatrix
-	m_view = XMMatrixLookAtLH(m_position, m_position + m_front, m_up);
-	m_projection = XMMatrixPerspectiveFovLH(
-		XMConvertToRadians(80), //FOV in rad (optional: 0.5f * 3.141f)
-		getAspectRatio(),		//Aspect ratio
-		0.1f, 1000);			//near & far clipping plane
-#pragma endregion
+	//Update variables, viewMatrix and projectionMatrix
+	UpdateCameraVectors();
 
 	return 0;
 }
 
 void CCamera::Update()
 {
-
 #pragma region //Input
 	float movementspeed = m_time->getDeltaTime() * 2;
 	if (m_input->getKeyboardState(DIK_LSHIFT) & 0x80) movementspeed *= 2; //movementspeed up
@@ -43,22 +37,16 @@ void CCamera::Update()
 		m_mouseRot.x -= m_input->getMouseState().lX * 0.2f; //horizontal mouse input
 		m_mouseRot.y -= m_input->getMouseState().lY * 0.2f; //vertical mouse input
 	}
-#pragma endregion
 
 	//Clamp vertical rotation to 80 degree each
 	m_mouseRot.y =
 		(m_mouseRot.y > 80) ? 80 :
 		(m_mouseRot.y < -80) ? -80 :
 		m_mouseRot.y;
+#pragma endregion
 
-	//Update variables and viewMatrix
+	//Update variables, viewMatrix and projectionMatrix
 	UpdateCameraVectors();
-
-	//Update projectionMatrix
-	m_projection = XMMatrixPerspectiveFovLH(
-		XMConvertToRadians(80),
-		getAspectRatio(),
-		0.1f, 1000);
 }
 
 void CCamera::Release()
@@ -78,14 +66,16 @@ void CCamera::UpdateCameraVectors()
 		front.x = cos(XMConvertToRadians(m_mouseRot.x)) * cos(XMConvertToRadians(m_mouseRot.y)),
 		front.y = sin(XMConvertToRadians(m_mouseRot.y)),
 		front.z = sin(XMConvertToRadians(m_mouseRot.x)) * cos(XMConvertToRadians(m_mouseRot.y)) };
-
 	//update frontVector
 	m_front = XMVector3Normalize(XMVectorSet(front.x, front.y, front.z, 0));
 	//update rightVector
 	m_right = XMVector3Normalize(XMVector3Cross(m_front, m_up));
 
-	//m_up = XMVector3Normalize(XMVector3Cross(m_right, m_front));
 	//update viewMatrix
 	m_view = XMMatrixLookAtLH(m_position, m_position + m_front, m_up);
-
+	//Update projectionMatrix
+	m_projection = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(80),
+		getAspectRatio(),
+		0.1f, 1000);
 }

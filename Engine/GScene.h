@@ -16,6 +16,7 @@ private:
 	CMesh m_skyBox = {};
 	CMesh m_plane = {};
 	CMesh m_cube = {};
+	CMesh m_cube2 = {};
 	CMaterial m_material00 = {};
 	CMaterial m_material01 = {};
 	CMaterial m_material02 = {};
