@@ -185,8 +185,14 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 		split_l = splitString(line, " ");
 		//Vertex
 		if (split_l[0] == "v")
-			positions.push_back(
-				XMFLOAT3(std::stof(split_l[1]), std::stof(split_l[2]), std::stof(split_l[3])));
+		{
+			if (split_l[1] != "")
+				positions.push_back(
+					XMFLOAT3(std::stof(split_l[1]), std::stof(split_l[2]), std::stof(split_l[3])));
+			else
+				positions.push_back(
+					XMFLOAT3(std::stof(split_l[2]), std::stof(split_l[3]), std::stof(split_l[4])));
+		}
 		//UV
 		if (split_l[0] == "vt")
 			uv.push_back(
@@ -198,38 +204,45 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 		//Face
 		if (split_l[0] == "f")
 		{
-			faceCount++;
 			//Vertex
 			for (int i = 1; i <= 4; i++)
 			{
 				split_f = splitString(split_l[i], "/");
+				if (split_f[0] == "")
+					continue;
 				faceInfo.push_back(
 					XMFLOAT3(std::stof(split_f[0]), std::stof(split_f[1]), std::stof(split_f[2])));
 			}
 			//Set Vertices
 			for (int i = 0; i < 4; i++)
 			{
-				vertexCount++;
+				//Current Vertex in Face
+				int j = i + faceCount * 4;
+				//FaceInfo = float3[4]
+				//.x = pos; .y = uv; .z = normal;
 				vertices.push_back(CVertex(
-					positions[faceInfo[i].x - 1].x,
-					positions[faceInfo[i].x - 1].y,
-					positions[faceInfo[i].x - 1].z,
-					uv[faceInfo[i].y - 1].x,
-					uv[faceInfo[i].y - 1].y,
-					normals[faceInfo[i].z - 1].x,
-					normals[faceInfo[i].z - 1].y,
-					normals[faceInfo[i].z - 1].z));
+					-positions[faceInfo[j].x - 1].x,
+					-positions[faceInfo[j].x - 1].y,
+					-positions[faceInfo[j].x - 1].z,
+					-uv[faceInfo[j].y - 1].x,
+					uv[faceInfo[j].y - 1].y,
+					normals[faceInfo[j].z - 1].x,
+					normals[faceInfo[j].z - 1].y,
+					normals[faceInfo[j].z - 1].z));
+				vertexCount++;
 			}
+			faceCount++;
 		}
 	}
+	//Set Indices
 	for (int i = 0; i < faceCount; i++)
 	{
-		indices.push_back(1 + (i * 4));
+		indices.push_back(0 + (i * 4));
 		indices.push_back(2 + (i * 4));
-		indices.push_back(3 + (i * 4));
 		indices.push_back(1 + (i * 4));
+		indices.push_back(0 + (i * 4));
 		indices.push_back(3 + (i * 4));
-		indices.push_back(4 + (i * 4));
+		indices.push_back(2 + (i * 4));
 	}
 
 	m_obj.vertices = vertices;

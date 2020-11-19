@@ -21,37 +21,42 @@ cbuffer cbPerFrame
 Texture2D ObjTexture;
 SamplerState ObjSamplerState;
 
+struct appdata
+{
+    float4 vertex : POSITION;
+    float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
+};
+
 struct VS_OUTPUT
 {
-    float4 Pos : SV_POSITION;
+    float4 pos : SV_POSITION;
     float3 WorldPos : POSITION;
     float2 UV : TEXCOORD;
     float3 normal : NORMAL;
 };
 
-VS_OUTPUT VS(float4 inPos : POSITION, float2 inTexCoord : TEXCOORD, float3 normal : NORMAL)
+VS_OUTPUT VS(appdata v)
 {
-    VS_OUTPUT output;
+    VS_OUTPUT o;
 
-    output.Pos = mul(inPos, WVP);
+    o.pos = mul(WVP, v.vertex);
+    o.normal = mul(World, v.normal);
+    o.WorldPos = mul(World, v.vertex);
+    o.UV = v.uv;
 
-    output.normal = mul(normal, World);
-
-    output.UV = inTexCoord;
-
-    output.WorldPos = mul(inPos, World);
-    
-    return output;
+    return o;
 }
 
-float4 PS(VS_OUTPUT input) : SV_TARGET
+float4 PS(VS_OUTPUT i) : SV_TARGET
 {
-    input.normal = normalize(input.normal);
+    float3 normal = normalize(i.normal);
 
-    float4 col = ObjTexture.Sample(ObjSamplerState, input.UV);
+    float4 col = ObjTexture.Sample(ObjSamplerState, i.UV);
 	
-    float3 viewDirection = normalize(WCP - input.WorldPos);
-    float4 fresnel = 2 * pow(1 + dot(viewDirection, input.normal), 0.75);
+    float3 viewDirection = normalize(WCP - i.WorldPos);
+    float4 fresnel = 2 * pow(1 + dot(viewDirection, normal), 0.75);
+
 
     return (fresnel) * col;
 }

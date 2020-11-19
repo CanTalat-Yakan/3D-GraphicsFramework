@@ -9,6 +9,8 @@ int CMesh::Init(CObj _obj)
 #pragma endregion
 
 #pragma region //Set Variables
+	m_vertices = _obj.vertices;
+	m_indices = _obj.indices;
 	m_vertexCount = _obj.vertexCount;
 	m_vertexStride = _obj.vertexStride;
 	m_indexCount = _obj.indexCount;
@@ -16,8 +18,8 @@ int CMesh::Init(CObj _obj)
 
 #pragma region //Create Buffer
 	int error = 0;
-	if (error = initVertexBuffer(&_obj.vertices[0]) > 0) return error;
-	if (error = initIndexBuffer(&_obj.indices[0]) > 0) return error;
+	if (error = initVertexBuffer(&m_vertices[0]) > 0) return error;
+	if (error = initIndexBuffer(&m_indices[0]) > 0) return error;
 #pragma endregion
 
 	return 0;

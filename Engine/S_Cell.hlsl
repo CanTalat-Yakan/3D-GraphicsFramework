@@ -57,7 +57,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 
     //calculate diffuse 
     float d = dot(normal, light.direction); //by calculating the angle of the normal and the light direction with the dot method
-    float4 diffuse = saturate(d * light.diffuse); //then saturating the diffuse so the backsite does not get values below 1
+    float4 diffuse = saturate(normalize(d) * light.diffuse * 0.9f); //then saturating the diffuse so the backsite does not get values below 1
 	
     //calculate specular
     float3 viewDir = normalize(WCP - i.WorldPos);

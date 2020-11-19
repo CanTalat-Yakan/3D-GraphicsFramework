@@ -24,7 +24,8 @@ public:
 	inline void SetPosition(XMFLOAT3 _pos) { m_position = { _pos.x, _pos.y, _pos.z }; }
 	inline void SetScale(float _x, float _y, float _z) { m_scale = { _x, _y, _z }; }
 	inline void SetScale(XMFLOAT3 _scale) { m_scale = _scale; }
-	inline void SetRotation(float _x, float _y, float _z) { SetRotation(XMQuaternionMultiply(GetRotation(), XMQuaternionRotationRollPitchYaw(_x, _y, _z))); }
+	inline void SetRotation(float _x, float _y, float _z) { SetRotationDeg(XMConvertToRadians(_x), XMConvertToRadians(_y), XMConvertToRadians(_z)); }
+	inline void SetRotationDeg(float _x, float _y, float _z) { SetRotation(XMQuaternionMultiply(GetRotation(), XMQuaternionRotationRollPitchYaw(_x, _y, _z))); }
 	inline void SetRotation(float _x) { SetRotation(_x, _x, _x); }
 	inline void SetRotation(XMFLOAT4 _rot) { m_rotation = _rot; }
 	inline void SetRotation(XMVECTOR _quaternion) { XMStoreFloat4(&m_rotation, _quaternion); }
@@ -41,9 +42,11 @@ private:
 	ID3D11Buffer* m_pVertexBuffer = nullptr;
 	ID3D11Buffer* m_pIndexBuffer = nullptr;
 
+	std::vector<CVertex> m_vertices = {};
+	std::vector<WORD> m_indices = {};
 	UINT m_vertexCount = 0;
 	UINT m_vertexStride = 0;
-	UINT m_indexCount = 0;
+	UINT m_indexCount = 0; 
 
 	XMMATRIX m_worldMatrix = {};
 	XMFLOAT3 m_position = { 0, 0, 0 };

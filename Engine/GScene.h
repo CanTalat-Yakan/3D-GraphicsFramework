@@ -20,6 +20,7 @@ private:
 	CMaterial m_material00 = {};
 	CMaterial m_material01 = {};
 	CMaterial m_material02 = {};
+	CMaterial m_material03 = {};
 	CLight m_light = {};
 	CObjLoader m_obj = {};
 
