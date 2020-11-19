@@ -41,9 +41,11 @@ void CMaterial::Release()
 	m_ppixelShader = nullptr;
 	m_pinputLayout->Release();
 	m_pinputLayout = nullptr;
-	m_ptexture_SRV->Release();
+	if (m_ptexture_SRV)
+		m_ptexture_SRV->Release();
 	m_ptexture_SRV = nullptr;
-	m_ptexture_SS->Release();
+	if (m_ptexture_SS)
+		m_ptexture_SS->Release();
 	m_ptexture_SS = nullptr;
 	m_pcbPerObj->Release();
 	m_pcbPerObj = nullptr;
@@ -99,7 +101,7 @@ int CMaterial::createVertexShader(LPCWSTR _shaderName)
 		0, 0, 0,			// optional flags
 		&pVS_Buffer,		// compiled blob target
 		0, 0);				// optional blob for all compile errors
-	
+
 	if (FAILED(hr)) return 50;
 
 	hr = m_d3d->getDevice()->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &m_pvertexShader);
@@ -147,7 +149,7 @@ int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 	elements[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	elements[2].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
 	elements[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	
+
 	HRESULT hr = m_d3d->getDevice()->CreateInputLayout(elements, 3, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &m_pinputLayout);
 	if (FAILED(hr)) return 55;
 

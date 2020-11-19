@@ -53,16 +53,16 @@ void CObjLoader::loadPrimVertices()
 			CVertex(hs, -hs, hs, 1, 1, -1, 0, 0),	//Bottom	Right
 
 			// Top Face
-			CVertex(-hs, hs, -hs, 0, 1, 0, -1, 0),	//Top		Right
-			CVertex(-hs, hs, hs, 0, 0, 0, -1, 0),	//Bottom	Right
-			CVertex(hs, hs, hs, 1, 0, 0, -1, 0),	//Bottom	Left
-			CVertex(hs, hs, -hs, 1, 1, 0, -1, 0),	//Top		Left
+			CVertex(-hs, hs, -hs, 1, 1, 0, -1, 0),	//Top		Right
+			CVertex(-hs, hs, hs, 0, 1, 0, -1, 0),	//Bottom	Right
+			CVertex(hs, hs, hs, 0, 0, 0, -1, 0),	//Bottom	Left
+			CVertex(hs, hs, -hs, 1, 0, 0, -1, 0),	//Top		Left
 
-			// Bottom Face					 	
-			CVertex(-hs, -hs, hs, 0, 1, 0, 1, 0),	//Bottom	Left
-			CVertex(-hs, -hs, -hs, 0, 0, 0, 1, 0),	//Top		Left
-			CVertex(hs, -hs, -hs, 1, 0, 0, 1, 0),	//Top		Right
-			CVertex(hs, -hs, hs, 1, 1, 0, 1, 0),	//Bottom	Right
+			// Base Face					 	
+			CVertex(-hs, -hs, hs, 0, 0, 0, 1, 0),	//Bottom	Left
+			CVertex(-hs, -hs, -hs, 1, 0, 0, 1, 0),	//Top		Left
+			CVertex(hs, -hs, -hs, 1, 1, 0, 1, 0),	//Top		Right
+			CVertex(hs, -hs, hs, 0, 1, 0, 1, 0),	//Bottom	Right
 		};
 		m_obj.vertexCount = 4 * 6;
 		m_obj.vertexStride = sizeof(CVertex);

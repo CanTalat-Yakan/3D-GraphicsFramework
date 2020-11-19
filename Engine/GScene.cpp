@@ -13,7 +13,7 @@ void GScene::Awake()
 	m_plane.Init(m_obj.load(EPrimitives::Cube));
 	m_cube.Init(m_obj.load(EPrimitives::Cube));
 
-	m_material00.Init(L"S_SkyBox.hlsl", L"T_Sky.jpg");
+	m_material00.Init(L"S_SkyBox.hlsl", L"T_SkyBox.png");
 	m_material01.Init(L"S_Standard.hlsl", L"T_Proto.png");
 	m_material02.Init(L"S_Standard.hlsl", L"T_Main.jpeg");
 
