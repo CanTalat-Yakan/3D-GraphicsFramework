@@ -44,7 +44,7 @@ VS_OUTPUT VS(appdata v)
     o.pos = mul(WVP, v.vertex);
     o.normal = mul(World, v.normal);
     o.WorldPos = mul(World, v.vertex);
-    o.CamPos = mul(World, float3(WCP.x, -WCP.y, -WCP.z));
+    o.CamPos = mul(World, WCP);
     o.UV = v.uv;
 
     return o;
@@ -64,8 +64,8 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //calculate specular
     float3 viewDir = normalize(i.WorldPos - i.CamPos);
     float3 halfVec = viewDir + light.direction;
-    d = saturate(dot(normalize(halfVec), normal));
-    float4 specular = 2 * pow(d, 30) * light.diffuse;
+    float d2 = saturate(dot(normalize(halfVec), normal));
+    float4 specular = 50 * d * pow(d2, 70) * (light.diffuse * 0.1f);
 
 
     return (diffuse + specular + light.ambient) * col;

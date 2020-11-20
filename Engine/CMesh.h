@@ -2,6 +2,7 @@
 #include "CObj.h"
 #include "CVertex.h"
 #include "CDirect.h"
+#include "CMaterial.h"
 #include "CTime.h"
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -14,12 +15,15 @@ public:
 	int Init(CObj _obj);
 	void Update();
 	void Render();
+	void Update_Render(CMaterial _material);
 	void Release();
 
 	inline XMMATRIX GetWorldMatrix() { return m_worldMatrix; }
 	inline UINT GetVertexCount() { return m_vertexCount; }
 	inline UINT GetVertexStride() { return m_vertexStride; }
 	inline UINT GetIndexCount() { return m_indexCount; }
+	inline UINT GetIndexStride() { return sizeof(WORD); }
+
 	inline void SetPosition(float _x, float _y, float _z) { m_position = { _x, _y, _z }; }
 	inline void SetPosition(XMFLOAT3 _pos) { m_position = { _pos.x, _pos.y, _pos.z }; }
 	inline void SetScale(float _x, float _y, float _z) { m_scale = { _x, _y, _z }; }

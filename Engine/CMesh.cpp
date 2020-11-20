@@ -46,6 +46,13 @@ void CMesh::Render()
 	m_d3d->getDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
 }
 
+void CMesh::Update_Render(CMaterial _material)
+{
+	_material.Render(GetWorldMatrix());
+	Update();
+	Render();
+}
+
 void CMesh::Release()
 {
 	if (m_pVertexBuffer != NULL)
@@ -62,7 +69,7 @@ int CMesh::initVertexBuffer(CVertex _vertices[])
 {
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // buffer type
-	desc.ByteWidth = m_vertexCount * m_vertexStride; // buffer size
+	desc.ByteWidth = GetVertexCount() * GetVertexStride(); // buffer size
 
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _vertices;
@@ -77,7 +84,7 @@ int CMesh::initIndexBuffer(WORD _indices[])
 {
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_INDEX_BUFFER; // buffer type
-	desc.ByteWidth = m_indexCount * sizeof(WORD); // buffer size
+	desc.ByteWidth = GetIndexCount() * GetIndexStride(); // buffer size
 
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _indices;

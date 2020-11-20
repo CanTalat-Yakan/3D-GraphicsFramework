@@ -44,8 +44,7 @@ VS_OUTPUT VS(appdata v)
     o.pos = mul(WVP, v.vertex);
     o.normal = mul(World, v.normal);
     o.worldPos = mul(World, v.vertex);
-    //o.camPos = mul(o.worldPos, float3(WCP.x, -WCP.y, -WCP.z));
-    o.camPos = mul(World, float3(WCP.x, -WCP.y, -WCP.z));
+    o.camPos = mul(World, WCP);
     o.uv = v.uv;
 
     return o;
