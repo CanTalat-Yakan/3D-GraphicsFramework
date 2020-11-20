@@ -31,8 +31,9 @@ struct appdata
 struct VS_OUTPUT
 {
     float4 pos : SV_POSITION;
-    float3 WorldPos : POSITION;
-    float2 UV : TEXCOORD;
+    float3 worldPos : POSITION;
+    float3 camPos : POSITION1;
+    float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
 
@@ -42,8 +43,10 @@ VS_OUTPUT VS(appdata v)
 
     o.pos = mul(WVP, v.vertex);
     o.normal = mul(World, v.normal);
-    o.WorldPos = mul(World, v.vertex);
-    o.UV = v.uv;
+    o.worldPos = mul(World, v.vertex);
+    //o.camPos = mul(o.worldPos, float3(WCP.x, -WCP.y, -WCP.z));
+    o.camPos = mul(World, float3(WCP.x, -WCP.y, -WCP.z));
+    o.uv = v.uv;
 
     return o;
 }
@@ -52,12 +55,12 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 {
     float3 normal = normalize(i.normal);
 
-    float4 col = ObjTexture.Sample(ObjSamplerState, i.UV);
+    float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
 	
-    float3 viewDirection = normalize(i.WorldPos - WCP);
-    float d = saturate(dot(normal, viewDirection));
+    float3 viewDir = normalize(i.worldPos - i.camPos);
+    float d = saturate(dot(normal, viewDir));
     float4 fresnel = pow(d, 10);
 
 
-    return (light.ambient + fresnel) * col;
+    return (fresnel) * col;
 }

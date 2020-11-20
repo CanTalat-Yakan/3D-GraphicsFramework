@@ -25,6 +25,7 @@ public:
 	inline XMFLOAT3 GetCamPosFloat3() { XMFLOAT3 r; XMStoreFloat3(&r, m_position); return r; }
 	inline float GetAspectRatio() { RECT _rect = m_window->getRect(); return (float)(_rect.right - _rect.left) / (float)(_rect.bottom - _rect.top); }
 	inline void SetPosition(float _x, float _y, float _z) { m_position = XMVectorSet(_x, _y, _z, 1); }
+	inline void SetRotation(float _x, float _y) { m_mouseRot = XMFLOAT2(_x, _y); }
 
 private:
 	CCamera() {}
@@ -35,8 +36,8 @@ private:
 	CTime* m_time;
 	CInput* m_input;
 
-	XMVECTOR m_position = { 0, 0, -1.4};
-	XMFLOAT2 m_mouseRot = { 90, 0};
+	XMVECTOR m_position = { 0, 0, 0};
+	XMFLOAT2 m_mouseRot = { 0, 0};
 
 	XMVECTOR m_front = { 0, 0, 1 };
 	XMVECTOR m_right = { 1, 0, 0 };

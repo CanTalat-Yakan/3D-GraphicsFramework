@@ -13,14 +13,13 @@ void GScene::Init()
 	m_sphere.Init(sphere);
 	m_sphere2.Init(sphere);
 	m_sphere3.Init(sphere);
-	m_sphere4.Init(sphere);
 	m_bird.Init(m_obj.Load(L"R_Bird.obj"));
 
 	m_material_Sky.Init(L"S_SkyBox.hlsl", L"T_SkyBox.png");
 	m_material_Proto.Init(L"S_Standard.hlsl", L"T_Proto.png");
 	m_material_Cells.Init(L"S_Standard.hlsl", L"T_Cell.jpeg");
-	m_material_CellShader.Init(L"S_Cell.hlsl", L"T_Cell.jpeg");
-	m_material_Fresnel.Init(L"S_Fresnel.hlsl", L"T_Cell.jpeg");
+	m_material_CellShader.Init(L"S_Cell.hlsl", L"T_Proto.png");
+	m_material_Fresnel.Init(L"S_Fresnel.hlsl", L"T_Proto.png");
 	m_material_Bird.Init(L"S_Standard.hlsl", L"T_Bird.jpg");
 }
 
@@ -37,6 +36,7 @@ void GScene::Awake()
 	m_material_Bird.SetLightBuffer(m_light);
 
 	camera->SetPosition(0, 2, -5);
+	camera->SetRotation(90, 0);
 }
 
 void GScene::Start()
@@ -62,10 +62,6 @@ void GScene::Start()
 	m_sphere3.SetScale(1.5f);
 	m_sphere3.SetPosition(-2, 1.5f, -2);
 
-	m_sphere4.SetRotation(-180, 0, 0);
-	m_sphere4.SetScale(1.5f);
-	m_sphere4.SetPosition(-2, 1.5f, -4);
-
 	m_bird.SetScale(0.1f, 0.1f, 0.1f);
 	m_bird.SetRotation(90, 120, 10);
 	m_bird.SetPosition(-5, 0, 0);
@@ -77,10 +73,9 @@ void GScene::Update()
 
 	float rot = time->getDeltaTime();
 	m_cylinder.SetRotationDeg(0, rot, 0);
-	m_sphere.SetRotationDeg(0, rot, 0);
+	//m_sphere.SetRotationDeg(0, rot, 0);
 	m_sphere2.SetRotationDeg(0, rot, 0);
 	m_sphere3.SetRotationDeg(0, rot, 0);
-	m_sphere4.SetRotationDeg(0, rot, 0);
 }
 
 void GScene::LateUpdate()
@@ -97,21 +92,17 @@ void GScene::LateUpdate()
 	m_cylinder.Render();
 	m_cylinder.Update();
 
-	m_material_Cells.Render(m_sphere.GetWorldMatrix());
+	m_material_Fresnel.Render(m_sphere.GetWorldMatrix());
 	m_sphere.Render();
 	m_sphere.Update();
 
-	m_material_Fresnel.Render(m_sphere2.GetWorldMatrix());
+	m_material_Cells.Render(m_sphere2.GetWorldMatrix());
 	m_sphere2.Render();
 	m_sphere2.Update();
 
 	m_material_CellShader.Render(m_sphere3.GetWorldMatrix());
 	m_sphere3.Render();
 	m_sphere3.Update();
-
-	m_material_Cells.Render(m_sphere4.GetWorldMatrix());
-	m_sphere4.Render();
-	m_sphere4.Update();
 
 	m_material_Cells.Render(m_cube.GetWorldMatrix());
 	m_cube.Render();
@@ -130,6 +121,7 @@ void GScene::Release()
 	m_cylinder.Release();
 	m_sphere.Release();
 	m_sphere2.Release();
+	m_sphere3.Release();
 	m_bird.Release();
 
 	m_material_Sky.Release();

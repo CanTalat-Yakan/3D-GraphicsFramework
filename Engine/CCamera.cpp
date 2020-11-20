@@ -18,14 +18,14 @@ void CCamera::Update()
 {
 #pragma region //Input
 	float movementspeed = m_time->getDeltaTime() * 2;
-	if (m_input->getKeyboardState(DIK_LSHIFT) & 0x80) movementspeed *= 2; //movementspeed up
-	if (m_input->getKeyboardState(DIK_LCONTROL) & 0x80) movementspeed *= 0.5f; //movementspeed down
+	if (m_input->getKeyboardState(DIK_LSHIFT) & 0x80) movementspeed *= 4;				//movementspeed up
+	if (m_input->getKeyboardState(DIK_LCONTROL) & 0x80) movementspeed *= 0.2f;			//movementspeed down
 	if (m_input->getKeyboardState(DIK_A) & 0x80) m_position += movementspeed * m_right; //horizontal keyboard input
 	if (m_input->getKeyboardState(DIK_D) & 0x80) m_position -= movementspeed * m_right; //horizontal keyboard input
 	if (m_input->getKeyboardState(DIK_W) & 0x80) m_position += movementspeed * m_front; //vertical keyboard input
 	if (m_input->getKeyboardState(DIK_S) & 0x80) m_position -= movementspeed * m_front; //vertical keyboard input
-	if (m_input->getKeyboardState(DIK_E) & 0x80) m_position += movementspeed * m_up; //height keyboard input
-	if (m_input->getKeyboardState(DIK_Q) & 0x80) m_position -= movementspeed * m_up; //height keyboard input
+	if (m_input->getKeyboardState(DIK_E) & 0x80) m_position += movementspeed * m_up;	//height keyboard input
+	if (m_input->getKeyboardState(DIK_Q) & 0x80) m_position -= movementspeed * m_up;	//height keyboard input
 	if (m_input->getKeyboardState(DIK_E) & 0x80 && m_input->getKeyboardState(DIK_W) & 0x80) //horizontal and height input
 		m_position += movementspeed * XMVector3Cross(m_right, m_front); //fix movement
 	if (m_input->getKeyboardState(DIK_Q) & 0x80 && m_input->getKeyboardState(DIK_S) & 0x80) //horizontal and height input
