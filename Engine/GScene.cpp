@@ -23,7 +23,6 @@ void GScene::Init()
 	m_sphere.Init(sphere);
 	m_sphere2.Init(sphere);
 	m_sphere3.Init(sphere);
-	m_sphere4.Init(sphere);
 
 	CObj bird = m_obj.Load(L"R_Bird.obj");
 	m_bird.Init(bird);
@@ -83,10 +82,6 @@ void GScene::Start()
 	m_sphere3.SetScale(1.5f);
 	m_sphere3.SetPosition(-2, 1.5f, -2);
 
-	m_sphere4.SetRotation(-180, 0, 0);
-	m_sphere4.SetScale(1.5f);
-	m_sphere4.SetPosition(-2, 1.5f, -4);
-
 	m_bird.SetScale(0.1f, 0.1f, 0.1f);
 	m_bird.SetRotation(90, 120, 10);
 	m_bird.SetPosition(-5, 0, 0);
@@ -127,7 +122,6 @@ void GScene::LateUpdate()
 	m_sphere.Update_Render(m_material_Proto);
 	m_sphere2.Update_Render(m_material_Fresnel);
 	m_sphere3.Update_Render(m_material_CellShader);
-	m_sphere4.Update_Render(m_material_Proto);
 
 	m_bird.Update_Render(m_material_Bird);
 #pragma endregion
@@ -142,7 +136,6 @@ void GScene::Release()
 	m_sphere.Release();
 	m_sphere2.Release();
 	m_sphere3.Release();
-	m_sphere4.Release();
 	m_bird.Release();
 
 	m_material_Sky.Release();

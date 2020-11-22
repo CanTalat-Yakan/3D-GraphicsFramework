@@ -21,7 +21,6 @@ private:
 	CMesh m_sphere = {};
 	CMesh m_sphere2 = {};
 	CMesh m_sphere3 = {};
-	CMesh m_sphere4 = {};
 	CMesh m_bird = {};
 
 	CMaterial m_material_Sky = {};

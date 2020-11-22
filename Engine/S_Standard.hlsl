@@ -21,6 +21,8 @@ cbuffer cbPerFrame
 
 Texture2D ObjTexture;
 SamplerState ObjSamplerState;
+Texture2D ObjTexture2;
+SamplerState ObjSamplerState2;
 
 struct VS_OUTPUT
 {

@@ -50,6 +50,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 		m_input->Update();
 		camera->Update();
 
+		mainScene.EarlyUpdate();
 		mainScene.Update();
 		mainScene.LateUpdate();
 
