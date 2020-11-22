@@ -25,9 +25,9 @@ private:
 
 	CMaterial m_material_Sky = {};
 	CMaterial m_material_Standard = {};
-	CMaterial m_material_Proto = {};
-	CMaterial m_material_Cells = {};
-	CMaterial m_material_CellShader = {};
+	CMaterial m_material_Standard2 = {};
+	CMaterial m_material_Standard3 = {};
+	CMaterial m_material_Cell = {};
 	CMaterial m_material_Fresnel = {};
 	CMaterial m_material_Bird = {};
 
