@@ -34,6 +34,7 @@ void CMesh::Update()
 	XMMATRIX scale = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
 
 	m_worldMatrix = scale * rotation * translation;
+	m_translationMatrix = translation;
 }
 
 void CMesh::Render()
@@ -48,7 +49,7 @@ void CMesh::Render()
 
 void CMesh::Update_Render(CMaterial _material)
 {
-	_material.Render(GetWorldMatrix());
+	_material.Render(GetWorldMatrix(), GetTranslationMatrix());
 	Update();
 	Render();
 }

@@ -10,6 +10,7 @@ cbuffer cbPerObject
 {
     float4x4 WVP;
     float4x4 World;
+    float4x4 Transl;
     float3 WCP;
 };
 
@@ -44,7 +45,7 @@ VS_OUTPUT VS(appdata v)
     o.pos = mul(WVP, v.vertex);
     o.normal = mul(World, v.normal);
     o.worldPos = mul(World, v.vertex);
-    o.camPos = mul(World, WCP);
+    o.camPos = mul(Transl, WCP);
     o.uv = v.uv;
 
     return o;

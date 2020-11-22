@@ -71,19 +71,20 @@ void GScene::Start()
 	m_cylinder.SetScale(0.3f);
 	m_cylinder.SetPosition(2, 1, 0);
 
-	//m_sphere.SetRotation(-180, 0, 0);
+	m_sphere.SetRotation(-180, 0, 0);
 	m_sphere.SetScale(1.5f);
 	m_sphere.SetPosition(-2, 1.5f, 2);
 
-	//m_sphere2.SetRotation(-180, 0, 0);
-	//m_sphere2.SetScale(1.5f);
+	m_sphere2.SetRotation(-180, 0, 0);
+	m_sphere2.SetScale(1.5f);
 	m_sphere2.SetPosition(-2, 1.5f, 0);
 
-	//m_sphere3.SetRotation(-180, 0, 0);
-	//m_sphere3.SetScale(1.5f);
+	m_sphere3.SetRotation(-180, 0, 0);
+	m_sphere3.SetScale(1.5f);
 	m_sphere3.SetPosition(-2, 1.5f, -2);
 
-	//m_sphere4.SetScale(1.5f);
+	m_sphere4.SetRotation(-180, 0, 0);
+	m_sphere4.SetScale(1.5f);
 	m_sphere4.SetPosition(-2, 1.5f, -4);
 
 	m_bird.SetScale(0.1f, 0.1f, 0.1f);
@@ -107,8 +108,8 @@ void GScene::Update()
 	m_cylinder.SetRotationDeg(0, rot, 0);
 
 	m_sphere.SetRotationDeg(0, rot, 0);
-	//m_sphere2.SetRotationDeg(0, rot, 0);
-	//m_sphere3.SetRotationDeg(0, rot, 0);
+	m_sphere2.SetRotationDeg(0, rot, 0);
+	m_sphere3.SetRotationDeg(0, rot, 0);
 #pragma endregion
 }
 
@@ -123,7 +124,7 @@ void GScene::LateUpdate()
 
 	m_cylinder.Update_Render(m_material_Cells);
 
-	m_sphere.Update_Render(m_material_Fresnel);
+	m_sphere.Update_Render(m_material_Proto);
 	m_sphere2.Update_Render(m_material_Fresnel);
 	m_sphere3.Update_Render(m_material_CellShader);
 	m_sphere4.Update_Render(m_material_Proto);

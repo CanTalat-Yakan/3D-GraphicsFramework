@@ -19,6 +19,7 @@ public:
 	void Release();
 
 	inline XMMATRIX GetWorldMatrix() { return m_worldMatrix; }
+	inline XMMATRIX GetTranslationMatrix() { return m_translationMatrix; }
 	inline UINT GetVertexCount() { return m_vertexCount; }
 	inline UINT GetVertexStride() { return m_vertexStride; }
 	inline UINT GetIndexCount() { return m_indexCount; }
@@ -55,6 +56,7 @@ private:
 	UINT m_indexCount = 0; 
 
 	XMMATRIX m_worldMatrix = {};
+	XMMATRIX m_translationMatrix = {};
 	XMFLOAT3 m_position = { 0, 0, 0 };
 	XMFLOAT4 m_rotation = { 0, 0, 0, 1 };
 	XMFLOAT3 m_scale = { 1, 1, 1 };
