@@ -65,9 +65,15 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //calculate specular
     float3 viewDir = normalize(i.worldPos - i.camPos);
     float3 halfVec = viewDir + light.direction;
-    float d2 = saturate(dot(normalize(halfVec), normal));
-    float4 specular = (d * pow(d2, 10)) * light.diffuse;
+    float d2 = dot(normalize(halfVec), normal);
+    d2 = (d2 > 0.95) ? 1 : 0;
+    float4 specular = d * d2 * light.diffuse;
 
+    //calculate outline
+    float d3 = saturate(dot(normal, viewDir));
+    d3 = (d3 < 0.2) ? -2 : 0;
+    float4 outline = d3 * light.diffuse;
 
-    return (diffuse + specular + light.ambient) * col;
+    
+    return (diffuse + specular + outline + light.ambient) * col;
 }

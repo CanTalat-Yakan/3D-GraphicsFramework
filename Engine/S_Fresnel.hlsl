@@ -53,10 +53,12 @@ VS_OUTPUT VS(appdata v)
 
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
-    float3 normal = normalize(i.normal);
-
     float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
+
+    //normalize normal
+    float3 normal = normalize(i.normal);
 	
+    //calculate fresnel
     float3 viewDir = normalize(i.worldPos - i.camPos);
     float d = saturate(dot(normal, viewDir));
     float4 fresnel = 1 - 2 * pow(d, 2);

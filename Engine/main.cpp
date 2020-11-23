@@ -17,7 +17,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 
 	CWindow* window = {}; //Create Window
 	window = &window->GetInstance(); //Singleton
-	if (error = window->Init(1500, 800, _hInstance, _nCmdShow) > 0) return error;
+	if (error = window->Init(1920, 1080, _hInstance, _nCmdShow) > 0) return error;
 
 	CTime* p_time = {}; //Create DeltaTime and Timer
 	p_time = &p_time->GetInstance(); //Singleton
@@ -33,7 +33,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 
 	CDirect* d3d = {}; //Create Direct3D 11
 	d3d = &d3d->GetInstance(); //Singleton
-	if (error = d3d->Init(true) > 0) return error;
+	if (error = d3d->Init(false) > 0) return error;
 
 	GScene mainScene = {};
 	mainScene.Init();

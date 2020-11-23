@@ -66,7 +66,11 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float3 viewDir = normalize(i.worldPos - i.camPos);
     float3 halfVec = viewDir + light.direction;
     float d2 = saturate(dot(normalize(halfVec), normal));
-    float4 specular = 2 * saturate(d) * pow(d2, 30) * light.diffuse;
+    d2 = pow(d2, 30);
+    float d3 = saturate(dot(normal, viewDir));
+    d3 = saturate(1 - pow(d3, 0.5));
+    float4 specular = 2 * saturate(d) * (d2 + (d3 * 0.75)) * light.diffuse;
 	
+    
     return (diffuse + specular + light.ambient) * col;
 }

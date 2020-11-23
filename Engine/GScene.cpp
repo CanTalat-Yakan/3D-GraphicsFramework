@@ -15,14 +15,18 @@ void GScene::Init()
 	//Obj Files
 	CObj cube = m_obj.Load(L"R_Cube.obj");
 	m_cube.Init(cube);
-
-	CObj cylinder = m_obj.Load(L"R_Cylinder_Hollow.obj");
-	m_cylinder.Init(cylinder);
+	m_cube2.Init(cube);
+	m_cube3.Init(cube);
 
 	CObj sphere = m_obj.Load(L"R_Sphere.obj");
 	m_sphere.Init(sphere);
 	m_sphere2.Init(sphere);
 	m_sphere3.Init(sphere);
+
+	CObj cylinder = m_obj.Load(L"R_Cylinder_Hollow.obj");
+	m_cylinder.Init(cylinder);
+	m_cylinder2.Init(cylinder);
+	m_cylinder3.Init(cylinder);
 
 	CObj bird = m_obj.Load(L"R_Bird.obj");
 	m_bird.Init(bird);
@@ -33,16 +37,16 @@ void GScene::Init()
 	m_material_Standard.Init(L"S_Standard.hlsl", L"T_White.png");
 	m_material_Standard2.Init(L"S_Standard.hlsl", L"T_Grid.png");
 	m_material_Standard3.Init(L"S_Standard.hlsl", L"T_Proto.png");
-	m_material_Cell.Init(L"S_Cell.hlsl", L"T_Proto.png");
-	m_material_Fresnel.Init(L"S_Fresnel.hlsl", L"T_Proto.png");
-	m_material_Bird.Init(L"S_Standard.hlsl", L"T_Bird.jpg");
+	m_material_Toon.Init(L"S_Toon.hlsl", L"T_Grid.png");
+	m_material_Fresnel.Init(L"S_Fresnel.hlsl", L"T_Grid.png");
+	m_material_Bird.Init(L"S_Standard.hlsl", L"T_Bird.png");
 #pragma endregion
 
 #pragma region //Setup Light
 	m_light.direction = { -0.75f, -0.5f, 0.1f };
-	m_light.ambient = { 0.1f, 0.1f, 0.1f, 1.0f };
-	m_light.diffuse = { 1.0f, 0.9f, 0.9f, 1.0f };
-	m_light.intensity = 1.1f;
+	m_light.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
+	m_light.diffuse = { 1.0f, 1.0f, 0.9f, 1.0f };
+	m_light.intensity = 0.9f;
 #pragma endregion
 
 #pragma region //Assign Light to Materials
@@ -64,27 +68,35 @@ void GScene::Start()
 	m_skyBox.SetRotation(0, 180, 0);
 	m_skyBox.SetScale(-1000);
 
-	m_cube.SetPosition(0, 1.5f, -2);
+	m_plane.SetPosition(0, 0, 2);
 
-	m_cylinder.SetRotation(90, 0, 0);
-	m_cylinder.SetScale(0.3f);
-	m_cylinder.SetPosition(0, 1, 0);
+	m_cube.SetPosition(0, 1.5f, 0);
+	m_cube2.SetPosition(0, 1.5f, 2);
+	m_cube3.SetPosition(0, 1.5f, 4);
 
 	m_sphere.SetRotation(-180, 0, 0);
-	m_sphere.SetScale(1.5f);
-	m_sphere.SetPosition(2, 1.5f, -2);
-
 	m_sphere2.SetRotation(-180, 0, 0);
-	m_sphere2.SetScale(1.5f);
-	m_sphere2.SetPosition(2, 1.5f, 0);
-
 	m_sphere3.SetRotation(-180, 0, 0);
+	m_sphere.SetScale(1.5f);
+	m_sphere2.SetScale(1.5f);
 	m_sphere3.SetScale(1.5f);
-	m_sphere3.SetPosition(2, 1.5f, 2);
+	m_sphere.SetPosition(2, 1.5f, 0);
+	m_sphere2.SetPosition(2, 1.5f, 2);
+	m_sphere3.SetPosition(2, 1.5f, 4);
 
-	m_bird.SetScale(0.1f, 0.1f, 0.1f);
+	m_cylinder.SetRotation(90, 0, 0);
+	m_cylinder2.SetRotation(90, 0, 0);
+	m_cylinder3.SetRotation(90, 0, 0);
+	m_cylinder.SetScale(0.3f);
+	m_cylinder2.SetScale(0.3f);
+	m_cylinder3.SetScale(0.3f);
+	m_cylinder.SetPosition(4, 1, 0);
+	m_cylinder2.SetPosition(4, 1, 2);
+	m_cylinder3.SetPosition(4, 1, 4);
+
 	m_bird.SetRotation(90, 120, 10);
-	m_bird.SetPosition(-4.2f, 0, 0);
+	m_bird.SetScale(0.1f);
+	m_bird.SetPosition(-4.25f, 0, 0);
 #pragma endregion
 }
 
@@ -98,9 +110,11 @@ void GScene::EarlyUpdate()
 void GScene::Update()
 {
 #pragma region //Update Contents Transforms
-	float rot = time->getDeltaTime(); 
+	float rot = time->getDeltaTime();
 
 	m_cylinder.SetRotationDeg(0, rot, 0);
+	m_cylinder2.SetRotationDeg(0, rot, 0);
+	m_cylinder3.SetRotationDeg(0, rot, 0);
 
 	m_sphere.SetRotationDeg(0, rot, 0);
 	m_sphere2.SetRotationDeg(0, rot, 0);
@@ -116,12 +130,16 @@ void GScene::LateUpdate()
 	m_plane.Update_Render(m_material_Standard3);
 
 	m_cube.Update_Render(m_material_Standard2);
+	m_cube2.Update_Render(m_material_Toon);
+	m_cube3.Update_Render(m_material_Fresnel);
+
+	m_sphere.Update_Render(m_material_Standard2);
+	m_sphere2.Update_Render(m_material_Toon);
+	m_sphere3.Update_Render(m_material_Fresnel);
 
 	m_cylinder.Update_Render(m_material_Standard2);
-
-	m_sphere.Update_Render(m_material_Standard3);
-	m_sphere2.Update_Render(m_material_Cell);
-	m_sphere3.Update_Render(m_material_Fresnel);
+	m_cylinder2.Update_Render(m_material_Toon);
+	m_cylinder3.Update_Render(m_material_Fresnel);
 
 	m_bird.Update_Render(m_material_Bird);
 #pragma endregion
@@ -132,17 +150,21 @@ void GScene::Release()
 	m_skyBox.Release();
 	m_plane.Release();
 	m_cube.Release();
-	m_cylinder.Release();
+	m_cube2.Release();
+	m_cube3.Release();
 	m_sphere.Release();
 	m_sphere2.Release();
 	m_sphere3.Release();
+	m_cylinder.Release();
+	m_cylinder2.Release();
+	m_cylinder3.Release();
 	m_bird.Release();
 
 	m_material_Sky.Release();
 	m_material_Standard.Release();
 	m_material_Standard2.Release();
 	m_material_Standard3.Release();
-	m_material_Cell.Release();
+	m_material_Toon.Release();
 	m_material_Fresnel.Release();
 	m_material_Bird.Release();
 }
