@@ -49,7 +49,7 @@ int CWindow::Init(INT _width, INT _height, HINSTANCE _hInstance, INT _nCmdShow)
 #pragma endregion
 
 #pragma region //Register windows class
-	if (!RegisterClassEx(&wc)) return 1;
+	if (!RegisterClassEx(&wc)) return 2;
 #pragma endregion
 
 #pragma region //Create window instance
@@ -61,7 +61,7 @@ int CWindow::Init(INT _width, INT _height, HINSTANCE _hInstance, INT _nCmdShow)
 		m_rect.bottom - m_rect.top,		//Height of our window
 		NULL, NULL, _hInstance, NULL);	//Handle to parent window //Handle to a Menu //Specifies instance of current program //used for an MDI client window
 
-	if (!m_hWnd) return 2;
+	if (!m_hWnd) return 3;
 #pragma endregion
 
 #pragma region //Show and update the window
