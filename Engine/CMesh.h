@@ -43,14 +43,12 @@ private:
 	CDirect* p_d3d;
 	CTime* p_time;
 
-	int initVertexBuffer(CVertex _vertices[]);
-	int initIndexBuffer(WORD _indices[]);
+	int initVertexBuffer(CVertex _vertices[], UINT _byteWidth);
+	int initIndexBuffer(WORD _indices[], UINT _byteWidth);
 
 	ID3D11Buffer* p_vertexBuffer = nullptr;
 	ID3D11Buffer* p_indexBuffer = nullptr;
 
-	std::vector<CVertex> m_vertices = {};
-	std::vector<WORD> m_indices = {};
 	UINT m_vertexCount = 0;
 	UINT m_vertexStride = 0;
 	UINT m_indexCount = 0; 

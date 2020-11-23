@@ -9,8 +9,6 @@ int CMesh::Init(CObj _obj)
 #pragma endregion
 
 #pragma region //Set Variables
-	m_vertices = _obj.vertices;
-	m_indices = _obj.indices;
 	m_vertexCount = _obj.vertexCount;
 	m_vertexStride = _obj.vertexStride;
 	m_indexCount = _obj.indexCount;
@@ -18,8 +16,8 @@ int CMesh::Init(CObj _obj)
 
 #pragma region //Create Buffer
 	int error = 0;
-	if (error = initVertexBuffer(&m_vertices[0]) > 0) return error;
-	if (error = initIndexBuffer(&m_indices[0]) > 0) return error;
+	if (error = initVertexBuffer(&_obj.vertices[0], GetVertexCount() * GetVertexStride()) > 0) return error;
+	if (error = initIndexBuffer(&_obj.indices[0], GetIndexCount() * GetIndexStride()) > 0) return error;
 #pragma endregion
 
 	return 0;
@@ -66,11 +64,11 @@ void CMesh::Release()
 }
 
 
-int CMesh::initVertexBuffer(CVertex _vertices[])
+int CMesh::initVertexBuffer(CVertex _vertices[], UINT _byteWidth)
 {
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER; // buffer type
-	desc.ByteWidth = GetVertexCount() * GetVertexStride(); // buffer size
+	desc.ByteWidth = _byteWidth; // buffer size
 
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _vertices;
@@ -81,11 +79,11 @@ int CMesh::initVertexBuffer(CVertex _vertices[])
 	return 0;
 }
 
-int CMesh::initIndexBuffer(WORD _indices[])
+int CMesh::initIndexBuffer(WORD _indices[], UINT _byteWidth)
 {
 	D3D11_BUFFER_DESC desc = {};
 	desc.BindFlags = D3D11_BIND_INDEX_BUFFER; // buffer type
-	desc.ByteWidth = GetIndexCount() * GetIndexStride(); // buffer size
+	desc.ByteWidth = _byteWidth; // buffer size
 
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _indices;
