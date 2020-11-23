@@ -21,8 +21,8 @@ public:
 	void SetLightBuffer(const CLight& _light);
 
 private:
-	CDirect* m_d3d;
-	CCamera* m_camera;
+	CDirect* p_d3d;
+	CCamera* p_camera;
 
 
 	int createVertexShader(LPCWSTR _shaderName);
@@ -35,18 +35,18 @@ private:
 	void setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _translationMatrix);
 
 	// shader
-	ID3D11VertexShader* m_pvertexShader = nullptr;
-	ID3D11PixelShader* m_ppixelShader = nullptr;
+	ID3D11VertexShader* p_vertexShader = nullptr;
+	ID3D11PixelShader* p_pixelShader = nullptr;
 
 	// input layout
-	ID3D11InputLayout* m_pinputLayout = nullptr;
+	ID3D11InputLayout* p_inputLayout = nullptr;
 
 	// texture
-	ID3D11ShaderResourceView* m_ptexture_SRV = nullptr;
-	ID3D11SamplerState* m_ptexture_SS = nullptr;
+	ID3D11ShaderResourceView* p_texture_SRV = nullptr;
+	ID3D11SamplerState* p_texture_SS = nullptr;
 
 	//constant buffer
-	ID3D11Buffer* m_pcbPerObj = nullptr;
+	ID3D11Buffer* p_cbPerObj = nullptr;
 	struct cbPerObject
 	{
 		XMMATRIX WVP;
@@ -55,7 +55,7 @@ private:
 		XMFLOAT3 WCP;
 	};
 
-	ID3D11Buffer* m_pcbPerFrame = nullptr;
+	ID3D11Buffer* p_cbPerFrame = nullptr;
 	struct cbPerFrame
 	{
 		CLight Light;

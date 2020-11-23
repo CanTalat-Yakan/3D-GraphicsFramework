@@ -6,20 +6,18 @@ struct Light
     float4 diffuse;
 };
 
-cbuffer cbPerObject
-{
-    float4x4 WVP;
-    float4x4 World;
-    float3 WCP;
-};
-
 cbuffer cbPerFrame
 {
     Light light;
 };
 
-Texture2D ObjTexture;
-SamplerState ObjSamplerState;
+cbuffer cbPerObject
+{
+    float4x4 WVP;
+    float4x4 World;
+    float4x4 Transl;
+    float3 WCP;
+};
 
 struct appdata
 {
@@ -32,9 +30,13 @@ struct VS_OUTPUT
 {
     float4 pos : SV_POSITION;
     float3 worldPos : POSITION;
+    float3 camPos : POSITION1;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
+
+Texture2D ObjTexture;
+SamplerState ObjSamplerState;
 
 VS_OUTPUT VS(appdata v)
 {

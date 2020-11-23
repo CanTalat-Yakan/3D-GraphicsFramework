@@ -4,8 +4,8 @@
 int CMesh::Init(CObj _obj)
 {
 #pragma region //Get Instance of DirectX and Time
-	m_d3d = &m_d3d->GetInstance(); 
-	m_time = &m_time->GetInstance();
+	p_d3d = &p_d3d->GetInstance(); 
+	p_time = &p_time->GetInstance();
 #pragma endregion
 
 #pragma region //Set Variables
@@ -41,10 +41,10 @@ void CMesh::Render()
 {
 	static UINT offset = 0;
 
-	m_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &m_vertexStride, &offset);
-	m_d3d->getDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-	m_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	m_d3d->getDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
+	p_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, &p_vertexBuffer, &m_vertexStride, &offset);
+	p_d3d->getDeviceContext()->IASetIndexBuffer(p_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	p_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	p_d3d->getDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
 }
 
 void CMesh::Update_Render(CMaterial _material)
@@ -56,13 +56,13 @@ void CMesh::Update_Render(CMaterial _material)
 
 void CMesh::Release()
 {
-	if (m_pVertexBuffer != NULL)
-		m_pVertexBuffer->Release();
-	m_pVertexBuffer = nullptr;
+	if (p_vertexBuffer != NULL)
+		p_vertexBuffer->Release();
+	p_vertexBuffer = nullptr;
 
-	if (m_pIndexBuffer != NULL)
-		m_pIndexBuffer->Release();
-	m_pIndexBuffer = nullptr;
+	if (p_indexBuffer != NULL)
+		p_indexBuffer->Release();
+	p_indexBuffer = nullptr;
 }
 
 
@@ -75,7 +75,7 @@ int CMesh::initVertexBuffer(CVertex _vertices[])
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _vertices;
 
-	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&desc, &data, &m_pVertexBuffer);
+	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&desc, &data, &p_vertexBuffer);
 	if (FAILED(hr)) return 30;
 
 	return 0;
@@ -90,7 +90,7 @@ int CMesh::initIndexBuffer(WORD _indices[])
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _indices;
 
-	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&desc, &data, &m_pIndexBuffer);
+	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&desc, &data, &p_indexBuffer);
 	if (FAILED(hr)) return 30;
 
 	return 0;

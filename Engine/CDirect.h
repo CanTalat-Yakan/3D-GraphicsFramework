@@ -24,20 +24,20 @@ public:
 	void Clear();
 	void Present();
 
-	ID3D11Device* getDevice() { return m_pd3dDev; }
-	ID3D11DeviceContext* getDeviceContext() { return m_pd3dDevCon; }
+	ID3D11Device* getDevice() { return p_d3dDev; }
+	ID3D11DeviceContext* getDeviceContext() { return p_d3dDevCon; }
 
 private:
 	CDirect() {}
 
-	CWindow* m_window;
+	CWindow* p_window;
 
-	ID3D11Device* m_pd3dDev = nullptr;						//Object for creating direct 3d objects
-	ID3D11DeviceContext* m_pd3dDevCon = nullptr;			//Object for modify render pipeline
-	IDXGISwapChain* m_pd3dSwapChain = nullptr;				//Holds references to front & back buffer and for switching those
-	ID3D11RenderTargetView* m_pRenderTargetView = nullptr;	//Reference to back buffer
-	ID3D11DepthStencilView* m_pDepthStencilView = nullptr;	//Reference to depth stencil buffer
-	ID3D11RasterizerState* m_pRasterizerState = nullptr;	//Reference to rasterizer stage manipulation
+	ID3D11Device* p_d3dDev = nullptr;						//Object for creating direct 3d objects
+	ID3D11DeviceContext* p_d3dDevCon = nullptr;				//Object for modify render pipeline
+	IDXGISwapChain* p_d3dSwapChain = nullptr;				//Holds references to front & back buffer and for switching those
+	ID3D11RenderTargetView* p_renderTargetView = nullptr;	//Reference to back buffer
+	ID3D11DepthStencilView* p_depthStencilView = nullptr;	//Reference to depth stencil buffer
+	ID3D11RasterizerState* p_rasterizerState = nullptr;		//Reference to rasterizer stage manipulation
 	D3D11_VIEWPORT m_viewPort = {};							//Hold view port data
 };
 

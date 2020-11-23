@@ -6,6 +6,11 @@ struct Light
     float4 diffuse;
 };
 
+cbuffer cbPerFrame
+{
+    Light light;
+};
+
 cbuffer cbPerObject
 {
     float4x4 WVP;
@@ -13,14 +18,6 @@ cbuffer cbPerObject
     float4x4 Transl;
     float3 WCP;
 };
-
-cbuffer cbPerFrame
-{
-    Light light;
-};
-
-Texture2D ObjTexture;
-SamplerState ObjSamplerState;
 
 struct appdata
 {
@@ -37,6 +34,9 @@ struct VS_OUTPUT
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
+
+Texture2D ObjTexture;
+SamplerState ObjSamplerState;
 
 VS_OUTPUT VS(appdata v)
 {

@@ -40,14 +40,14 @@ public:
 	inline XMFLOAT4 GetRotationFloat4() { return m_rotation; }
 
 private:
-	CDirect* m_d3d;
-	CTime* m_time;
+	CDirect* p_d3d;
+	CTime* p_time;
 
 	int initVertexBuffer(CVertex _vertices[]);
 	int initIndexBuffer(WORD _indices[]);
 
-	ID3D11Buffer* m_pVertexBuffer = nullptr;
-	ID3D11Buffer* m_pIndexBuffer = nullptr;
+	ID3D11Buffer* p_vertexBuffer = nullptr;
+	ID3D11Buffer* p_indexBuffer = nullptr;
 
 	std::vector<CVertex> m_vertices = {};
 	std::vector<WORD> m_indices = {};

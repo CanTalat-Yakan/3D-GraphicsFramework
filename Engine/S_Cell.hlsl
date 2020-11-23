@@ -6,6 +6,11 @@ struct Light
     float4 diffuse;
 };
 
+cbuffer cbPerFrame
+{
+    Light light;
+};
+
 cbuffer cbPerObject
 {
     float4x4 WVP;
@@ -13,14 +18,6 @@ cbuffer cbPerObject
     float4x4 Transl;
     float3 WCP;
 };
-
-cbuffer cbPerFrame
-{
-    Light light;
-};
-
-Texture2D ObjTexture;
-SamplerState ObjSamplerState;
 
 struct appdata
 {
@@ -32,11 +29,14 @@ struct appdata
 struct VS_OUTPUT
 {
     float4 pos : SV_POSITION;
-    float3 WorldPos : POSITION;
-    float3 CamPos : POSITION1;
-    float2 UV : TEXCOORD;
+    float3 worldPos : POSITION;
+    float3 camPos : POSITION1;
+    float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
+
+Texture2D ObjTexture;
+SamplerState ObjSamplerState;
 
 VS_OUTPUT VS(appdata v)
 {
@@ -44,16 +44,16 @@ VS_OUTPUT VS(appdata v)
 
     o.pos = mul(WVP, v.vertex);
     o.normal = mul(World, v.normal);
-    o.WorldPos = mul(World, v.vertex);
-    o.CamPos = mul(Transl, WCP);
-    o.UV = v.uv;
+    o.worldPos = mul(World, v.vertex);
+    o.camPos = mul(Transl, WCP);
+    o.uv = v.uv;
 
     return o;
 }
 
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
-    float4 col = ObjTexture.Sample(ObjSamplerState, i.UV);
+    float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
 
     //normalize normal
     float3 normal = normalize(i.normal);
@@ -63,7 +63,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float4 diffuse = d * light.diffuse * 0.9f; //then saturating the diffuse so the backsite does not get values below 1
 	
     //calculate specular
-    float3 viewDir = normalize(i.WorldPos - i.CamPos);
+    float3 viewDir = normalize(i.worldPos - i.camPos);
     float3 halfVec = viewDir + light.direction;
     float d2 = saturate(dot(normalize(halfVec), normal));
     float4 specular = (d * pow(d2, 10)) * light.diffuse;

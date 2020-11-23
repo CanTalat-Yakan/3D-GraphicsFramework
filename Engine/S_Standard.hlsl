@@ -19,10 +19,12 @@ cbuffer cbPerFrame
     Light light;
 };
 
-Texture2D ObjTexture;
-SamplerState ObjSamplerState;
-Texture2D ObjTexture2;
-SamplerState ObjSamplerState2;
+struct appdata
+{
+    float4 vertex : POSITION;
+    float2 uv : TEXCOORD;
+    float3 normal : NORMAL;
+};
 
 struct VS_OUTPUT
 {
@@ -33,15 +35,18 @@ struct VS_OUTPUT
     float3 normal : NORMAL;
 };
 
-VS_OUTPUT VS(float4 _vertex : POSITION, float2 _uv : TEXCOORD, float3 _normal : NORMAL)
+Texture2D ObjTexture;
+SamplerState ObjSamplerState;
+
+VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
 
-    o.pos = mul(WVP, _vertex);
-    o.normal = mul(World, _normal);
-    o.worldPos = mul(World, _vertex);
+    o.pos = mul(WVP, v.vertex);
+    o.normal = mul(World, v.normal);
+    o.worldPos = mul(World, v.vertex);
     o.camPos = mul(Transl, WCP);
-    o.uv = _uv;
+    o.uv = v.uv;
 
     return o;
 }

@@ -3,9 +3,9 @@
 int CDirect::Init(bool _isWindowed)
 {
 #pragma region //Get Window Variables
-	m_window = &m_window->GetInstance();
-	HWND hWnd = m_window->getHWND();
-	RECT rect = m_window->getRect();
+	p_window = &p_window->GetInstance();
+	HWND hWnd = p_window->getHWND();
+	RECT rect = p_window->getRect();
 #pragma endregion
 
 #pragma region //Create buffer description for swapChain description
@@ -36,26 +36,26 @@ int CDirect::Init(bool _isWindowed)
 		NULL, NULL,						//Reference to software module if driver type is software /Optional flags
 		supportedLevels, 1,				//Supported direct 3d versions
 		D3D11_SDK_VERSION,				//Api version the application was build with
-		&swapChainDESC, &m_pd3dSwapChain, &m_pd3dDev,
+		&swapChainDESC, &p_d3dSwapChain, &p_d3dDev,
 		nullptr,						//Optional chosen feature level
-		&m_pd3dDevCon);
+		&p_d3dDevCon);
 	if (FAILED(hr)) return 11;
 #pragma endregion
 
 #pragma region 	//Create render target view, get back buffer texture before
-	ID3D11Texture2D* pBackBuffer = nullptr;
-	hr = m_pd3dSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
+	ID3D11Texture2D* pbackBuffer = nullptr;
+	hr = p_d3dSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pbackBuffer));
 	if (FAILED(hr)) return 12;
 
-	hr = m_pd3dDev->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView);
+	hr = p_d3dDev->CreateRenderTargetView(pbackBuffer, nullptr, &p_renderTargetView);
 	if (FAILED(hr)) return 13;
 
-	pBackBuffer->Release();
-	pBackBuffer = nullptr;
+	pbackBuffer->Release();
+	pbackBuffer = nullptr;
 #pragma endregion
 
 #pragma region 	//Create depth stencil view
-	ID3D11Texture2D* pDepthStencilBuffer = nullptr;
+	ID3D11Texture2D* pdepthStencilBuffer = nullptr;
 	D3D11_TEXTURE2D_DESC bufferDesc = {};
 	bufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	bufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -64,27 +64,27 @@ int CDirect::Init(bool _isWindowed)
 	bufferDesc.ArraySize = 1;
 	bufferDesc.SampleDesc.Count = 1;
 
-	hr = m_pd3dDev->CreateTexture2D(&bufferDesc, nullptr, &pDepthStencilBuffer);
+	hr = p_d3dDev->CreateTexture2D(&bufferDesc, nullptr, &pdepthStencilBuffer);
 	if (FAILED(hr)) return 14;
 
-	hr = m_pd3dDev->CreateDepthStencilView(pDepthStencilBuffer, nullptr, &m_pDepthStencilView);
+	hr = p_d3dDev->CreateDepthStencilView(pdepthStencilBuffer, nullptr, &p_depthStencilView);
 	if (FAILED(hr)) return 15;
 
-	pDepthStencilBuffer->Release();
-	pDepthStencilBuffer = nullptr;
+	pdepthStencilBuffer->Release();
+	pdepthStencilBuffer = nullptr;
 
-	m_pd3dDevCon->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+	p_d3dDevCon->OMSetRenderTargets(1, &p_renderTargetView, p_depthStencilView);
 #pragma endregion
 
 #pragma region 	//Create rasterizer state
-	D3D11_RASTERIZER_DESC rsDESC = {};
-	rsDESC.FillMode = D3D11_FILL_SOLID;
-	rsDESC.CullMode = D3D11_CULL_BACK;
+	D3D11_RASTERIZER_DESC rasterizerDESC = {};
+	rasterizerDESC.FillMode = D3D11_FILL_SOLID;
+	rasterizerDESC.CullMode = D3D11_CULL_BACK;
 
-	hr = m_pd3dDev->CreateRasterizerState(&rsDESC, &m_pRasterizerState);
+	hr = p_d3dDev->CreateRasterizerState(&rasterizerDESC, &p_rasterizerState);
 	if (FAILED(hr)) return 16;
 
-	m_pd3dDevCon->RSSetState(m_pRasterizerState);
+	p_d3dDevCon->RSSetState(p_rasterizerState);
 #pragma endregion
 
 #pragma region //Set viewport
@@ -95,7 +95,7 @@ int CDirect::Init(bool _isWindowed)
 	m_viewPort.MinDepth = 0;
 	m_viewPort.MaxDepth = 1;
 
-	m_pd3dDevCon->RSSetViewports(1, &m_viewPort);
+	p_d3dDevCon->RSSetViewports(1, &m_viewPort);
 #pragma endregion
 
 	return 0;
@@ -105,30 +105,30 @@ void CDirect::Clear()
 {
 	//Clear back buffer with solid color
 	const FLOAT color[] = { 1, 1, 1, 1 };
-	m_pd3dDevCon->ClearRenderTargetView(m_pRenderTargetView, color);
-	m_pd3dDevCon->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	p_d3dDevCon->ClearRenderTargetView(p_renderTargetView, color);
+	p_d3dDevCon->ClearDepthStencilView(p_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
 void CDirect::Present()
 {
 	//Swap front and back buffer
-	m_pd3dSwapChain->Present(0, 0);
+	p_d3dSwapChain->Present(0, 0);
 }
 
 void CDirect::Release()
 {
-	m_pRasterizerState->Release();
-	m_pRasterizerState = nullptr;
-	m_pDepthStencilView->Release();
-	m_pDepthStencilView = nullptr;
-	m_pRenderTargetView->Release();
-	m_pRenderTargetView = nullptr;
-	m_pd3dSwapChain->Release();
-	m_pd3dSwapChain = nullptr;
-	m_pd3dDevCon->Release();
-	m_pd3dDevCon = nullptr;
-	m_pd3dDev->Release();
-	m_pd3dDev = nullptr;
-	m_window->Release();
-	m_window = nullptr;
+	p_rasterizerState->Release();
+	p_rasterizerState = nullptr;
+	p_depthStencilView->Release();
+	p_depthStencilView = nullptr;
+	p_renderTargetView->Release();
+	p_renderTargetView = nullptr;
+	p_d3dSwapChain->Release();
+	p_d3dSwapChain = nullptr;
+	p_d3dDevCon->Release();
+	p_d3dDevCon = nullptr;
+	p_d3dDev->Release();
+	p_d3dDev = nullptr;
+	p_window->Release();
+	p_window = nullptr;
 }

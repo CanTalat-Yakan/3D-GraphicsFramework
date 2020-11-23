@@ -19,9 +19,9 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	window = &window->GetInstance(); //Singleton
 	if (error = window->Init(1500, 800, _hInstance, _nCmdShow) > 0) return error;
 
-	CTime* m_time = {}; //Create DeltaTime and Timer
-	m_time = &m_time->GetInstance(); //Singleton
-	if (error = m_time->Init() > 0) return error;
+	CTime* p_time = {}; //Create DeltaTime and Timer
+	p_time = &p_time->GetInstance(); //Singleton
+	if (error = p_time->Init() > 0) return error;
 
 	CInput* m_input = {}; //Create InputManger
 	m_input = &m_input->GetInstance(); //Singleton
@@ -46,7 +46,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	{
 		d3d->Clear();
 
-		m_time->Update();
+		p_time->Update();
 		m_input->Update();
 		camera->Update();
 
@@ -60,7 +60,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 #pragma region //Release
 	window->Release();
 	camera->Release();
-	m_time->Release();
+	p_time->Release();
 	m_input->Release();
 	mainScene.Release();
 	d3d->Release();

@@ -21,7 +21,7 @@ public:
 private:
 	CInput() {}
 
-	CWindow* m_window;
+	CWindow* p_window;
 
 	IDirectInputDevice8* m_diMouse = nullptr;
 	IDirectInputDevice8* m_diKeyboard = nullptr;

@@ -5,8 +5,8 @@
 int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 {
 #pragma region //Get Instances of DirectX and Camera
-	m_d3d = &m_d3d->GetInstance();
-	m_camera = &m_camera->GetInstance();
+	p_d3d = &p_d3d->GetInstance();
+	p_camera = &p_camera->GetInstance();
 #pragma endregion
 
 #pragma region //Create Material
@@ -23,67 +23,67 @@ int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 
 void CMaterial::Render(XMMATRIX _worldMatrix, XMMATRIX _translationMatrix)
 {
-	m_d3d->getDeviceContext()->IASetInputLayout(m_pinputLayout);
-	m_d3d->getDeviceContext()->VSSetShader(m_pvertexShader, nullptr, 0);
-	m_d3d->getDeviceContext()->PSSetShader(m_ppixelShader, nullptr, 0);
+	p_d3d->getDeviceContext()->IASetInputLayout(p_inputLayout);
+	p_d3d->getDeviceContext()->VSSetShader(p_vertexShader, nullptr, 0);
+	p_d3d->getDeviceContext()->PSSetShader(p_pixelShader, nullptr, 0);
 
 	setMatrixBuffer(_worldMatrix, _translationMatrix);
 
-	m_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &m_ptexture_SRV);
-	m_d3d->getDeviceContext()->PSSetSamplers(0, 1, &m_ptexture_SS);
+	p_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &p_texture_SRV);
+	p_d3d->getDeviceContext()->PSSetSamplers(0, 1, &p_texture_SS);
 }
 
 void CMaterial::Release()
 {
-	if (m_ptexture_SRV)
-		m_ptexture_SRV->Release();
-	m_ptexture_SRV = nullptr;
-	if (m_ptexture_SS)
-		m_ptexture_SS->Release();
-	m_pvertexShader->Release();
-	m_pvertexShader = nullptr;
-	m_ppixelShader->Release();
-	m_ppixelShader = nullptr;
-	m_pinputLayout->Release();
-	m_pinputLayout = nullptr;
-	m_ptexture_SS = nullptr;
-	m_pcbPerObj->Release();
-	m_pcbPerObj = nullptr;
-	m_pcbPerFrame->Release();
-	m_pcbPerFrame = nullptr;
-	m_d3d = nullptr;
-	m_camera = nullptr;
+	if (p_texture_SRV)
+		p_texture_SRV->Release();
+	p_texture_SRV = nullptr;
+	if (p_texture_SS)
+		p_texture_SS->Release();
+	p_vertexShader->Release();
+	p_vertexShader = nullptr;
+	p_pixelShader->Release();
+	p_pixelShader = nullptr;
+	p_inputLayout->Release();
+	p_inputLayout = nullptr;
+	p_texture_SS = nullptr;
+	p_cbPerObj->Release();
+	p_cbPerObj = nullptr;
+	p_cbPerFrame->Release();
+	p_cbPerFrame = nullptr;
+	p_d3d = nullptr;
+	p_camera = nullptr;
 }
 
 
 void CMaterial::SetLightBuffer(const CLight& _light)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = m_d3d->getDeviceContext()->Map(m_pcbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 
 	cbPerFrame* buffer = reinterpret_cast<cbPerFrame*>(data.pData);
 	buffer->Light = _light;
 
-	m_d3d->getDeviceContext()->Unmap(m_pcbPerFrame, 0);
+	p_d3d->getDeviceContext()->Unmap(p_cbPerFrame, 0);
 
-	m_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &m_pcbPerFrame);
+	p_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &p_cbPerFrame);
 }
 
 void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _translationMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = m_d3d->getDeviceContext()->Map(m_pcbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 	cbPerObject* buffer = reinterpret_cast<cbPerObject*>(data.pData);
 
-	buffer->WVP = _worldMatrix * m_camera->GetViewProjectionMatrix();
+	buffer->WVP = _worldMatrix * p_camera->GetViewProjectionMatrix();
 	buffer->World = _worldMatrix;
 	buffer->Transl = _translationMatrix;
-	buffer->WCP = m_camera->GetCamPosFloat3();
+	buffer->WCP = p_camera->GetCamPosFloat3();
 
-	m_d3d->getDeviceContext()->Unmap(m_pcbPerObj, 0);
-	m_d3d->getDeviceContext()->VSSetConstantBuffers(0, 1, &m_pcbPerObj);
+	p_d3d->getDeviceContext()->Unmap(p_cbPerObj, 0);
+	p_d3d->getDeviceContext()->VSSetConstantBuffers(0, 1, &p_cbPerObj);
 }
 
 
@@ -101,7 +101,7 @@ int CMaterial::createVertexShader(LPCWSTR _shaderName)
 
 	if (FAILED(hr)) return 50;
 
-	hr = m_d3d->getDevice()->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &m_pvertexShader);
+	hr = p_d3d->getDevice()->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &p_vertexShader);
 	if (FAILED(hr)) return 53;
 
 	int error = createInputLayout(pVS_Buffer);
@@ -119,7 +119,7 @@ int CMaterial::createPixelShader(LPCWSTR _shaderName)
 	HRESULT hr = D3DX11CompileFromFile(_shaderName, 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
 	if (FAILED(hr)) return 57;
 
-	hr = m_d3d->getDevice()->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &m_ppixelShader);
+	hr = p_d3d->getDevice()->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &p_pixelShader);
 	if (FAILED(hr)) return 59;
 
 	pPS_Buffer->Release();
@@ -147,7 +147,7 @@ int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 	elements[2].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
 	elements[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 
-	HRESULT hr = m_d3d->getDevice()->CreateInputLayout(elements, 3, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &m_pinputLayout);
+	HRESULT hr = p_d3d->getDevice()->CreateInputLayout(elements, 3, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &p_inputLayout);
 	if (FAILED(hr)) return 55;
 
 	return 0;
@@ -163,7 +163,7 @@ int CMaterial::createMatrixBuffer()
 	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &m_pcbPerObj);
+	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &p_cbPerObj);
 	if (FAILED(hr)) return 58;
 
 	return 0;
@@ -178,7 +178,7 @@ int CMaterial::createPixelShaderBuffer()
 	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr = m_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &m_pcbPerFrame);
+	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &p_cbPerFrame);
 	if (FAILED(hr)) return 51;
 
 	return 0;
@@ -187,7 +187,7 @@ int CMaterial::createPixelShaderBuffer()
 int CMaterial::createTextureAndSampler(LPCWSTR _textureName)
 {
 	// create texture
-	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(m_d3d->getDevice(), _textureName, NULL, NULL, &m_ptexture_SRV, NULL);
+	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(p_d3d->getDevice(), _textureName, NULL, NULL, &p_texture_SRV, NULL);
 	if (FAILED(hr)) return 56;
 
 	// create sampler state
@@ -201,7 +201,7 @@ int CMaterial::createTextureAndSampler(LPCWSTR _textureName)
 	sDESC.MinLOD = 0;
 	sDESC.MaxLOD = D3D11_FLOAT32_MAX;
 
-	hr = m_d3d->getDevice()->CreateSamplerState(&sDESC, &m_ptexture_SS);
+	hr = p_d3d->getDevice()->CreateSamplerState(&sDESC, &p_texture_SS);
 	if (FAILED(hr)) return 54;
 
 	return 0;

@@ -3,9 +3,9 @@
 int CCamera::Init()
 {
 #pragma region Get Instances of Time, Input and Window
-	m_time = &m_time->GetInstance();
+	p_time = &p_time->GetInstance();
 	m_input = &m_input->GetInstance();
-	m_window = &m_window->GetInstance();
+	p_window = &p_window->GetInstance();
 #pragma endregion
 
 	//Update variables, viewMatrix and projectionMatrix
@@ -17,7 +17,7 @@ int CCamera::Init()
 void CCamera::Update()
 {
 #pragma region //Input
-	float movementspeed = m_time->getDeltaTime() * 2;
+	float movementspeed = p_time->getDeltaTime() * 2;
 	if (m_input->getKeyboardState(DIK_LSHIFT) & 0x80) movementspeed *= 4;				//movementspeed up
 	if (m_input->getKeyboardState(DIK_LCONTROL) & 0x80) movementspeed *= 0.2f;			//movementspeed down
 	if (m_input->getKeyboardState(DIK_A) & 0x80) m_position += movementspeed * m_right; //horizontal keyboard input
@@ -51,16 +51,18 @@ void CCamera::Update()
 
 void CCamera::Release()
 {
-	m_window->Release();
-	m_window = nullptr;
-	m_time->Release();
-	m_time = nullptr;
+	p_window->Release();
+	p_window = nullptr;
+	p_time->Release();
+	p_time = nullptr;
 	m_input->Release();
 	m_input = nullptr;
 }
 
 void CCamera::updateCameraVectors()
 {
+	//https://github.com/TKscoot/Ivy/blob/master/projects/Ivy/source/scene/Camera.cpp
+
 	//360 degree horizontal rotation
 	XMFLOAT3 front = {
 		front.x = cos(XMConvertToRadians(m_mouseRot.x)) * cos(XMConvertToRadians(m_mouseRot.y)),
