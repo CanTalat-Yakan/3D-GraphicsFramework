@@ -192,11 +192,12 @@ int CMaterial::createTextureAndSampler(LPCWSTR _textureName)
 
 	// create sampler state
 	D3D11_SAMPLER_DESC sDESC = {};
-	sDESC.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sDESC.Filter = D3D11_FILTER_ANISOTROPIC;
 	sDESC.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	sDESC.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	sDESC.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sDESC.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sDESC.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	sDESC.MaxAnisotropy = 16;
 	sDESC.MinLOD = 0;
 	sDESC.MaxLOD = D3D11_FLOAT32_MAX;
 

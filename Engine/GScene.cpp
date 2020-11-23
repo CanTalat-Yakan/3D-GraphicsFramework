@@ -139,9 +139,9 @@ void GScene::Release()
 	m_bird.Release();
 
 	m_material_Sky.Release();
-	m_material_Standard3.Release();
-	m_material_Standard2.Release();
 	m_material_Standard.Release();
+	m_material_Standard2.Release();
+	m_material_Standard3.Release();
 	m_material_Cell.Release();
 	m_material_Fresnel.Release();
 	m_material_Bird.Release();
