@@ -16,7 +16,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	int error = 0;
 	int width = 1920;
 	int height = 1080;
-	int windowed = false;
+	int windowed = true;
 
 	CWindow* window = {}; //Create Window
 	window = &window->GetInstance(); //Singleton
