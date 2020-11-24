@@ -61,7 +61,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //calculate fresnel
     float3 viewDir = normalize(i.worldPos - i.camPos);
     float d = saturate(dot(normal, viewDir));
-    float4 fresnel = 1 - 2 * pow(d, 2);
+    float4 fresnel = 1 - 5 * pow(d, 2);
 
 
     return (fresnel) * col;

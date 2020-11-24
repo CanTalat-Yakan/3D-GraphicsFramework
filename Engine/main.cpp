@@ -14,8 +14,8 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 {
 #pragma region //Init CoreFeatures
 	int error = 0;
-	int width = 1920;
-	int height = 1080;
+	int width = 1600;
+	int height = 900;
 	int windowed = true;
 
 	CWindow* window = {}; //Create Window

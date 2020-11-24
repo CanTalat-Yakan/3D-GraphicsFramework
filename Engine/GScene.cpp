@@ -75,28 +75,27 @@ void GScene::Start()
 	m_cube3.transform.SetPosition(0, 1.5f, 4);
 
 	m_sphere.transform.SetRotation(-180, 0, 0);
-	m_sphere2.transform.SetRotation(-180, 0, 0);
-	m_sphere3.transform.SetRotation(-180, 0, 0);
 	m_sphere.transform.SetScale(1.5f);
-	m_sphere2.transform.SetScale(1.5f);
-	m_sphere3.transform.SetScale(1.5f);
 	m_sphere.transform.SetPosition(2, 1.5f, 0);
-	m_sphere2.transform.SetPosition(2, 1.5f, 2);
-	m_sphere3.transform.SetPosition(2, 1.5f, 4);
+	m_sphere2.transform = m_sphere3.transform = m_sphere.transform;
+	m_sphere2.transform.m_position.z += 2;
+	m_sphere3.transform.m_position.z += 4;
 
 	m_cylinder.transform.SetRotation(90, 0, 0);
-	m_cylinder2.transform.SetRotation(90, 0, 0);
-	m_cylinder3.transform.SetRotation(90, 0, 0);
 	m_cylinder.transform.SetScale(0.3f);
-	m_cylinder2.transform.SetScale(0.3f);
-	m_cylinder3.transform.SetScale(0.3f);
 	m_cylinder.transform.SetPosition(4, 1, 0);
-	m_cylinder2.transform.SetPosition(4, 1, 2);
-	m_cylinder3.transform.SetPosition(4, 1, 4);
+	m_cylinder2.transform = m_cylinder3.transform = m_cylinder.transform;
+	m_cylinder2.transform.m_position.z += 2;
+	m_cylinder3.transform.m_position.z += 4;
 
 	m_bird.transform.SetRotation(90, 120, 10);
 	m_bird.transform.SetScale(0.1f);
 	m_bird.transform.SetPosition(-4.25f, 0, 0);
+	m_bird2.transform = m_bird3.transform = m_bird.transform;
+	m_bird2.transform.m_position.x += 1;
+	m_bird2.transform.m_position.z += 3;
+	m_bird3.transform.m_position.x += 1;
+	m_bird3.transform.m_position.z += 6;
 #pragma endregion
 }
 
@@ -111,6 +110,10 @@ void GScene::Update()
 {
 #pragma region //Update Contents Transforms
 	float rot = time->getDeltaTime();
+
+	m_cube.transform.SetRotationDeg(0, rot, 0);
+	m_cube2.transform.SetRotationDeg(0, rot, 0);
+	m_cube3.transform.SetRotationDeg(0, rot, 0);
 
 	m_cylinder.transform.SetRotationDeg(0, rot, 0);
 	m_cylinder2.transform.SetRotationDeg(0, rot, 0);
@@ -142,6 +145,8 @@ void GScene::LateUpdate()
 	m_cylinder3.Update_Render(m_mat_Fresnel);
 
 	m_bird.Update_Render(m_mat_Bird);
+	m_bird2.Update_Render(m_mat_Toon);
+	m_bird3.Update_Render(m_mat_Fresnel);
 #pragma endregion
 }
 
