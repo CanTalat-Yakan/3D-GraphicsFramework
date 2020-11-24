@@ -111,9 +111,9 @@ void GScene::Update()
 #pragma region //Update Contents Transforms
 	float rot = time->getDeltaTime();
 
-	m_cube.transform.SetRotationDeg(0, rot, 0);
-	m_cube2.transform.SetRotationDeg(0, rot, 0);
-	m_cube3.transform.SetRotationDeg(0, rot, 0);
+	//m_cube.transform.SetRotationDeg(0, rot, 0);
+	//m_cube2.transform.SetRotationDeg(0, rot, 0);
+	//m_cube3.transform.SetRotationDeg(0, rot, 0);
 
 	m_cylinder.transform.SetRotationDeg(0, rot, 0);
 	m_cylinder2.transform.SetRotationDeg(0, rot, 0);
@@ -164,6 +164,8 @@ void GScene::Release()
 	m_cylinder2.Release();
 	m_cylinder3.Release();
 	m_bird.Release();
+	m_bird2.Release();
+	m_bird3.Release();
 
 	m_mat_Sky.Release();
 	m_mat_Standard.Release();

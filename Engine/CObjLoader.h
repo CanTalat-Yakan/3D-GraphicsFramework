@@ -23,7 +23,6 @@ private:
 	void readFile(std::ifstream* _fileStream);
 	std::vector<std::string> splitString(std::string _s, std::string _delim);
 
-	CObj m_obj;
-	EPrimitives m_prim;
+	CObj m_obj = {};
+	EPrimitives m_prim = {};
 };
-

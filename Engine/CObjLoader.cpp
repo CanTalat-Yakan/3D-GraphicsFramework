@@ -167,19 +167,14 @@ void CObjLoader::loadFile(LPCWSTR _fileName)
 
 void CObjLoader::readFile(std::ifstream* _fileStream)
 {
+	m_obj = CObj();
 	std::vector<XMFLOAT3> positions = {};
 	std::vector<XMFLOAT2> uv = {};
 	std::vector<XMFLOAT3> normals = {};
-	std::vector<XMFLOAT3> faceInfo = {};
-	std::vector<CVertex> vertices = {};
-	std::vector<WORD> indices = {};
 	std::vector<std::string> split_f = {};
 	std::vector<std::string> split_l = {};
 	std::string line = {};
 	int faceCount = 0;
-	bool triangle = false;
-	int faceFactor = 4;
-	int vertexFactor = 0;
 
 	while (std::getline(*_fileStream, line))
 	{
@@ -190,105 +185,72 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 			int i = (split_l[1] == "") ? 1 : 0;
 			positions.push_back(
 				XMFLOAT3(std::stof(split_l[1 + i]), std::stof(split_l[2 + i]), std::stof(split_l[3 + i])));
+			continue;
 		}
 #pragma endregion
 #pragma region //UV
 		if (split_l[0] == "vt")
+		{
 			uv.push_back(
 				XMFLOAT2(std::stof(split_l[1]), std::stof(split_l[2])));
+			continue;
+		}
 #pragma endregion
 #pragma region //Normal
 		if (split_l[0] == "vn")
+		{
 			normals.push_back(
 				XMFLOAT3(std::stof(split_l[1]), std::stof(split_l[2]), std::stof(split_l[3])));
+			continue;
+		}
 #pragma endregion
 #pragma region //Face
 		if (split_l[0] == "f")
 		{
-#pragma region //Check if face is triangle
-
-			triangle = false;
-			faceFactor = 4;
-			if (split_l.size() == 4)
+			for (int i = 1; i <= 4; i++)
 			{
-				triangle = true;
-				faceFactor = 3;
-			}
-			if (split_l.size() == 5)
-				if (split_l[4] == "")
-				{
-					triangle = true;
-					faceFactor = 3;
-				}
-
-			if (uv.size() == 0)
-				uv.push_back(
-					XMFLOAT2(0, 0));
-#pragma endregion
-#pragma region //Vertex Conception
-			for (int i = 1; i <= faceFactor; i++)
-			{
-				split_f = splitString(split_l[i], "/");
-				for (int j = 0; j < 3; j++)
-				{
-					if (split_f[j] == "")
-						split_f[j] = "1";
-				}
-				faceInfo.push_back(
-					XMFLOAT3(std::stof(split_f[0]), std::stof(split_f[1]), std::stof(split_f[2])));
-			}
-#pragma endregion
 #pragma region //Set Vertices
-			for (int i = 0; i < faceFactor; i++)
-			{
-				//FaceInfo = float3[3]
-				//.x = pos; .y = uv; .z = normal;
-				vertices.push_back(CVertex(
-					-positions[faceInfo[vertexFactor].x - 1].x,
-					-positions[faceInfo[vertexFactor].x - 1].y,
-					-positions[faceInfo[vertexFactor].x - 1].z,
-					uv[faceInfo[vertexFactor].y - 1].x,
-					-uv[faceInfo[vertexFactor].y - 1].y,
-					normals[faceInfo[vertexFactor].z - 1].x,
-					normals[faceInfo[vertexFactor].z - 1].y,
-					normals[faceInfo[vertexFactor].z - 1].z));
-				vertexFactor++;
-			}
+				split_f = splitString(split_l[i], "/");
+
+				m_obj.vertices.push_back(CVertex(
+					-positions[std::stof(split_f[0]) - 1].x,
+					-positions[std::stof(split_f[0]) - 1].y,
+					-positions[std::stof(split_f[0]) - 1].z,
+					uv[std::stof(split_f[1]) - 1].x,
+					-uv[std::stof(split_f[1]) - 1].y,
+					normals[std::stof(split_f[2]) - 1].x,
+					normals[std::stof(split_f[2]) - 1].y,
+					normals[std::stof(split_f[2]) - 1].z));
+				m_obj.vertexCount++;
 #pragma endregion
-#pragma region //Set Indices
-			indices.push_back(0 + (faceCount * faceFactor));
-			indices.push_back(2 + (faceCount * faceFactor));
-			indices.push_back(1 + (faceCount * faceFactor));
-			if (!triangle)
-			{
-				indices.push_back(0 + (faceCount * faceFactor));
-				indices.push_back(3 + (faceCount * faceFactor));
-				indices.push_back(2 + (faceCount * faceFactor));
 			}
+#pragma region //Set Indices
+			m_obj.indices.push_back(0 + (faceCount * 4));
+			m_obj.indices.push_back(2 + (faceCount * 4));
+			m_obj.indices.push_back(1 + (faceCount * 4));
+			m_obj.indices.push_back(0 + (faceCount * 4));
+			m_obj.indices.push_back(3 + (faceCount * 4));
+			m_obj.indices.push_back(2 + (faceCount * 4));
+			m_obj.indexCount += 6;
 #pragma endregion
 			faceCount++;
 		}
 #pragma endregion
 	}
 
-	m_obj.vertices = vertices;
-	m_obj.indices = indices;
-	m_obj.vertexCount = vertices.size();
-	m_obj.indexCount = indices.size();
 	m_obj.vertexStride = sizeof(CVertex);
 }
 
-
-std::vector<std::string> CObjLoader::splitString(std::string _s, std::string _delim) {
+std::vector<std::string> CObjLoader::splitString(std::string _line, std::string _delim) {
 	std::vector<std::string> list;
 	size_t pos = 0;
 	std::string token;
 
-	while ((pos = _s.find(_delim)) != std::string::npos) {
-		token = _s.substr(0, pos);
+	while ((pos = _line.find(_delim)) != std::string::npos) {
+		token = _line.substr(0, pos);
 		list.push_back(token);
-		_s.erase(0, pos + _delim.length());
+		_line.erase(0, pos + _delim.length());
 	}
-	list.push_back(_s);
+	list.push_back(_line);
 	return list;
 }
