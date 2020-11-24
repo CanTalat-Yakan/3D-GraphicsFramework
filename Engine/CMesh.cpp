@@ -23,18 +23,6 @@ int CMesh::Init(CObj _obj)
 	return 0;
 }
 
-void CMesh::Update()
-{
-	XMVECTOR quaternion = XMLoadFloat4(&m_rotation);
-
-	XMMATRIX translation = XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
-	XMMATRIX rotation = XMMatrixRotationQuaternion(quaternion);
-	XMMATRIX scale = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
-
-	m_worldMatrix = scale * rotation * translation;
-	m_translationMatrix = translation;
-}
-
 void CMesh::Render()
 {
 	static UINT offset = 0;
@@ -43,13 +31,6 @@ void CMesh::Render()
 	p_d3d->getDeviceContext()->IASetIndexBuffer(p_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	p_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	p_d3d->getDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
-}
-
-void CMesh::Update_Render(CMaterial _material)
-{
-	_material.Render(GetWorldMatrix(), GetTranslationMatrix());
-	Update();
-	Render();
 }
 
 void CMesh::Release()

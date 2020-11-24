@@ -5,6 +5,7 @@
 #include "CLight.h";
 #include "CCamera.h";
 #include "CTime.h";
+#include "GObject.h";
 
 class MonoBehaviour
 {
@@ -20,4 +21,11 @@ public:
 	CDirect* d3d = {};
 	CCamera* camera = {};
 	CTime* time = {};
+
+	inline void InitCore() 
+	{
+		d3d = &d3d->GetInstance();
+		camera = &camera->GetInstance();
+		time = &time->GetInstance();
+	}
 };

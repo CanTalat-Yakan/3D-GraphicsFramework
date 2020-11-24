@@ -39,7 +39,10 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	if (error = d3d->Init(windowed) > 0) return error;
 
 	GScene mainScene = {};
+	mainScene.InitCore();
 	mainScene.Init();
+#pragma endregion
+
 #pragma endregion
 
 	mainScene.Awake();

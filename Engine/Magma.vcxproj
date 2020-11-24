@@ -171,9 +171,11 @@
     <ClInclude Include="CMesh.h" />
     <ClInclude Include="CObjLoader.h" />
     <ClInclude Include="CTime.h" />
+    <ClInclude Include="CTransform.h" />
     <ClInclude Include="CVertex.h" />
     <ClInclude Include="CWindow.h" />
     <ClInclude Include="CObj.h" />
+    <ClInclude Include="GObject.h" />
     <ClInclude Include="GScene.h" />
     <ClInclude Include="IMono.h" />
   </ItemGroup>

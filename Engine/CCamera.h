@@ -47,4 +47,3 @@ private:
 	XMMATRIX m_projection = {};
 
 };
-
