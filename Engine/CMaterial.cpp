@@ -21,13 +21,13 @@ int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 	return 0;
 }
 
-void CMaterial::Render(XMMATRIX _worldMatrix, XMMATRIX _translationMatrix)
+void CMaterial::Render(XMMATRIX _worldMatrix)
 {
 	p_d3d->getDeviceContext()->IASetInputLayout(p_inputLayout);
 	p_d3d->getDeviceContext()->VSSetShader(p_vertexShader, nullptr, 0);
 	p_d3d->getDeviceContext()->PSSetShader(p_pixelShader, nullptr, 0);
 
-	setMatrixBuffer(_worldMatrix, _translationMatrix);
+	setMatrixBuffer(_worldMatrix);
 
 	p_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &p_texture_SRV);
 	p_d3d->getDeviceContext()->PSSetSamplers(0, 1, &p_texture_SS);
@@ -70,7 +70,7 @@ void CMaterial::SetLightBuffer(const CLight& _light)
 	p_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &p_cbPerFrame);
 }
 
-void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _translationMatrix)
+void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
 	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
@@ -79,7 +79,6 @@ void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _translationMatr
 
 	buffer->WVP = _worldMatrix * p_camera->GetViewProjectionMatrix();
 	buffer->World = _worldMatrix;
-	buffer->Transl = _translationMatrix;
 	buffer->WCP = p_camera->GetCamPosFloat3();
 
 	p_d3d->getDeviceContext()->Unmap(p_cbPerObj, 0);

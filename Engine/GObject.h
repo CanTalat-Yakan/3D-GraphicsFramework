@@ -12,7 +12,7 @@ struct GObject
 	inline void Update_Render(CMaterial _material)
 	{
 		transform.Update();
-		_material.Render(transform.GetWorldMatrix(), transform.GetTranslationMatrix());
+		_material.Render(transform.GetWorldMatrix());
 		mesh.Render();
 	}
 };

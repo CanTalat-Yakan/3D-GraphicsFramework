@@ -6,13 +6,11 @@ using namespace DirectX;
 struct CTransform 
 {
 	XMMATRIX m_worldMatrix = {};
-	XMMATRIX m_translationMatrix = {};
 	XMFLOAT3 m_position = { 0, 0, 0 };
 	XMFLOAT4 m_rotation = { 0, 0, 0, 1 };
 	XMFLOAT3 m_scale = { 1, 1, 1 };
 
 	inline XMMATRIX GetWorldMatrix() { return m_worldMatrix; }
-	inline XMMATRIX GetTranslationMatrix() { return m_translationMatrix; }
 	inline XMVECTOR GetRotation() { return XMLoadFloat4(&m_rotation); }
 	inline XMFLOAT4 GetRotationFloat4() { return m_rotation; }
 
@@ -37,6 +35,5 @@ struct CTransform
 		XMMATRIX scale = XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z);
 
 		m_worldMatrix = scale * rotation * translation;
-		m_translationMatrix = translation;
 	}
 };

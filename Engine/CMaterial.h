@@ -15,7 +15,7 @@ class CMaterial
 {
 public:
 	int Init(LPCWSTR _shaderName, LPCWSTR _textureName);
-	void Render(XMMATRIX _worldMatrix, XMMATRIX _translationMatrix);
+	void Render(XMMATRIX _worldMatrix);
 	void Release();
 
 	void SetLightBuffer(const CLight& _light);
@@ -32,7 +32,7 @@ private:
 	int createPixelShaderBuffer();
 	int createTextureAndSampler(LPCWSTR _textureName);
 
-	void setMatrixBuffer(XMMATRIX _worldMatrix, XMMATRIX _translationMatrix);
+	void setMatrixBuffer(XMMATRIX _worldMatrix);
 
 	// shader
 	ID3D11VertexShader* p_vertexShader = nullptr;
@@ -51,7 +51,6 @@ private:
 	{
 		XMMATRIX WVP;
 		XMMATRIX World;
-		XMMATRIX Transl;
 		XMFLOAT3 WCP;
 	};
 
