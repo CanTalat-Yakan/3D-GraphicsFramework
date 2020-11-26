@@ -6,22 +6,21 @@ struct Light
     float4 diffuse;
 };
 
-cbuffer cbPerObject
-{
-    float4x4 WVP;
-    float4x4 World;
-    float4x4 Transl;
-    float3 WCP;
-};
-
 cbuffer cbPerFrame
 {
     Light light;
 };
 
+cbuffer cbPerObject
+{
+    float4x4 WVP;
+    float4x4 World;
+    float3 WCP;
+};
+
 struct appdata
 {
-    float4 vertex : POSITION;
+    float3 vertex : POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -42,10 +41,10 @@ VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
 
-    o.pos = mul(WVP, v.vertex);
-    o.normal = mul(World, v.normal);
-    o.worldPos = mul(World, v.vertex);
-    o.camPos = mul(Transl, WCP);
+    o.pos = mul(WVP, float4(v.vertex, 1));
+    o.normal = mul(World, float4(v.normal, 0));
+    o.worldPos = mul(World, float4(v.vertex, 1));
+    o.camPos = WCP;
     o.uv = v.uv;
 
     return o;

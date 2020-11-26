@@ -15,13 +15,12 @@ cbuffer cbPerObject
 {
     float4x4 WVP;
     float4x4 World;
-    float4x4 Transl;
     float3 WCP;
 };
 
 struct appdata
 {
-    float4 vertex : POSITION;
+    float3 vertex : POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -41,10 +40,11 @@ SamplerState ObjSamplerState;
 VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
-
-    o.pos = mul(WVP, v.vertex);
+    
+    o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = v.normal;
-    o.worldPos = mul(World, v.vertex);
+    o.worldPos = mul(World, float4(v.vertex, 1));
+    o.camPos = WCP;
     o.uv = float2(v.uv.x / 4.0035, v.uv.y / 3.0035);
 
     return o;
