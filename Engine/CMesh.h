@@ -19,7 +19,7 @@ public:
 	inline UINT GetVertexCount() { return m_vertexCount; }
 	inline UINT GetVertexStride() { return m_vertexStride; }
 	inline UINT GetIndexCount() { return m_indexCount; }
-	inline UINT GetIndexStride() { return sizeof(WORD); }
+	inline UINT GetIndexStride() { return m_indexStride; }
 
 private:
 	CDirect* p_d3d;
@@ -34,5 +34,6 @@ private:
 	UINT m_vertexCount = 0;
 	UINT m_vertexStride = 0;
 	UINT m_indexCount = 0; 
+	UINT m_indexStride = 0;
 };
 

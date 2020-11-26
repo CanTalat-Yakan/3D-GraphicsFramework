@@ -64,8 +64,6 @@ void CObjLoader::loadPrimVertices()
 			CVertex(hs, -hs, -hs, 0, 0, 0, 1, 0),	//Top		Right
 			CVertex(hs, -hs, hs, 1, 0, 0, 1, 0),	//Bottom	Right
 		};
-		m_obj.vertexCount = 4 * 6;
-		m_obj.vertexStride = sizeof(CVertex);
 		break;
 	}
 	case EPrimitives::Plane:
@@ -79,8 +77,6 @@ void CObjLoader::loadPrimVertices()
 			CVertex(hs, 0, hs, 1, 0, 0, -1, 0),		//Top		Right
 			CVertex(hs, 0, -hs, 1, 1, 0, -1, 0),	//Bottom	Right
 		};
-		m_obj.vertexCount = 1 * 4;
-		m_obj.vertexStride = sizeof(CVertex);
 		break;
 	}
 	case EPrimitives::Cylinder:
@@ -125,7 +121,6 @@ void CObjLoader::loadPrimIndices()
 			20, 21, 22,
 			20, 22, 23,
 		};
-		m_obj.indexCount = 6 * 6;
 		break;
 	}
 	case EPrimitives::Plane:
@@ -136,7 +131,6 @@ void CObjLoader::loadPrimIndices()
 			0, 1, 2,
 			0, 2, 3,
 		};
-		m_obj.indexCount = 1 * 6;
 		break;
 	}
 	case EPrimitives::Cylinder:
@@ -221,7 +215,6 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 					normals[std::stof(split_f[2]) - 1].x,
 					normals[std::stof(split_f[2]) - 1].y,
 					normals[std::stof(split_f[2]) - 1].z));
-				m_obj.vertexCount++;
 #pragma endregion
 			}
 #pragma region //Set Indices
@@ -231,17 +224,17 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 			m_obj.indices.push_back(0 + (faceCount * 4));
 			m_obj.indices.push_back(3 + (faceCount * 4));
 			m_obj.indices.push_back(2 + (faceCount * 4));
-			m_obj.indexCount += 6;
 #pragma endregion
 			faceCount++;
 		}
 #pragma endregion
 	}
-
-	m_obj.vertexStride = sizeof(CVertex);
 }
 
-std::vector<std::string> CObjLoader::splitString(std::string _line, std::string _delim) {
+std::vector<std::string> CObjLoader::splitString(std::string _line, std::string _delim) 
+{
+	//https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+	//https://stackoverflow.com/users/90464/fret
 	std::vector<std::string> list;
 	size_t pos = 0;
 	std::string token;

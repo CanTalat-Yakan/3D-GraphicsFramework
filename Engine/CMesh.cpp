@@ -9,9 +9,10 @@ int CMesh::Init(CObj _obj)
 #pragma endregion
 
 #pragma region //Set Variables
-	m_vertexCount = _obj.vertexCount;
-	m_vertexStride = _obj.vertexStride;
-	m_indexCount = _obj.indexCount;
+	m_vertexCount = _obj.vertices.size();
+	m_vertexStride = sizeof(CVertex);
+	m_indexCount = _obj.indices.size();
+	m_indexStride = sizeof(WORD);
 #pragma endregion
 
 #pragma region //Create Buffer
