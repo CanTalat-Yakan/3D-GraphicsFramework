@@ -1,9 +1,9 @@
 #pragma once
-#include "DirectXMath.h";
+#include "DirectXMath.h"
 
 using namespace DirectX;
 
-struct CTransform 
+struct CTransform
 {
 	XMMATRIX m_worldMatrix = {};
 	XMFLOAT3 m_position = { 0, 0, 0 };
@@ -13,6 +13,7 @@ struct CTransform
 	inline XMMATRIX GetWorldMatrix() { return m_worldMatrix; }
 	inline XMVECTOR GetRotation() { return XMLoadFloat4(&m_rotation); }
 	inline XMFLOAT4 GetRotationFloat4() { return m_rotation; }
+	inline XMFLOAT3 GetRotationFloat3() { XMFLOAT3 r; XMStoreFloat3(&r, GetRotation()); return r; }
 
 	inline void SetPosition(float _x, float _y, float _z) { m_position = { _x, _y, _z }; }
 	inline void SetPosition(XMFLOAT3 _pos) { m_position = { _pos.x, _pos.y, _pos.z }; }

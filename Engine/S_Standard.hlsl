@@ -32,9 +32,11 @@ struct VS_OUTPUT
     float3 camPos : POSITION1;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
+    float4x4 tangent : TANGENT;
 };
 
-Texture2D ObjTexture;
+Texture2D ObjTexture : register(t0);
+Texture2D ObjNormal : register(t1);
 SamplerState ObjSamplerState;
 
 VS_OUTPUT VS(appdata v)
@@ -53,23 +55,28 @@ VS_OUTPUT VS(appdata v)
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
     float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
+    float4 colNormal = ObjNormal.Sample(ObjSamplerState, i.uv);
 
     //normalize normal
-    float3 normal = normalize(i.normal);
+    i.normal = normalize(i.normal);
 
     //calculate diffuse 
-    float d = saturate(dot(normal, light.direction)); //by calculating the angle of the normal and the light direction with the dot method
+    float d = saturate(dot(i.normal, light.direction)); //by calculating the angle of the normal and the light direction with the dot method
     float4 diffuse = d * light.diffuse * light.intensity; //then saturating the diffuse so the backsite does not get values below 1
 	
     //calculate specular
     float3 viewDir = normalize(i.worldPos - i.camPos);
     float3 halfVec = viewDir + light.direction;
-    float d2 = saturate(dot(normalize(halfVec), normal));
+    float d2 = saturate(dot(normalize(halfVec), i.normal));
     d2 = pow(d2, 30);
-    float d3 = saturate(dot(normal, viewDir));
+    float d3 = saturate(dot(i.normal, viewDir));
     d3 = saturate(1 - pow(d3, 0.5));
     float4 specular = 2 * saturate(d) * (d2 + (d3 * 0.75)) * light.diffuse;
-	
     
-    return (diffuse + specular + light.ambient) * col;
+    //calulate normalMap
+    float3 tangent = colNormal * 2 - 1;
+    float d4 = dot(tangent, light.direction);
+    float4 normal = (saturate(d) * d4) * light.diffuse;
+    
+    return (diffuse + specular + normal + light.ambient) * col;
 }

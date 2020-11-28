@@ -33,7 +33,7 @@ void GScene::Init()
 #pragma region //Setup Materials
 	m_mat_Sky.Init(L"S_SkyBox.hlsl", L"T_SkyBox.png");
 	m_mat_Standard.Init(L"S_Standard.hlsl", L"T_White.png");
-	m_mat_Standard2.Init(L"S_Standard.hlsl", L"T_Grid.png");
+	m_mat_Standard2.Init(L"S_Standard.hlsl", L"T_Grid.png", L"T_NormalDebug.png");
 	m_mat_Standard3.Init(L"S_Standard.hlsl", L"T_Proto.png");
 	m_mat_Toon.Init(L"S_Toon.hlsl", L"T_Grid.png");
 	m_mat_Fresnel.Init(L"S_Fresnel.hlsl", L"T_Grid.png");
@@ -41,8 +41,6 @@ void GScene::Init()
 #pragma endregion
 
 #pragma region //Setup Light
-	CLight m_light = {};
-
 	m_light.direction = { -0.75f, -0.5f, 0.1f };
 	m_light.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
 	m_light.diffuse = { 1.0f, 1.0f, 0.9f, 1.0f };
@@ -57,8 +55,8 @@ void GScene::Init()
 void GScene::Awake()
 {
 #pragma region //Setup Camera Transform
-	camera->SetPosition(0, 2, -5);
-	camera->SetRotation(90, 0);
+	Camera->SetPosition(0, 2, -5);
+	Camera->SetRotation(90, 0);
 #pragma endregion
 }
 
@@ -102,14 +100,14 @@ void GScene::Start()
 void GScene::EarlyUpdate()
 {
 #pragma region //Parent Camera to Skybox
-	m_skyBox.transform.SetPosition(camera->GetCamPosFloat3());
+	m_skyBox.transform.SetPosition(Camera->GetCamPosFloat3());
 #pragma endregion
 }
 
 void GScene::Update()
 {
 #pragma region //Update Contents Transforms
-	float rot = time->getDeltaTime();
+	float rot = Time->getDeltaTime();
 
 	//m_cube.transform.SetRotationDeg(0, rot, 0);
 	//m_cube2.transform.SetRotationDeg(0, rot, 0);
@@ -122,6 +120,12 @@ void GScene::Update()
 	m_sphere.transform.SetRotationDeg(0, rot, 0);
 	m_sphere2.transform.SetRotationDeg(0, rot, 0);
 	m_sphere3.transform.SetRotationDeg(0, rot, 0);
+#pragma endregion
+
+#pragma region Light Rotation
+	m_lightTransform.SetRotationDeg(rot, rot, rot);
+	m_light.direction = m_lightTransform.GetRotationFloat3();
+	m_mat_Standard.SetLightBuffer(m_light);
 #pragma endregion
 }
 

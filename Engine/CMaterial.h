@@ -15,6 +15,7 @@ class CMaterial
 {
 public:
 	int Init(LPCWSTR _shaderName, LPCWSTR _textureName);
+	int Init(LPCWSTR _shaderName, LPCWSTR _textureName, LPCWSTR _normalTextureName);
 	void Render(XMMATRIX _worldMatrix);
 	void Release();
 
@@ -30,7 +31,7 @@ private:
 	int createInputLayout(ID3DBlob* _pBlob);
 	int createMatrixBuffer();
 	int createPixelShaderBuffer();
-	int createTextureAndSampler(LPCWSTR _textureName);
+	int createTextureAndSampler(LPCWSTR _textureName, ID3D11ShaderResourceView** _texture_SRV);
 
 	void setMatrixBuffer(XMMATRIX _worldMatrix);
 
@@ -43,6 +44,7 @@ private:
 
 	// texture
 	ID3D11ShaderResourceView* p_texture_SRV = nullptr;
+	ID3D11ShaderResourceView* p_normalTexture_SRV = nullptr;
 	ID3D11SamplerState* p_texture_SS = nullptr;
 
 	//constant buffer

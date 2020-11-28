@@ -34,7 +34,7 @@ struct VS_OUTPUT
     float3 normal : NORMAL;
 };
 
-Texture2D ObjTexture;
+Texture2D ObjTexture : register(t0);
 SamplerState ObjSamplerState;
 
 VS_OUTPUT VS(appdata v)

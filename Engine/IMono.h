@@ -18,14 +18,14 @@ public:
 	virtual void LateUpdate() = 0;
 	virtual void Release() = 0;
 
-	CDirect* d3d = {};
-	CCamera* camera = {};
-	CTime* time = {};
+	CDirect* D3d = {};
+	CCamera* Camera = {};
+	CTime* Time = {};
 
 	inline void InitCore() 
 	{
-		d3d = &d3d->GetInstance();
-		camera = &camera->GetInstance();
-		time = &time->GetInstance();
+		D3d = &D3d->GetInstance();
+		Camera = &Camera->GetInstance();
+		Time = &Time->GetInstance();
 	}
 };

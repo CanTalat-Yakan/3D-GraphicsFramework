@@ -26,9 +26,9 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	p_time = &p_time->GetInstance(); //Singleton
 	if (error = p_time->Init() > 0) return error;
 
-	CInput* m_input = {}; //Create InputManger
-	m_input = &m_input->GetInstance(); //Singleton
-	if (error = m_input->Init() > 0) return error;
+	CInput* input = {}; //Create InputManger
+	input = &input->GetInstance(); //Singleton
+	if (error = input->Init() > 0) return error;
 
 	CCamera* camera = {}; //Create CameraView
 	camera = &camera->GetInstance();//Singleton
@@ -53,7 +53,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 		d3d->Clear();
 
 		p_time->Update();
-		m_input->Update();
+		input->Update();
 		camera->Update();
 
 		mainScene.EarlyUpdate();
@@ -67,7 +67,7 @@ INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	window->Release();
 	camera->Release();
 	p_time->Release();
-	m_input->Release();
+	input->Release();
 	mainScene.Release();
 	d3d->Release();
 #pragma endregion

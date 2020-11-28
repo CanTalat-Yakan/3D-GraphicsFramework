@@ -15,7 +15,21 @@ int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 	if (error = createPixelShader(_shaderName) > 0) return error;
 	if (error = createMatrixBuffer() > 0) return error;
 	if (error = createPixelShaderBuffer() > 0) return error;
-	if (error = createTextureAndSampler(_textureName) > 0) return error;
+	if (error = createTextureAndSampler(_textureName, &p_texture_SRV) > 0) return error;
+#pragma endregion
+
+	return 0;
+}
+
+int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName, LPCWSTR _normalTextureName)
+{
+#pragma region Use previous complete init method
+	Init(_shaderName, _textureName);
+#pragma endregion
+
+#pragma region Add additional Textures
+	int error = 0;
+	if (error = createTextureAndSampler(_normalTextureName, &p_normalTexture_SRV) > 0) return error;
 #pragma endregion
 
 	return 0;
@@ -30,6 +44,7 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 	setMatrixBuffer(_worldMatrix);
 
 	p_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &p_texture_SRV);
+	p_d3d->getDeviceContext()->PSSetShaderResources(1, 1, &p_normalTexture_SRV);
 	p_d3d->getDeviceContext()->PSSetSamplers(0, 1, &p_texture_SS);
 }
 
@@ -37,16 +52,21 @@ void CMaterial::Release()
 {
 	if (p_texture_SRV)
 		p_texture_SRV->Release();
+	if (p_normalTexture_SRV)
+		p_normalTexture_SRV->Release();
 	p_texture_SRV = nullptr;
+	p_normalTexture_SRV = nullptr;
+
 	if (p_texture_SS)
 		p_texture_SS->Release();
+	p_texture_SS = nullptr;
+
 	p_vertexShader->Release();
 	p_vertexShader = nullptr;
 	p_pixelShader->Release();
 	p_pixelShader = nullptr;
 	p_inputLayout->Release();
 	p_inputLayout = nullptr;
-	p_texture_SS = nullptr;
 	p_cbPerObj->Release();
 	p_cbPerObj = nullptr;
 	p_cbPerFrame->Release();
@@ -183,10 +203,10 @@ int CMaterial::createPixelShaderBuffer()
 	return 0;
 }
 
-int CMaterial::createTextureAndSampler(LPCWSTR _textureName)
+int CMaterial::createTextureAndSampler(LPCWSTR _textureName, ID3D11ShaderResourceView** _texture_SRV)
 {
 	// create texture
-	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(p_d3d->getDevice(), _textureName, NULL, NULL, &p_texture_SRV, NULL);
+	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(p_d3d->getDevice(), _textureName, NULL, NULL, *&_texture_SRV, NULL);
 	if (FAILED(hr)) return 56;
 
 	// create sampler state
