@@ -15,4 +15,5 @@ struct CVertex
 	XMFLOAT3 pos;
 	XMFLOAT2 texCoord;
 	XMFLOAT3 normal;
+	XMFLOAT3 tangent;
 };

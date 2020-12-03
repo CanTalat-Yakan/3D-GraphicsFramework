@@ -41,7 +41,7 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 	p_d3d->getDeviceContext()->VSSetShader(p_vertexShader, nullptr, 0);
 	p_d3d->getDeviceContext()->PSSetShader(p_pixelShader, nullptr, 0);
 
-	setMatrixBuffer(_worldMatrix);
+	setPerObjectBuffer(_worldMatrix);
 
 	p_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &p_texture_SRV);
 	p_d3d->getDeviceContext()->PSSetShaderResources(1, 1, &p_normalTexture_SRV);
@@ -76,7 +76,7 @@ void CMaterial::Release()
 }
 
 
-void CMaterial::SetLightBuffer(const CLight& _light)
+void CMaterial::SetPerFrameBuffer(const CLight& _light)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
 	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
@@ -90,7 +90,7 @@ void CMaterial::SetLightBuffer(const CLight& _light)
 	p_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &p_cbPerFrame);
 }
 
-void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix)
+void CMaterial::setPerObjectBuffer(XMMATRIX _worldMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
 	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
@@ -149,7 +149,7 @@ int CMaterial::createPixelShader(LPCWSTR _shaderName)
 
 int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 {
-	D3D11_INPUT_ELEMENT_DESC elements[3] = {};
+	D3D11_INPUT_ELEMENT_DESC elements[4] = {};
 
 	// position
 	elements[0].SemanticName = "POSITION"; // element type
@@ -165,8 +165,13 @@ int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 	elements[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	elements[2].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
 	elements[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-
-	HRESULT hr = p_d3d->getDevice()->CreateInputLayout(elements, 3, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &p_inputLayout);
+	// tangent
+	elements[3].SemanticName = "TANGENT";
+	elements[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	elements[3].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
+	elements[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	
+	HRESULT hr = p_d3d->getDevice()->CreateInputLayout(elements, 4, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &p_inputLayout);
 	if (FAILED(hr)) return 55;
 
 	return 0;

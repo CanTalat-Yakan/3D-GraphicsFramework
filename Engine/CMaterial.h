@@ -19,7 +19,7 @@ public:
 	void Render(XMMATRIX _worldMatrix);
 	void Release();
 
-	void SetLightBuffer(const CLight& _light);
+	void SetPerFrameBuffer(const CLight& _light);
 
 private:
 	CDirect* p_d3d;
@@ -33,7 +33,7 @@ private:
 	int createPixelShaderBuffer();
 	int createTextureAndSampler(LPCWSTR _textureName, ID3D11ShaderResourceView** _texture_SRV);
 
-	void setMatrixBuffer(XMMATRIX _worldMatrix);
+	void setPerObjectBuffer(XMMATRIX _worldMatrix);
 
 	// shader
 	ID3D11VertexShader* p_vertexShader = nullptr;

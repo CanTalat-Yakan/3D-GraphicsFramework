@@ -37,7 +37,7 @@ void GScene::Init()
 	m_mat_Standard3.Init(L"S_Standard.hlsl", L"T_Proto.png");
 	m_mat_Toon.Init(L"S_Toon.hlsl", L"T_Grid.png");
 	m_mat_Fresnel.Init(L"S_Fresnel.hlsl", L"T_Grid.png");
-	m_mat_Bird.Init(L"S_Standard.hlsl", L"T_Bird.png");
+	m_mat_Bird.Init(L"S_Standard.hlsl", L"T_Bird.png", L"T_NormalDebug.png");
 #pragma endregion
 
 #pragma region //Setup Light
@@ -48,7 +48,7 @@ void GScene::Init()
 #pragma endregion
 
 #pragma region //Assign Light to Materials
-	m_mat_Standard.SetLightBuffer(m_light);
+	m_mat_Standard.SetPerFrameBuffer(m_light);
 #pragma endregion
 }
 
@@ -109,9 +109,9 @@ void GScene::Update()
 #pragma region //Update Contents Transforms
 	float rot = Time->getDeltaTime();
 
-	//m_cube.transform.SetRotationDeg(0, rot, 0);
-	//m_cube2.transform.SetRotationDeg(0, rot, 0);
-	//m_cube3.transform.SetRotationDeg(0, rot, 0);
+	m_cube.transform.SetRotationDeg(0, rot, 0);
+	m_cube2.transform.SetRotationDeg(0, rot, 0);
+	m_cube3.transform.SetRotationDeg(0, rot, 0);
 
 	m_cylinder.transform.SetRotationDeg(0, rot, 0);
 	m_cylinder2.transform.SetRotationDeg(0, rot, 0);
@@ -120,12 +120,6 @@ void GScene::Update()
 	m_sphere.transform.SetRotationDeg(0, rot, 0);
 	m_sphere2.transform.SetRotationDeg(0, rot, 0);
 	m_sphere3.transform.SetRotationDeg(0, rot, 0);
-#pragma endregion
-
-#pragma region Light Rotation
-	m_lightTransform.SetRotationDeg(rot, rot, rot);
-	m_light.direction = m_lightTransform.GetRotationFloat3();
-	m_mat_Standard.SetLightBuffer(m_light);
 #pragma endregion
 }
 

@@ -23,6 +23,7 @@ struct appdata
     float3 vertex : POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
+    float3 tangent : TANGENT;
 };
 
 struct VS_OUTPUT
