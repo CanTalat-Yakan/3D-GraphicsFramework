@@ -47,25 +47,19 @@ VS_OUTPUT VS(appdata v)
     VS_OUTPUT o;
 
     o.pos = mul(WVP, float4(v.vertex, 1));
-    o.normal = mul(World, float4(v.normal, 0));
+    o.normal = normalize(mul(World, float4(v.normal, 0)));
     o.worldPos = mul(World, float4(v.vertex, 1));
     o.camPos = WCP;
     o.uv = v.uv;
-    
-    //float3 t1 = cross(o.normal, float3(0, 0, 1));
-    //float3 t2 = cross(o.normal, float3(0, 1, 0));
-    
-    //float3 appdata_tangent = (length(t1) > length(t2)) ? t1 : t2;
-    //float3 tangent = mul(World, float4(appdata_tangent, 0));
-    //float3 bitangent = cross(o.normal, tangent);
- 
-    //o.tbn[0] = normalize(tangent);
-    //o.tbn[1] = normalize(bitangent);
-    //o.tbn[2] = normalize(o.normal);
-    
-    //add the tangent and binormal
-    //o.tangent = normalize(mul(float4(v.tangent, 0), World).xyz);
-    //o.binormal = normalize(cross(o.normal, o.tangent));
+
+    //o.normal = float3(0, 0, 1);
+    float3 t1 = cross(o.normal, float3(0, 0, 1));
+    float3 t2 = cross(o.normal, float3(0, 1, 0));
+    v.tangent = (length(t1) > length(t2)) ? normalize(t1) : normalize(t2);
+
+    o.tangent = normalize(mul(World, float4(v.tangent, 1)));
+    o.binormal = normalize(cross(o.normal, o.tangent));
+    o.tbn = float3x3(o.tangent, o.binormal, o.normal);
 
     return o;
 }
@@ -74,12 +68,10 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 {
     float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
     float3 colNormal = ObjNormal.Sample(ObjSamplerState, float2(-i.uv.x, i.uv.y));
- 
+    
     //calulate normal
-    float3 normal = normalize(i.normal);
-    //float3 normal = colNormal * 2 - 1;
-    //normal = i.tbn[0] * colNormal.x + i.tbn[1] * colNormal.y + i.tbn[2] * colNormal.z;
-    //normal = normalize(normal);
+    float3 normal = i.normal;
+    normal = mul(i.tbn, colNormal * 2 - 1);
     
     //calculate diffuse 
     float d = saturate(dot(normal, light.direction)); //by calculating the angle of the normal and the light direction with the dot method
@@ -95,5 +87,5 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float4 specular = 2 * saturate(d) * (d2 + (d3 * 0.75)) * light.diffuse;
 
     
-    return (diffuse + specular + light.ambient) * col;
+    return float4(normal, 1); //(diffuse + specular + light.ambient) * col;
 }

@@ -33,11 +33,11 @@ void GScene::Init()
 #pragma region //Setup Materials
 	m_mat_Sky.Init(L"S_SkyBox.hlsl", L"T_SkyBox.png");
 	m_mat_Standard.Init(L"S_Standard.hlsl", L"T_White.png");
-	m_mat_Standard2.Init(L"S_Standard.hlsl", L"T_Grid.png", L"T_NormalDebug.png");
+	m_mat_Standard2.Init(L"S_Standard.hlsl", L"T_Grid.png", L"T_NormalDebug2.png");
 	m_mat_Standard3.Init(L"S_Standard.hlsl", L"T_Proto.png");
 	m_mat_Toon.Init(L"S_Toon.hlsl", L"T_Grid.png");
 	m_mat_Fresnel.Init(L"S_Fresnel.hlsl", L"T_Grid.png");
-	m_mat_Bird.Init(L"S_Standard.hlsl", L"T_Bird.png", L"T_NormalDebug.png");
+	m_mat_Bird.Init(L"S_Standard.hlsl", L"T_Bird.png");
 #pragma endregion
 
 #pragma region //Setup Light

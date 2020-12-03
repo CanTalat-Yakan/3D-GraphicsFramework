@@ -206,6 +206,7 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 #pragma region //Set Vertices
 				split_f = splitString(split_l[i], "/");
 
+				XMFLOAT3 tangent = {};
 				m_obj.vertices.push_back(CVertex(
 					-positions[std::stof(split_f[0]) - 1].x,
 					-positions[std::stof(split_f[0]) - 1].y,
@@ -215,6 +216,7 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 					normals[std::stof(split_f[2]) - 1].x,
 					normals[std::stof(split_f[2]) - 1].y,
 					normals[std::stof(split_f[2]) - 1].z));
+					//0,0,0));
 #pragma endregion
 			}
 #pragma region //Set Indices
@@ -231,7 +233,7 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 	}
 }
 
-std::vector<std::string> CObjLoader::splitString(std::string _line, std::string _delim) 
+std::vector<std::string> CObjLoader::splitString(std::string _line, std::string _delim)
 {
 	//https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
 	//https://stackoverflow.com/users/90464/fret
