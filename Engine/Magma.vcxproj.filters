@@ -92,6 +92,9 @@
     <ClInclude Include="CTransform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="EngineClassDiagram.cd">

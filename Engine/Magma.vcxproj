@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
     <ClInclude Include="CDirect.h" />
+    <ClInclude Include="CEngine.h" />
     <ClInclude Include="CInput.h" />
     <ClInclude Include="CLight.h" />
     <ClInclude Include="CMaterial.h" />

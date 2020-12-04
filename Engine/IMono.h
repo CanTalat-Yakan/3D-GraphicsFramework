@@ -22,7 +22,7 @@ public:
 	CCamera* Camera = {};
 	CTime* Time = {};
 
-	inline void InitCore() 
+	inline void GetInstances() 
 	{
 		D3d = &D3d->GetInstance();
 		Camera = &Camera->GetInstance();
