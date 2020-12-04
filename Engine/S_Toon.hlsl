@@ -80,7 +80,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 
     //calculate outline
     float d3 = saturate(dot(normal, viewDir));
-    d3 = (d3 < 0.25) ? -2 : 0;
+    d3 = (d3 < 0.25) ? -8 : 0;
     float4 outline = d3 * dirLight.diffuse;
 
     
