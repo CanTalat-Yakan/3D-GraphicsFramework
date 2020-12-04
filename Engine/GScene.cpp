@@ -70,6 +70,7 @@ void GScene::Init()
 #pragma endregion
 }
 
+
 void GScene::Awake()
 {
 #pragma region //Setup Camera Transform
@@ -92,6 +93,7 @@ void GScene::Start()
 
 	m_sphere.transform.SetRotation(-180, 0, 0);
 	m_sphere.transform.SetScale(1.5f);
+	//m_sphere.transform.SetScale(0.25f);
 	m_sphere.transform.SetPosition(2, 1.5f, 0);
 	m_sphere2.transform = m_sphere3.transform = m_sphere.transform;
 	m_sphere2.transform.m_position.z += 2;
@@ -114,6 +116,7 @@ void GScene::Start()
 	m_bird3.transform.m_position.z += 6;
 #pragma endregion
 }
+
 
 void GScene::EarlyUpdate()
 {
