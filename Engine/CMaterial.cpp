@@ -101,8 +101,8 @@ void CMaterial::SetLightingBuffer()
 	if (FAILED(hr)) return;
 
 	cbLighting* buffer = reinterpret_cast<cbLighting*>(data.pData);
-	buffer->dirLight = p_lighting->m_DirLight;
-	buffer->pointLight = p_lighting->m_PointLight;
+	buffer->dirLight = p_lighting->DirectionalLight;
+	buffer->pointLight = p_lighting->PointLight;
 
 	p_d3d->getDeviceContext()->Unmap(p_cbLighting, 0);
 	p_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &p_cbLighting);

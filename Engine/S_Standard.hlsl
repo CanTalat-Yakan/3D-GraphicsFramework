@@ -96,6 +96,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //normal = mul(colNormal * 2 - 1, i.tbn);
     //normal = normalize(normal);
     
+
     //calculate dirLight diffuse 
     float d = saturate(dot(normal, dirLight.direction)); //by calculating the angle of the normal and the light direction with the dot method
     float4 diffuse = d * dirLight.diffuse * dirLight.intensity; //then saturating the diffuse so the backsite does not get values below 1
@@ -126,5 +127,5 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 
     return 
         (diffuse + specular + pointLightDiffuse + pointLightSpecular + dirLight.ambient) * col;
-        float4(i.normal, 1);
+        float4(normal, 1);
 }

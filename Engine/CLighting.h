@@ -25,8 +25,8 @@ public:
 	CLighting(CLighting const&) = delete;
 	void operator=(CLighting const&) = delete;
 
-	CDirectionalLight m_DirLight;
-	CPointLight m_PointLight;
+	CDirectionalLight DirectionalLight;
+	CPointLight PointLight;
 
 private:
 	CLighting() {}

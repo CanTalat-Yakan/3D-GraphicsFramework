@@ -2,7 +2,7 @@
 #include "GScene.h"
 #include "CEngine.h"
 
-INT WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, INT _nCmdShow)
+int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, INT _nCmdShow)
 {
 #pragma region //Init
 	CEngine engine = {};

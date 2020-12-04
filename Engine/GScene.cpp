@@ -4,15 +4,15 @@ void GScene::Init()
 	GetInstances();
 
 #pragma region //Setup Light
-	Lighting->m_DirLight.direction = { -0.75f, -0.5f, 0.1f };
-	Lighting->m_DirLight.intensity = 0.9f;
-	Lighting->m_DirLight.diffuse = { 1.0f, 1.0f, 0.9f, 1.0f };
-	Lighting->m_DirLight.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
+	Lighting->DirectionalLight.direction = { -0.75f, -0.5f, 0.1f };
+	Lighting->DirectionalLight.intensity = 0.9f;
+	Lighting->DirectionalLight.diffuse = { 1.0f, 1.0f, 0.9f, 1.0f };
+	Lighting->DirectionalLight.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
 
-	Lighting->m_PointLight.diffuse = { 0.2f, 0.6f, 0.0f, 1.0f };
-	Lighting->m_PointLight.intensity = 1;
-	Lighting->m_PointLight.position = { 0.0f, 0.5f, 0.0f };
-	//Lighting->m_PointLight.radius = 10;
+	Lighting->PointLight.position = { 0.0f, 0.5f, 0.0f };
+	Lighting->PointLight.intensity = 1;
+	Lighting->PointLight.diffuse = { 0.2f, 0.6f, 0.0f, 1.0f };
+	//Lighting->GetPointlLight()->radius = 10;
 #pragma endregion
 
 #pragma region //Load Meshes
