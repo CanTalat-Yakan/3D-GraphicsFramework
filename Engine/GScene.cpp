@@ -10,9 +10,9 @@ void GScene::Init()
 	Lighting->DirectionalLight.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
 
 	Lighting->PointLight.position = { 0.0f, 0.5f, 0.0f };
-	Lighting->PointLight.intensity = 1;
+	Lighting->PointLight.intensity = 0.7f;
 	Lighting->PointLight.diffuse = { 0.2f, 0.6f, 0.0f, 1.0f };
-	//Lighting->GetPointlLight()->radius = 10;
+	//Lighting->GetPointlLight()->radius = 3.5f;
 #pragma endregion
 
 #pragma region //Load Meshes

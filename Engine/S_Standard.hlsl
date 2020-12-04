@@ -98,31 +98,32 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     
 
     //calculate dirLight diffuse 
-    float d = saturate(dot(normal, dirLight.direction)); //by calculating the angle of the normal and the light direction with the dot method
-    float4 diffuse = d * dirLight.diffuse * dirLight.intensity; //then saturating the diffuse so the backsite does not get values below 1
+    float d = saturate(dot(normal, dirLight.direction)); //by calculating the angle of the normal and the light direction with the dot method 
+    //then saturating the diffuse so the backsite does not get values below 0
+    float4 diffuse = d * dirLight.diffuse * dirLight.intensity; //calculating the diffuse with the sun lit area and the directional Light Diffuse and intensity
 	
     //calculate dirLight specular
-    float3 viewDir = normalize(i.worldPos - i.camPos);
-    float3 halfVec = viewDir + dirLight.direction;
-    float d2 = saturate(dot(normalize(halfVec), normal));
-    d2 = pow(d2, 30);
-    float d3 = saturate(dot(normal, viewDir));
-    d3 = saturate(1 - pow(d3, 0.5));
-    float4 specular = 2 * saturate(d) * (d2 + (d3 * 0.75)) * dirLight.diffuse;
+    float3 viewDir = normalize(i.worldPos - i.camPos); //calculating the direction in which the camera targets
+    float3 halfVec = viewDir + dirLight.direction; //the half Vector between the view Dir and the sun light
+    float d2 = saturate(dot(normalize(halfVec), normal)); //calculating the area hit by the specular light
+    d2 = pow(d2, 30); //calculating power 30 to the specular
+    float d3 = saturate(dot(normal, viewDir)); // calculating the fresnel diffuse
+    d3 = saturate(1 - pow(d3, 0.5)); //calculating power 0.5 to the fresnel
+    float4 specular = 2 * saturate(d) * (d2 + (d3 * 0.75)) * dirLight.diffuse * dirLight.intensity; //specular from the sunlight diffuse area with the specular and fresnel
 
     //calculate pointLight diffuse
-    float3 pointDir = (i.worldPos - pointLight.position);
-    float fallOff = saturate(3.5 - length(pointDir));
-    float d4 = saturate(dot(normal, normalize(pointDir)) * fallOff);
-    float4 pointLightDiffuse = d4 * pointLight.diffuse * pointLight.intensity;
+    float3 pointDir = (i.worldPos - pointLight.position); //calculating the direction in which the point light hits the target
+    float fallOff = saturate(3.5 - length(pointDir)); //calculating the fallOff acording to the radius of the point light
+    float d4 = saturate(dot(normal, normalize(pointDir)) * fallOff); //calculating the dot product of the pointDir and the surface normal with fallOff
+    float4 pointLightDiffuse = d4 * pointLight.diffuse * pointLight.intensity; //calculating the diffuse with the point light lit area and the point Light Diffuse and intensity
     
     //calculate pointLight specular
-    halfVec = viewDir + pointDir;
-    float d5 = saturate(dot(normalize(halfVec), normal));
-    d5 = pow(d5, 30);
-    float d6 = saturate(dot(normal, viewDir));
-    d6 = saturate(1 - pow(d6, 0.5));
-    float4 pointLightSpecular = 2 * saturate(d4) * (d5 + (d6 * 0.75)) * pointLight.diffuse;
+    halfVec = viewDir + pointDir; //half Vector from the targeting view Direction and the point Light Direction
+    float d5 = saturate(dot(normalize(halfVec), normal)); //calculating the area hit by the specular light
+    d5 = pow(d5, 30); //calculating power 30 to the specular
+    float d6 = saturate(dot(normal, viewDir)); // calculating the fresnel diffuse
+    d6 = saturate(1 - pow(d6, 0.5)); //calculating power 0.5 to the fresnel
+    float4 pointLightSpecular = 2 * saturate(d4) * (d5 + (d6 * 0.75)) * pointLight.diffuse * pointLight.intensity; //specular from the point Light diffuse area with the specular and fresnel
 
 
     return 
