@@ -3,6 +3,18 @@ void GScene::Init()
 {
 	GetInstances();
 
+#pragma region //Setup Light
+	Lighting->m_DirLight.direction = { -0.75f, -0.5f, 0.1f };
+	Lighting->m_DirLight.intensity = 0.9f;
+	Lighting->m_DirLight.diffuse = { 1.0f, 1.0f, 0.9f, 1.0f };
+	Lighting->m_DirLight.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
+
+	Lighting->m_PointLight.diffuse = { 0.2f, 0.6f, 0.0f, 1.0f };
+	Lighting->m_PointLight.intensity = 1;
+	Lighting->m_PointLight.position = { 0.0f, 0.5f, 0.0f };
+	//Lighting->m_PointLight.radius = 10;
+#pragma endregion
+
 #pragma region //Load Meshes
 	CObjLoader m_obj = {};
 
@@ -34,38 +46,27 @@ void GScene::Init()
 
 #pragma region //Setup Materials
 	m_mat_Sky.Init(
-		L"S_SkyBox.hlsl", 
+		L"S_SkyBox.hlsl",
 		L"T_SkyBox.png");
 	m_mat_Standard.Init(
-		L"S_Standard.hlsl", 
+		L"S_Standard.hlsl",
 		L"T_White.png");
 	m_mat_Standard2.Init(
-		L"S_Standard.hlsl", 
-		L"T_Grid.png", 
+		L"S_Standard.hlsl",
+		L"T_Grid.png",
 		L"T_NormalDebug2.png");
 	m_mat_Standard3.Init(
-		L"S_Standard.hlsl", 
+		L"S_Standard.hlsl",
 		L"T_Proto.png");
 	m_mat_Toon.Init(
-		L"S_Toon.hlsl", 
+		L"S_Toon.hlsl",
 		L"T_Grid.png");
 	m_mat_Fresnel.Init(
-		L"S_Fresnel.hlsl", 
+		L"S_Fresnel.hlsl",
 		L"T_Grid.png");
 	m_mat_Bird.Init(
-		L"S_Standard.hlsl", 
+		L"S_Standard.hlsl",
 		L"T_Bird.png");
-#pragma endregion
-
-#pragma region //Setup Light
-	m_light.direction = { -0.75f, -0.5f, 0.1f };
-	m_light.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
-	m_light.diffuse = { 1.0f, 1.0f, 0.9f, 1.0f };
-	m_light.intensity = 0.9f;
-#pragma endregion
-
-#pragma region //Assign Light to Materials
-	m_mat_Standard.SetPerFrameBuffer(m_light);
 #pragma endregion
 }
 
@@ -164,6 +165,7 @@ void GScene::LateUpdate()
 	m_bird3.Update_Render(m_mat_Fresnel);
 #pragma endregion
 }
+
 
 void GScene::Release()
 {

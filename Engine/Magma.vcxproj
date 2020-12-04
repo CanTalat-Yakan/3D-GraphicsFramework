@@ -153,6 +153,7 @@
     <ClCompile Include="CCamera.cpp" />
     <ClCompile Include="CDirect.cpp" />
     <ClCompile Include="CInput.cpp" />
+    <ClCompile Include="CLighting.cpp" />
     <ClCompile Include="CMaterial.cpp" />
     <ClCompile Include="CMesh.cpp" />
     <ClCompile Include="CObjLoader.cpp" />
@@ -169,7 +170,7 @@
     <ClInclude Include="CDirect.h" />
     <ClInclude Include="CEngine.h" />
     <ClInclude Include="CInput.h" />
-    <ClInclude Include="CLight.h" />
+    <ClInclude Include="CLighting.h" />
     <ClInclude Include="CMaterial.h" />
     <ClInclude Include="CMesh.h" />
     <ClInclude Include="CObjLoader.h" />

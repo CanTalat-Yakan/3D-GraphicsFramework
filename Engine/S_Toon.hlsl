@@ -1,14 +1,23 @@
-struct Light
+struct DirectionalLight
 {
     float3 direction;
     float intensity;
-    float4 ambient;
     float4 diffuse;
+    float4 ambient;
+};
+
+struct PointLight
+{
+    float3 position;
+    float intensity;
+    float4 diffuse;
+    float radius;
 };
 
 cbuffer cbPerFrame
 {
-    Light light;
+    DirectionalLight dirLight;
+    PointLight pointLight;
 };
 
 cbuffer cbPerObject
@@ -59,21 +68,21 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float3 normal = normalize(i.normal);
 
     //calculate diffuse 
-    float d = saturate(sign(dot(normal, light.direction))); //by calculating the angle of the normal and the light direction with the dot method
-    float4 diffuse = d * light.diffuse * 0.9f; //then saturating the diffuse so the backsite does not get values below 1
+    float d = saturate(sign(dot(normal, dirLight.direction))); //by calculating the angle of the normal and the light direction with the dot method
+    float4 diffuse = d * dirLight.diffuse * 0.9f; //then saturating the diffuse so the backsite does not get values below 1
 	
     //calculate specular
     float3 viewDir = normalize(i.worldPos - i.camPos);
-    float3 halfVec = viewDir + light.direction;
+    float3 halfVec = viewDir + dirLight.direction;
     float d2 = dot(normalize(halfVec), normal);
     d2 = (d2 > 0.95) ? 1 : 0;
-    float4 specular = d * d2 * light.diffuse;
+    float4 specular = d * d2 * dirLight.diffuse;
 
     //calculate outline
     float d3 = saturate(dot(normal, viewDir));
     d3 = (d3 < 0.25) ? -2 : 0;
-    float4 outline = d3 * light.diffuse;
+    float4 outline = d3 * dirLight.diffuse;
 
     
-    return (diffuse + specular + outline + light.ambient) * col;
+    return (diffuse + specular + outline + dirLight.ambient) * col;
 }

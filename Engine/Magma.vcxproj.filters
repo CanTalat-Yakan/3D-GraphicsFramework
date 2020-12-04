@@ -45,6 +45,9 @@
     <ClCompile Include="GScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CLighting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CWindow.h">
@@ -66,9 +69,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CInput.h">
@@ -93,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CLighting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

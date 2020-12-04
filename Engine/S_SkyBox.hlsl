@@ -1,21 +1,7 @@
-struct Light
-{
-    float3 direction;
-    float intensity;
-    float4 ambient;
-    float4 diffuse;
-};
-
-cbuffer cbPerFrame
-{
-    Light light;
-};
-
 cbuffer cbPerObject
 {
     float4x4 WVP;
     float4x4 World;
-    float3 WCP;
 };
 
 struct appdata
@@ -23,14 +9,11 @@ struct appdata
     float3 vertex : POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
-    float3 tangent : TANGENT;
 };
 
 struct VS_OUTPUT
 {
     float4 pos : SV_POSITION;
-    float3 worldPos : POSITION;
-    float3 camPos : POSITION1;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -44,8 +27,6 @@ VS_OUTPUT VS(appdata v)
     
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = v.normal;
-    o.worldPos = mul(World, float4(v.vertex, 1));
-    o.camPos = WCP;
     o.uv = float2(v.uv.x / 4.0035, v.uv.y / 3.0035);
 
     return o;
@@ -70,6 +51,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     pos.y *= offset.y;
 
     float4 col = ObjTexture.Sample(ObjSamplerState, -pos + -i.uv);
+
 
     return col;
 }

@@ -1,14 +1,23 @@
-struct Light
+struct DirectionalLight
 {
     float3 direction;
     float intensity;
-    float4 ambient;
     float4 diffuse;
+    float4 ambient;
+};
+
+struct PointLight
+{
+    float3 position;
+    float intensity;
+    float4 diffuse;
+    float radius;
 };
 
 cbuffer cbPerFrame
 {
-    Light light;
+    DirectionalLight dirLight;
+    PointLight pointLight;
 };
 
 cbuffer cbPerObject
@@ -84,22 +93,38 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //calulate normal
     float3 normal = i.normal;
     //i.tbn = float3x3(i.tangent, i.binormal, i.normal);
-    normal = mul(colNormal * 2 - 1, i.tbn);
-    normal = normalize(normal);
+    //normal = mul(colNormal * 2 - 1, i.tbn);
+    //normal = normalize(normal);
     
-    //calculate diffuse 
-    float d = saturate(dot(normal, light.direction)); //by calculating the angle of the normal and the light direction with the dot method
-    float4 diffuse = d * light.diffuse * light.intensity; //then saturating the diffuse so the backsite does not get values below 1
+    //calculate dirLight diffuse 
+    float d = saturate(dot(normal, dirLight.direction)); //by calculating the angle of the normal and the light direction with the dot method
+    float4 diffuse = d * dirLight.diffuse * dirLight.intensity; //then saturating the diffuse so the backsite does not get values below 1
 	
-    //calculate specular
+    //calculate dirLight specular
     float3 viewDir = normalize(i.worldPos - i.camPos);
-    float3 halfVec = viewDir + light.direction;
+    float3 halfVec = viewDir + dirLight.direction;
     float d2 = saturate(dot(normalize(halfVec), normal));
     d2 = pow(d2, 30);
     float d3 = saturate(dot(normal, viewDir));
     d3 = saturate(1 - pow(d3, 0.5));
-    float4 specular = 2 * saturate(d) * (d2 + (d3 * 0.75)) * light.diffuse;
+    float4 specular = 2 * saturate(d) * (d2 + (d3 * 0.75)) * dirLight.diffuse;
 
+    //calculate pointLight diffuse
+    float3 pointDir = (i.worldPos - pointLight.position);
+    float fallOff = saturate(3.5 - length(pointDir));
+    float d4 = saturate(dot(normal, normalize(pointDir)) * fallOff);
+    float4 pointLightDiffuse = d4 * pointLight.diffuse * pointLight.intensity;
     
-    return float4(normal, 1); //(diffuse + specular + light.ambient) * col;
+    //calculate pointLight specular
+    halfVec = viewDir + pointDir;
+    float d5 = saturate(dot(normalize(halfVec), normal));
+    d5 = pow(d5, 30);
+    float d6 = saturate(dot(normal, viewDir));
+    d6 = saturate(1 - pow(d6, 0.5));
+    float4 pointLightSpecular = 2 * saturate(d4) * (d5 + (d6 * 0.75)) * pointLight.diffuse;
+
+
+    return 
+        (diffuse + specular + pointLightDiffuse + pointLightSpecular + dirLight.ambient) * col;
+        float4(i.normal, 1);
 }

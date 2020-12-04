@@ -1,5 +1,5 @@
 #pragma once
-#include "CLight.h"
+#include "CLighting.h"
 #include "CDirect.h"
 #include "CCamera.h"
 #include <d3d11.h>
@@ -19,21 +19,22 @@ public:
 	void Render(XMMATRIX _worldMatrix);
 	void Release();
 
-	void SetPerFrameBuffer(const CLight& _light);
 
 private:
 	CDirect* p_d3d;
 	CCamera* p_camera;
+	CLighting* p_lighting;
 
 
 	int createVertexShader(LPCWSTR _shaderName);
 	int createPixelShader(LPCWSTR _shaderName);
 	int createInputLayout(ID3DBlob* _pBlob);
 	int createMatrixBuffer();
-	int createPixelShaderBuffer();
+	int createLightingBuffer();
 	int createTextureAndSampler(LPCWSTR _textureName, ID3D11ShaderResourceView** _texture_SRV);
 
-	void setPerObjectBuffer(XMMATRIX _worldMatrix);
+	void setMatrixBuffer(XMMATRIX _worldMatrix);
+	void SetLightingBuffer();
 
 	// shader
 	ID3D11VertexShader* p_vertexShader = nullptr;
@@ -47,18 +48,19 @@ private:
 	ID3D11ShaderResourceView* p_normalTexture_SRV = nullptr;
 	ID3D11SamplerState* p_texture_SS = nullptr;
 
-	//constant buffer
-	ID3D11Buffer* p_cbPerObj = nullptr;
-	struct cbPerObject
+	// constant buffer
+	ID3D11Buffer* p_cbMatrix = nullptr;
+	struct cbMatrix
 	{
 		XMMATRIX WVP;
 		XMMATRIX World;
 		XMFLOAT3 WCP;
 	};
 
-	ID3D11Buffer* p_cbPerFrame = nullptr;
-	struct cbPerFrame
+	ID3D11Buffer* p_cbLighting = nullptr;
+	struct cbLighting
 	{
-		CLight Light;
+		CDirectionalLight dirLight;
+		CPointLight pointLight;
 	};
 };

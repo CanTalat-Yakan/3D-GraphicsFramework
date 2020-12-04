@@ -26,8 +26,5 @@ private:
 	CMaterial m_mat_Toon = {};
 	CMaterial m_mat_Fresnel = {};
 	CMaterial m_mat_Bird = {};
-
-	CLight m_light = {};
-	CTransform m_lightTransform;
 };
 

@@ -7,6 +7,7 @@ int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 #pragma region //Get Instances of DirectX and Camera
 	p_d3d = &p_d3d->GetInstance();
 	p_camera = &p_camera->GetInstance();
+	p_lighting = &p_lighting->GetInstance();
 #pragma endregion
 
 #pragma region //Create Material
@@ -14,7 +15,7 @@ int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 	if (error = createVertexShader(_shaderName) > 0) return error;
 	if (error = createPixelShader(_shaderName) > 0) return error;
 	if (error = createMatrixBuffer() > 0) return error;
-	if (error = createPixelShaderBuffer() > 0) return error;
+	if (error = createLightingBuffer() > 0) return error;
 	if (error = createTextureAndSampler(_textureName, &p_texture_SRV) > 0) return error;
 #pragma endregion
 
@@ -41,7 +42,8 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 	p_d3d->getDeviceContext()->VSSetShader(p_vertexShader, nullptr, 0);
 	p_d3d->getDeviceContext()->PSSetShader(p_pixelShader, nullptr, 0);
 
-	setPerObjectBuffer(_worldMatrix);
+	setMatrixBuffer(_worldMatrix);
+	SetLightingBuffer();
 
 	p_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &p_texture_SRV);
 	p_d3d->getDeviceContext()->PSSetShaderResources(1, 1, &p_normalTexture_SRV);
@@ -52,9 +54,10 @@ void CMaterial::Release()
 {
 	if (p_texture_SRV)
 		p_texture_SRV->Release();
+	p_texture_SRV = nullptr;
+
 	if (p_normalTexture_SRV)
 		p_normalTexture_SRV->Release();
-	p_texture_SRV = nullptr;
 	p_normalTexture_SRV = nullptr;
 
 	if (p_texture_SS)
@@ -67,42 +70,42 @@ void CMaterial::Release()
 	p_pixelShader = nullptr;
 	p_inputLayout->Release();
 	p_inputLayout = nullptr;
-	p_cbPerObj->Release();
-	p_cbPerObj = nullptr;
-	p_cbPerFrame->Release();
-	p_cbPerFrame = nullptr;
+	p_cbMatrix->Release();
+	p_cbMatrix = nullptr;
+	p_cbLighting->Release();
+	p_cbLighting = nullptr;
 	p_d3d = nullptr;
 	p_camera = nullptr;
 }
 
 
-void CMaterial::SetPerFrameBuffer(const CLight& _light)
+void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbPerFrame, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbMatrix, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 
-	cbPerFrame* buffer = reinterpret_cast<cbPerFrame*>(data.pData);
-	buffer->Light = _light;
-
-	p_d3d->getDeviceContext()->Unmap(p_cbPerFrame, 0);
-
-	p_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &p_cbPerFrame);
-}
-
-void CMaterial::setPerObjectBuffer(XMMATRIX _worldMatrix)
-{
-	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbPerObj, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
-	if (FAILED(hr)) return;
-	cbPerObject* buffer = reinterpret_cast<cbPerObject*>(data.pData);
-
+	cbMatrix* buffer = reinterpret_cast<cbMatrix*>(data.pData);
 	buffer->WVP = _worldMatrix * p_camera->GetViewProjectionMatrix();
 	buffer->World = _worldMatrix;
 	buffer->WCP = p_camera->GetCamPosFloat3();
 
-	p_d3d->getDeviceContext()->Unmap(p_cbPerObj, 0);
-	p_d3d->getDeviceContext()->VSSetConstantBuffers(0, 1, &p_cbPerObj);
+	p_d3d->getDeviceContext()->Unmap(p_cbMatrix, 0);
+	p_d3d->getDeviceContext()->VSSetConstantBuffers(0, 1, &p_cbMatrix);
+}
+
+void CMaterial::SetLightingBuffer()
+{
+	D3D11_MAPPED_SUBRESOURCE data = {};
+	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbLighting, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	if (FAILED(hr)) return;
+
+	cbLighting* buffer = reinterpret_cast<cbLighting*>(data.pData);
+	buffer->dirLight = p_lighting->m_DirLight;
+	buffer->pointLight = p_lighting->m_PointLight;
+
+	p_d3d->getDeviceContext()->Unmap(p_cbLighting, 0);
+	p_d3d->getDeviceContext()->PSSetConstantBuffers(0, 1, &p_cbLighting);
 }
 
 
@@ -182,27 +185,27 @@ int CMaterial::createMatrixBuffer()
 {
 	D3D11_BUFFER_DESC cbDESC = {};
 	cbDESC.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbDESC.ByteWidth = sizeof(cbPerObject);
+	cbDESC.ByteWidth = sizeof(cbMatrix);
 	cbDESC.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &p_cbPerObj);
+	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &p_cbMatrix);
 	if (FAILED(hr)) return 58;
 
 	return 0;
 }
 
-int CMaterial::createPixelShaderBuffer()
+int CMaterial::createLightingBuffer()
 {
 	D3D11_BUFFER_DESC cbDESC = {};
 	cbDESC.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbDESC.ByteWidth = sizeof(cbPerFrame);
+	cbDESC.ByteWidth = sizeof(cbLighting);
 	cbDESC.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &p_cbPerFrame);
+	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &p_cbLighting);
 	if (FAILED(hr)) return 51;
 
 	return 0;

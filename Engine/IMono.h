@@ -2,7 +2,7 @@
 #include "CMesh.h";
 #include "CMaterial.h";
 #include "CObjLoader.h"
-#include "CLight.h";
+#include "CLighting.h";
 #include "CCamera.h";
 #include "CTime.h";
 #include "GObject.h";
@@ -18,14 +18,14 @@ public:
 	virtual void LateUpdate() = 0;
 	virtual void Release() = 0;
 
-	CDirect* D3d = {};
 	CCamera* Camera = {};
 	CTime* Time = {};
+	CLighting* Lighting = {};
 
 	inline void GetInstances() 
 	{
-		D3d = &D3d->GetInstance();
 		Camera = &Camera->GetInstance();
 		Time = &Time->GetInstance();
+		Lighting = &Lighting->GetInstance();
 	}
 };

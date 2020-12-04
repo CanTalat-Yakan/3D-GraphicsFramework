@@ -4,9 +4,6 @@
 #include "CTime.h";
 #include "CInput.h";
 #include "CCamera.h";
-#include "CLight.h";
-#include "CMesh.h";
-#include "CMaterial.h";
 #include "CObjLoader.h"
 
 class CEngine
@@ -14,9 +11,9 @@ class CEngine
 public:
 	CWindow* p_window = {};	//Create Window
 	CTime* p_time = {};		//Create DeltaTime and Timer
-	CInput* p_input = {};		//Create InputManger
+	CInput* p_input = {};	//Create InputManger
 	CCamera* p_camera = {};	//Create CameraView
-	CDirect* p_d3d = {};		//Create Direct3D 11
+	CDirect* p_d3d = {};	//Create Direct3D 11
 
 	inline int Init(HINSTANCE _hInstance, INT _nCmdShow)
 	{

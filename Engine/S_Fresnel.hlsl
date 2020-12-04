@@ -1,14 +1,23 @@
-struct Light
+struct DirectionalLight
 {
     float3 direction;
     float intensity;
-    float4 ambient;
     float4 diffuse;
+    float4 ambient;
+};
+
+struct PointLight
+{
+    float3 position;
+    float intensity;
+    float4 diffuse;
+    float radius;
 };
 
 cbuffer cbPerFrame
 {
-    Light light;
+    DirectionalLight dirLight;
+    PointLight pointLight;
 };
 
 cbuffer cbPerObject
