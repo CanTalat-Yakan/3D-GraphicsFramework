@@ -36,7 +36,7 @@ struct VS_OUTPUT
 };
 
 Texture2D ObjTexture : register(t0);
-SamplerState ObjSamplerState;
+SamplerState ObjSamplerState : register(s0);
 
 VS_OUTPUT VS(appdata v)
 {
