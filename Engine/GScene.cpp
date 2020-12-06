@@ -25,8 +25,6 @@ void GScene::Init()
 	//Obj Files
 	CObj cube = m_obj.Load(L"R_Cube.obj");
 	m_cube.mesh.Init(cube);
-	m_cube2.mesh.Init(cube);
-	m_cube3.mesh.Init(cube);
 
 	CObj sphere = m_obj.Load(L"R_Sphere.obj");
 	m_sphere.mesh.Init(sphere);
@@ -38,35 +36,35 @@ void GScene::Init()
 	m_cylinder2.mesh.Init(cylinder);
 	m_cylinder3.mesh.Init(cylinder);
 
-	CObj bird = m_obj.Load(L"R_Bird.obj");
-	m_bird.mesh.Init(bird);
-	m_bird2.mesh.Init(bird);
-	m_bird3.mesh.Init(bird);
+	CObj duck = m_obj.Load(L"R_Duck.obj");
+	m_duck.mesh.Init(duck);
+	m_duck2.mesh.Init(duck);
+	m_duck3.mesh.Init(duck);
 #pragma endregion
 
 #pragma region //Setup Materials
 	m_mat_Sky.Init(
 		L"S_SkyBox.hlsl",
-		L"T_SkyBox.png");
+		L"T_SkyBox2.png");
 	m_mat_Standard.Init(
 		L"S_Standard.hlsl",
 		L"T_White.png");
 	m_mat_Standard2.Init(
 		L"S_Standard.hlsl",
-		L"T_Grid.png",
+		L"T_Proto3.png",
 		L"T_NormalDebug2.png");
 	m_mat_Standard3.Init(
 		L"S_Standard.hlsl",
-		L"T_Proto.png");
+		L"T_Proto2.png");
 	m_mat_Toon.Init(
 		L"S_Toon.hlsl",
-		L"T_Grid.png");
+		L"T_Proto3.png");
 	m_mat_Fresnel.Init(
 		L"S_Fresnel.hlsl",
-		L"T_Grid.png");
-	m_mat_Bird.Init(
+		L"T_White.png");
+	m_mat_duck.Init(
 		L"S_Standard.hlsl",
-		L"T_Bird.png");
+		L"T_Duck2.png");
 #pragma endregion
 }
 
@@ -88,8 +86,6 @@ void GScene::Start()
 	m_plane.transform.SetPosition(0, 0, 2);
 
 	m_cube.transform.SetPosition(0, 1.5f, 0);
-	m_cube2.transform.SetPosition(0, 1.5f, 2);
-	m_cube3.transform.SetPosition(0, 1.5f, 4);
 
 	m_sphere.transform.SetRotation(-180, 0, 0);
 	m_sphere.transform.SetScale(1.5f);
@@ -106,14 +102,14 @@ void GScene::Start()
 	m_cylinder2.transform.m_position.z += 2;
 	m_cylinder3.transform.m_position.z += 4;
 
-	m_bird.transform.SetRotation(90, 120, 10);
-	m_bird.transform.SetScale(0.1f);
-	m_bird.transform.SetPosition(-4.25f, 0, 0);
-	m_bird2.transform = m_bird3.transform = m_bird.transform;
-	m_bird2.transform.m_position.x += 1;
-	m_bird2.transform.m_position.z += 3;
-	m_bird3.transform.m_position.x += 1;
-	m_bird3.transform.m_position.z += 6;
+	m_duck.transform.SetRotation(90, 120, 10);
+	m_duck.transform.SetScale(0.1f);
+	m_duck.transform.SetPosition(-4.25f, 0, 0);
+	m_duck2.transform = m_duck3.transform = m_duck.transform;
+	m_duck2.transform.m_position.x += 3;
+	m_duck2.transform.m_position.z += 3;
+	m_duck3.transform.m_position.x += 3;
+	m_duck3.transform.m_position.z += 6;
 #pragma endregion
 }
 
@@ -131,8 +127,6 @@ void GScene::Update()
 	float rot = Time->getDeltaTime();
 
 	m_cube.transform.SetRotationDeg(0, rot, 0);
-	m_cube2.transform.SetRotationDeg(0, rot, 0);
-	m_cube3.transform.SetRotationDeg(0, rot, 0);
 
 	m_cylinder.transform.SetRotationDeg(0, rot, 0);
 	m_cylinder2.transform.SetRotationDeg(0, rot, 0);
@@ -152,8 +146,6 @@ void GScene::LateUpdate()
 	m_plane.Update_Render(m_mat_Standard3);
 
 	m_cube.Update_Render(m_mat_Standard2);
-	m_cube2.Update_Render(m_mat_Toon);
-	m_cube3.Update_Render(m_mat_Fresnel);
 
 	m_sphere.Update_Render(m_mat_Standard2);
 	m_sphere2.Update_Render(m_mat_Toon);
@@ -163,9 +155,9 @@ void GScene::LateUpdate()
 	m_cylinder2.Update_Render(m_mat_Toon);
 	m_cylinder3.Update_Render(m_mat_Fresnel);
 
-	m_bird.Update_Render(m_mat_Bird);
-	m_bird2.Update_Render(m_mat_Toon);
-	m_bird3.Update_Render(m_mat_Fresnel);
+	m_duck.Update_Render(m_mat_duck);
+	m_duck2.Update_Render(m_mat_Toon);
+	m_duck3.Update_Render(m_mat_Fresnel);
 #pragma endregion
 }
 
@@ -175,17 +167,15 @@ void GScene::Release()
 	m_skyBox.Release();
 	m_plane.Release();
 	m_cube.Release();
-	m_cube2.Release();
-	m_cube3.Release();
 	m_sphere.Release();
 	m_sphere2.Release();
 	m_sphere3.Release();
 	m_cylinder.Release();
 	m_cylinder2.Release();
 	m_cylinder3.Release();
-	m_bird.Release();
-	m_bird2.Release();
-	m_bird3.Release();
+	m_duck.Release();
+	m_duck2.Release();
+	m_duck3.Release();
 
 	m_mat_Sky.Release();
 	m_mat_Standard.Release();
@@ -193,5 +183,5 @@ void GScene::Release()
 	m_mat_Standard3.Release();
 	m_mat_Toon.Release();
 	m_mat_Fresnel.Release();
-	m_mat_Bird.Release();
+	m_mat_duck.Release();
 }

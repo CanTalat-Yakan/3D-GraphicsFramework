@@ -5,7 +5,6 @@ struct DirectionalLight
     float4 diffuse;
     float4 ambient;
 };
-
 struct PointLight
 {
     float3 position;
@@ -19,7 +18,6 @@ cbuffer cbPerFrame
     DirectionalLight dirLight;
     PointLight pointLight;
 };
-
 cbuffer cbPerObject
 {
     float4x4 WVP;
@@ -34,7 +32,6 @@ struct appdata
     float3 normal : NORMAL;
     float3 tangent : TANGENT;
 };
-
 struct VS_OUTPUT
 {
     float4 pos : SV_POSITION;
@@ -47,16 +44,63 @@ struct VS_OUTPUT
     float3 binormal : BINORMAL;
 };
 
-float3 calculateTangent(float3 n)
+float3 calculateTangent(float3 _normal)
 {
-    float3 v = float3(1.0, 0.0, 0.0);
-    float d = dot(v, n);
+    float3 vec = float3(1.0, 0.0, 0.0);
+    float d = dot(vec, _normal);
+
     if (abs(d) < 1.0e-3)
     {
-        v = float3(0.0, 1.0, 0.0);
-        d = dot(v, n);
+        vec = float3(0.0, 1.0, 0.0);
+        d = dot(vec, _normal);
     }
-    return normalize(v - d * n);
+
+    
+    return normalize(vec - d * _normal);
+}
+float3 calculateTangent2(float3 _normal)
+{
+    float3 t1 = cross(_normal, float3(0, 0, 1));
+    float3 t2 = cross(_normal, float3(0, 1, 0));
+
+
+    return (length(t1) > length(t2)) ? normalize(t1) : normalize(t2);
+}
+float CalculateFallOff(float _radius, float3 _lightDir)
+{
+    float fallOff = saturate(_radius - length(_lightDir)); //calculating the fallOff acording to the radius of the light
+
+    //When no radius is applied, then calculate without any radius
+    if (_radius < 0)
+        fallOff = 1;
+
+    
+    return fallOff;
+}
+float4 CalculateDiffuse(float3 _normal, float3 _lightDir, float4 _diffuse, float _intensity, float _radius = -1)
+{
+    float fallOff = CalculateFallOff(_radius, _lightDir);
+
+    float d = saturate(dot(_normal, normalize(_lightDir)) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
+
+
+    return float4(d * _diffuse * _intensity);
+}
+float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, float4 _diffuse, float _intensity, float _radius = -1)
+{
+    float3 viewDir = normalize(_viewDir); //calculating the direction in which the camera targets
+    float3 halfVec = viewDir + _lightDir; //the half Vector between the view Dir and the light
+    float fallOff = CalculateFallOff(_radius, _lightDir);
+    
+    float d = saturate(dot(_normal, normalize(_lightDir)) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
+
+    float d2 = saturate(dot(normalize(halfVec), _normal)); //calculating the area hit by the specular light
+    d2 = pow(d2, 30); //calculating power 30 to the specular
+    float d3 = saturate(dot(_normal, viewDir)); // calculating the fresnel diffuse
+    d3 = saturate(1 - pow(d3, 0.5)); //calculating power 0.5 to the fresnel
+
+    
+    return float4(2 * saturate(d) * (d2 + (d3 * 0.75)) * _diffuse * _intensity);
 }
 
 Texture2D ObjTexture : register(t0);
@@ -73,12 +117,10 @@ VS_OUTPUT VS(appdata v)
     o.camPos = WCP;
     o.uv = v.uv;
 
-    float3 t1 = cross(o.normal, float3(0, 0, 1));
-    float3 t2 = cross(o.normal, float3(0, 1, 0));
-    v.tangent = (length(t1) > length(t2)) ? normalize(t1) : normalize(t2);
     //v.tangent = calculateTangent(o.normal);
+    v.tangent = calculateTangent2(o.normal);
 
-    o.tangent = normalize(mul(World, float4(v.tangent, 1)));
+    o.tangent = normalize(mul(float4(v.tangent, 0), World));
     o.binormal = normalize(cross(o.normal, o.tangent));
     o.tbn = float3x3(o.tangent, o.binormal, o.normal);
 
@@ -90,43 +132,44 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
     float3 colNormal = ObjNormal.Sample(ObjSamplerState, float2(-i.uv.x, i.uv.y));
     
-    //calulate normal
+    //calculating normal
     float3 normal = i.normal;
-    //i.tbn = float3x3(i.tangent, i.binormal, i.normal);
-    //normal = mul(colNormal * 2 - 1, i.tbn);
-    //normal = normalize(normal);
+    if (length(colNormal) > 0)
+    {
+        i.tbn = float3x3(i.tangent, i.binormal, i.normal);
+        normal = mul(colNormal * 2 - 1, i.tbn);
+        normal = normalize(normal);
+    }
+
     
-
-    //calculate dirLight diffuse 
-    float d = saturate(dot(normal, dirLight.direction)); //by calculating the angle of the normal and the light direction with the dot method 
-    //then saturating the diffuse so the backsite does not get values below 0
-    float4 diffuse = d * dirLight.diffuse * dirLight.intensity; //calculating the diffuse with the sun lit area and the directional Light Diffuse and intensity
-	
-    //calculate dirLight specular
-    float3 viewDir = normalize(i.worldPos - i.camPos); //calculating the direction in which the camera targets
-    float3 halfVec = viewDir + dirLight.direction; //the half Vector between the view Dir and the sun light
-    float d2 = saturate(dot(normalize(halfVec), normal)); //calculating the area hit by the specular light
-    d2 = pow(d2, 30); //calculating power 30 to the specular
-    float d3 = saturate(dot(normal, viewDir)); // calculating the fresnel diffuse
-    d3 = saturate(1 - pow(d3, 0.5)); //calculating power 0.5 to the fresnel
-    float4 specular = 2 * saturate(d) * (d2 + (d3 * 0.75)) * dirLight.diffuse * dirLight.intensity; //specular from the sunlight diffuse area with the specular and fresnel
-
-    //calculate pointLight diffuse
-    float3 pointDir = (i.worldPos - pointLight.position); //calculating the direction in which the point light hits the target
-    float fallOff = saturate(3.5 - length(pointDir)); //calculating the fallOff acording to the radius of the point light
-    float d4 = saturate(dot(normal, normalize(pointDir)) * fallOff); //calculating the dot product of the pointDir and the surface normal with fallOff
-    float4 pointLightDiffuse = d4 * pointLight.diffuse * pointLight.intensity; //calculating the diffuse with the point light lit area and the point Light Diffuse and intensity
+    //calculating directionalLight
+    float4 directionalLight =
+        CalculateDiffuse(
+            normal, 
+            dirLight.direction, 
+            dirLight.diffuse, dirLight.intensity)
+        + CalculateSpecular(
+            normal, 
+            i.worldPos - i.camPos, 
+            dirLight.direction, 
+            dirLight.diffuse, dirLight.intensity);
     
-    //calculate pointLight specular
-    halfVec = viewDir + pointDir; //half Vector from the targeting view Direction and the point Light Direction
-    float d5 = saturate(dot(normalize(halfVec), normal)); //calculating the area hit by the specular light
-    d5 = pow(d5, 30); //calculating power 30 to the specular
-    float d6 = saturate(dot(normal, viewDir)); // calculating the fresnel diffuse
-    d6 = saturate(1 - pow(d6, 0.5)); //calculating power 0.5 to the fresnel
-    float4 pointLightSpecular = 2 * saturate(d4) * (d5 + (d6 * 0.75)) * pointLight.diffuse * pointLight.intensity; //specular from the point Light diffuse area with the specular and fresnel
+    //calculating pointLight
+    float4 PointLight =
+        CalculateDiffuse(
+            normal, 
+            i.worldPos - pointLight.position, 
+            pointLight.diffuse, pointLight.intensity, 
+            3.5)
+        + CalculateSpecular(
+            normal, 
+            i.worldPos - i.camPos, 
+            i.worldPos - pointLight.position, 
+            pointLight.diffuse, pointLight.intensity,
+            3.5);
 
 
-    return 
-        (diffuse + specular + pointLightDiffuse + pointLightSpecular + dirLight.ambient) * col;
+    return
+        (directionalLight + PointLight + dirLight.ambient) * col;
         float4(normal, 1);
 }

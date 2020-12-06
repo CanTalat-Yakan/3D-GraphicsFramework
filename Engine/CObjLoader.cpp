@@ -5,6 +5,7 @@
 CObj CObjLoader::Load(LPCWSTR _fileName)
 {
 	loadFile(_fileName);
+	//SafeFile();
 
 	return m_obj;
 }
@@ -248,4 +249,18 @@ std::vector<std::string> CObjLoader::splitString(std::string _line, std::string 
 	}
 	list.push_back(_line);
 	return list;
+}
+
+void CObjLoader::SafeFile()
+{
+	std::ofstream fileStream(L"Text.txt");
+	if (!fileStream.is_open())
+		return;
+
+	//std::string verticesList(m_obj.vertices.begin(), m_obj.vertices.end());
+	//fileStream << verticesList;
+	//std::string indicesList(m_obj.indices.begin(), m_obj.indices.end());
+	//fileStream << indicesList;
+
+	fileStream.close();
 }
