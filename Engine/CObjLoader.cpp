@@ -90,6 +90,11 @@ void CObjLoader::loadPrimVertices()
 
 		break;
 	}
+	case EPrimitives::Sphere:
+	{
+
+		break;
+	}
 	default:
 		break;
 	}
@@ -144,6 +149,11 @@ void CObjLoader::loadPrimIndices()
 
 		break;
 	}
+	case EPrimitives::Sphere:
+	{
+
+		break;
+	}
 	default:
 		break;
 	}
@@ -170,6 +180,7 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 	std::vector<std::string> split_l = {};
 	std::string line = {};
 	int faceCount = 0;
+	float vertexCount = 0;
 
 	while (std::getline(*_fileStream, line))
 	{
@@ -202,8 +213,14 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 #pragma region //Face
 		if (split_l[0] == "f")
 		{
-			for (int i = 1; i <= 4; i++)
+			vertexCount = split_l.size() - 1;
+			for (int i = 1; i <= vertexCount; i++)
 			{
+				if (split_l[i].empty())
+				{
+					vertexCount--;
+					continue;
+				}
 #pragma region //Set Vertices
 				split_f = splitString(split_l[i], "/");
 
@@ -217,16 +234,19 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 					normals[std::stof(split_f[2]) - 1].x,
 					normals[std::stof(split_f[2]) - 1].y,
 					normals[std::stof(split_f[2]) - 1].z));
-					//0,0,0));
 #pragma endregion
 			}
 #pragma region //Set Indices
-			m_obj.indices.push_back(0 + (faceCount * 4));
-			m_obj.indices.push_back(2 + (faceCount * 4));
-			m_obj.indices.push_back(1 + (faceCount * 4));
-			m_obj.indices.push_back(0 + (faceCount * 4));
-			m_obj.indices.push_back(3 + (faceCount * 4));
-			m_obj.indices.push_back(2 + (faceCount * 4));
+			float offSet = (faceCount * vertexCount);
+			m_obj.indices.push_back(0 + offSet);
+			m_obj.indices.push_back(2 + offSet);
+			m_obj.indices.push_back(1 + offSet);
+			if (vertexCount == 4)
+			{
+				m_obj.indices.push_back(0 + offSet);
+				m_obj.indices.push_back(3 + offSet);
+				m_obj.indices.push_back(2 + offSet);
+			}
 #pragma endregion
 			faceCount++;
 		}
@@ -251,16 +271,38 @@ std::vector<std::string> CObjLoader::splitString(std::string _line, std::string 
 	return list;
 }
 
-void CObjLoader::SafeFile()
+void CObjLoader::SafeFile(std::string _fileName, CObj _obj)
 {
-	std::ofstream fileStream(L"Text.txt");
+	std::ofstream fileStream(_fileName + ".txt");
 	if (!fileStream.is_open())
 		return;
 
-	//std::string verticesList(m_obj.vertices.begin(), m_obj.vertices.end());
-	//fileStream << verticesList;
-	//std::string indicesList(m_obj.indices.begin(), m_obj.indices.end());
-	//fileStream << indicesList;
+	std::string s = "";
+
+	for (int i = 0; i < _obj.vertices.size(); i++)
+	{
+		s.append("CVertex(");
+
+		s.append(std::to_string(_obj.vertices[i].pos.x) + ", ");
+		s.append(std::to_string(_obj.vertices[i].pos.y) + ", ");
+		s.append(std::to_string(_obj.vertices[i].pos.z) + ", ");
+		s.append(std::to_string(_obj.vertices[i].texCoord.x) + ", ");
+		s.append(std::to_string(_obj.vertices[i].texCoord.y) + ", ");
+		s.append(std::to_string(_obj.vertices[i].normal.x) + ", ");
+		s.append(std::to_string(_obj.vertices[i].normal.y) + ", ");
+		s.append(std::to_string(_obj.vertices[i].normal.z) + "");
+
+		s.append((i == _obj.vertices.size() - 1) ? ") \n" : "), \n");
+	}
+
+	s.append("\n");
+
+	for (int i = 0; i < _obj.indices.size(); i++)
+	{
+		s.append(std::to_string(_obj.indices[i]) + ", ");
+	}
+
+	fileStream << s;
 
 	fileStream.close();
 }

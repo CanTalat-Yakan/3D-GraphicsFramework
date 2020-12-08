@@ -40,31 +40,42 @@ void GScene::Init()
 	m_duck.mesh.Init(duck);
 	m_duck2.mesh.Init(duck);
 	m_duck3.mesh.Init(duck);
+
+	CObj volcano = m_obj.Load(L"R_Volcano.obj");
+	m_volcano.mesh.Init(volcano);
 #pragma endregion
 
 #pragma region //Setup Materials
 	m_mat_Sky.Init(
 		L"S_SkyBox.hlsl",
-		L"T_SkyBox2.png");
+		L"T_SkyBox.png");
+
 	m_mat_Standard.Init(
 		L"S_Standard.hlsl",
-		L"T_White.png");
+		L"T_Gray.png");
 	m_mat_Standard2.Init(
 		L"S_Standard.hlsl",
-		L"T_Proto3.png",
-		L"T_NormalDebug2.png");
+		L"T_Proto2.png");
 	m_mat_Standard3.Init(
 		L"S_Standard.hlsl",
-		L"T_Proto2.png");
+		L"T_Proto4.png",
+		L"T_NormalDebug2.png");
+
 	m_mat_Toon.Init(
 		L"S_Toon.hlsl",
-		L"T_Proto3.png");
+		L"T_Proto4.png");
+
 	m_mat_Fresnel.Init(
 		L"S_Fresnel.hlsl",
 		L"T_White.png");
-	m_mat_duck.Init(
+
+	m_mat_Duck.Init(
 		L"S_Standard.hlsl",
-		L"T_Duck2.png");
+		L"T_Duck.png");
+
+	m_mat_Volcano.Init(
+		L"S_Standard.hlsl",
+		L"T_Volcano.png");
 #pragma endregion
 }
 
@@ -110,6 +121,10 @@ void GScene::Start()
 	m_duck2.transform.m_position.z += 3;
 	m_duck3.transform.m_position.x += 3;
 	m_duck3.transform.m_position.z += 6;
+
+	m_volcano.transform.SetScale(0.0001, 0.0001, 0.0001);
+	m_volcano.transform.SetRotation(0, 0, 180);
+	m_volcano.transform.SetPosition(0, -10, 0);
 #pragma endregion
 }
 
@@ -143,21 +158,23 @@ void GScene::LateUpdate()
 #pragma region //Render Contents
 	m_skyBox.Update_Render(m_mat_Sky);
 
-	m_plane.Update_Render(m_mat_Standard3);
+	m_plane.Update_Render(m_mat_Standard2);
 
-	m_cube.Update_Render(m_mat_Standard2);
+	m_cube.Update_Render(m_mat_Standard3);
 
-	m_sphere.Update_Render(m_mat_Standard2);
+	m_sphere.Update_Render(m_mat_Standard3);
 	m_sphere2.Update_Render(m_mat_Toon);
 	m_sphere3.Update_Render(m_mat_Fresnel);
 
-	m_cylinder.Update_Render(m_mat_Standard2);
+	m_cylinder.Update_Render(m_mat_Standard3);
 	m_cylinder2.Update_Render(m_mat_Toon);
 	m_cylinder3.Update_Render(m_mat_Fresnel);
 
-	m_duck.Update_Render(m_mat_duck);
+	m_duck.Update_Render(m_mat_Duck);
 	m_duck2.Update_Render(m_mat_Toon);
 	m_duck3.Update_Render(m_mat_Fresnel);
+
+	m_volcano.Update_Render(m_mat_Volcano);
 #pragma endregion
 }
 
@@ -176,6 +193,7 @@ void GScene::Release()
 	m_duck.Release();
 	m_duck2.Release();
 	m_duck3.Release();
+	m_volcano.Release();
 
 	m_mat_Sky.Release();
 	m_mat_Standard.Release();
@@ -183,5 +201,5 @@ void GScene::Release()
 	m_mat_Standard3.Release();
 	m_mat_Toon.Release();
 	m_mat_Fresnel.Release();
-	m_mat_duck.Release();
+	m_mat_Duck.Release();
 }

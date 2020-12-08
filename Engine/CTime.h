@@ -13,8 +13,8 @@ public:
 	void Update();
 	void Release();
 
-	double getDeltaTime() { return m_deltaTime; }
-	double getTime() { return m_time; }
+	inline double getDeltaTime() { return m_deltaTime; }
+	inline double getTime() { return m_time; }
 
 private:
 	CTime() {}

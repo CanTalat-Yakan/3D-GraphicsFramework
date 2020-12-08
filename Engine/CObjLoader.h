@@ -9,12 +9,14 @@ enum class EPrimitives
 	Plane,
 	Cylinder,
 	Pyramid,
+	Sphere,
 };
 class CObjLoader
 {
 public:
 	CObj Load(LPCWSTR _fileName);
 	CObj Load(EPrimitives _primitiveType);
+	void SafeFile(std::string _fileName, CObj _obj);
 
 private:
 	void loadPrimVertices();
@@ -22,7 +24,6 @@ private:
 	void loadFile(LPCWSTR _fileName);
 	void readFile(std::ifstream* _fileStream);
 	std::vector<std::string> splitString(std::string _s, std::string _delim);
-	void SafeFile();
 
 	CObj m_obj = {};
 	EPrimitives m_prim = {};
