@@ -1,26 +1,4 @@
-struct DirectionalLight
-{
-    float3 direction;
-    float intensity;
-    float4 diffuse;
-    float4 ambient;
-};
-
-struct PointLight
-{
-    float3 position;
-    float intensity;
-    float4 diffuse;
-    float radius;
-};
-
-cbuffer cbPerFrame
-{
-    DirectionalLight dirLight;
-    PointLight pointLight;
-};
-
-cbuffer cbPerObject
+cbuffer cbMatrix : register(b0)
 {
     float4x4 WVP;
     float4x4 World;
@@ -32,7 +10,6 @@ struct appdata
     float3 vertex : POSITION;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
-    float3 tangent : TANGENT;
 };
 
 struct VS_OUTPUT

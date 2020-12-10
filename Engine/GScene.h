@@ -21,6 +21,7 @@ private:
 	GObject m_cylinder, m_cylinder2, m_cylinder3 = {};
 	GObject m_duck, m_duck2, m_duck3 = {};
 	GObject m_volcano = {};
+	GObject m_water = {};
 
 	CMaterial m_mat_Sky = {};
 	CMaterial m_mat_Standard, m_mat_Standard2, m_mat_Standard3 = {};
@@ -28,5 +29,7 @@ private:
 	CMaterial m_mat_Fresnel = {};
 	CMaterial m_mat_Duck = {};
 	CMaterial m_mat_Volcano = {};
+	CMaterial m_mat_Water = {};
+	CMaterial m_mat_Terrain = {};
 };
 

@@ -13,16 +13,16 @@ struct PointLight
     float radius;
 };
 
-cbuffer cbPerFrame
-{
-    DirectionalLight dirLight;
-    PointLight pointLight;
-};
-cbuffer cbPerObject
+cbuffer cbMatrix : register(b0)
 {
     float4x4 WVP;
     float4x4 World;
     float3 WCP;
+};
+cbuffer cbLighting : register(b1)
+{
+    DirectionalLight dirLight;
+    PointLight pointLight;
 };
 
 struct appdata

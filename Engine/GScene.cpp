@@ -9,40 +9,43 @@ void GScene::Init()
 	Lighting->DirectionalLight.diffuse = { 1.0f, 1.0f, 0.9f, 1.0f };
 	Lighting->DirectionalLight.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
 
-	Lighting->PointLight.position = { 0.0f, 0.5f, 0.0f };
-	Lighting->PointLight.intensity = 0.7f;
 	Lighting->PointLight.diffuse = { 0.2f, 0.6f, 0.0f, 1.0f };
-	//Lighting->GetPointlLight()->radius = 3.5f;
+	Lighting->PointLight.intensity = 0.7f;
+	Lighting->PointLight.position = { 0.0f, 0.5f, 0.0f };
+	//Lighting->PointLight.radius = 3.5f;
 #pragma endregion
 
 #pragma region //Load Meshes
-	CObjLoader m_obj = {};
+	CObjLoader obj = {};
 
 	//Primitives
-	m_skyBox.mesh.Init(m_obj.Load(EPrimitives::Cube));
-	m_plane.mesh.Init(m_obj.Load(EPrimitives::Plane));
+	m_skyBox.mesh.Init(obj.Load(EPrimitives::Cube));
+	m_plane.mesh.Init(obj.Load(EPrimitives::Plane));
 
 	//Obj Files
-	CObj cube = m_obj.Load(L"R_Cube.obj");
+	CObj cube = obj.Load(L"R_Cube.obj");
 	m_cube.mesh.Init(cube);
 
-	CObj sphere = m_obj.Load(L"R_Sphere.obj");
+	CObj sphere = obj.Load(L"R_Sphere.obj");
 	m_sphere.mesh.Init(sphere);
 	m_sphere2.mesh.Init(sphere);
 	m_sphere3.mesh.Init(sphere);
 
-	CObj cylinder = m_obj.Load(L"R_Cylinder_Hollow.obj");
+	CObj cylinder = obj.Load(L"R_Cylinder_Hollow.obj");
 	m_cylinder.mesh.Init(cylinder);
 	m_cylinder2.mesh.Init(cylinder);
 	m_cylinder3.mesh.Init(cylinder);
 
-	CObj duck = m_obj.Load(L"R_Duck.obj");
+	CObj duck = obj.Load(L"R_Duck.obj");
 	m_duck.mesh.Init(duck);
 	m_duck2.mesh.Init(duck);
 	m_duck3.mesh.Init(duck);
 
-	CObj volcano = m_obj.Load(L"R_Volcano.obj");
+	CObj volcano = obj.Load(L"R_Volcano.obj");
 	m_volcano.mesh.Init(volcano);
+
+	CObj terrain = obj.LoadTerrain(100, 100, 100);
+	m_water.mesh.Init(terrain);
 #pragma endregion
 
 #pragma region //Setup Materials
@@ -76,6 +79,15 @@ void GScene::Init()
 	m_mat_Volcano.Init(
 		L"S_Standard.hlsl",
 		L"T_Volcano.png");
+
+	m_mat_Water.Init(
+		L"S_Water.hlsl",
+		L"T_Grid.png");
+
+	m_mat_Terrain.Init(
+		L"S_Terrain.hlsl",
+		L"T_Volcano.png",
+		L"T_Height.png");
 #pragma endregion
 }
 
@@ -125,6 +137,8 @@ void GScene::Start()
 	m_volcano.transform.SetScale(0.0001, 0.0001, 0.0001);
 	m_volcano.transform.SetRotation(0, 0, 180);
 	m_volcano.transform.SetPosition(0, -10, 0);
+
+	m_water.transform.SetPosition(-50, -10, -50);
 #pragma endregion
 }
 
@@ -150,6 +164,8 @@ void GScene::Update()
 	m_sphere.transform.SetRotationDeg(0, rot, 0);
 	m_sphere2.transform.SetRotationDeg(0, rot, 0);
 	m_sphere3.transform.SetRotationDeg(0, rot, 0);
+
+	//m_terrain.transform.SetRotationDeg(0, 0, rot);
 #pragma endregion
 }
 
@@ -174,7 +190,9 @@ void GScene::LateUpdate()
 	m_duck2.Update_Render(m_mat_Toon);
 	m_duck3.Update_Render(m_mat_Fresnel);
 
-	m_volcano.Update_Render(m_mat_Volcano);
+	m_volcano.Update_Render(m_mat_Terrain);
+	m_water.Update_Render(m_mat_Water);
+	//m_water.Update_Render(m_mat_Terrain);
 #pragma endregion
 }
 
@@ -194,6 +212,7 @@ void GScene::Release()
 	m_duck2.Release();
 	m_duck3.Release();
 	m_volcano.Release();
+	m_water.Release();
 
 	m_mat_Sky.Release();
 	m_mat_Standard.Release();

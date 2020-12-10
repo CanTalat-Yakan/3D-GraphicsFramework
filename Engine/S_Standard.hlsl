@@ -13,16 +13,21 @@ struct PointLight
     float radius;
 };
 
-cbuffer cbPerFrame
-{
-    DirectionalLight dirLight;
-    PointLight pointLight;
-};
-cbuffer cbPerObject
+cbuffer cbMatrix : register(b0)
 {
     float4x4 WVP;
     float4x4 World;
     float3 WCP;
+};
+cbuffer cbLighting : register(b1)
+{
+    DirectionalLight dirLight;
+    PointLight pointLight;
+};
+cbuffer cbParameter : register(b2)
+{
+    float time;
+    float deltaTime;
 };
 
 struct appdata
@@ -46,6 +51,14 @@ struct VS_OUTPUT
 
 float3 calculateTangent(float3 _normal)
 {
+    float3 t1 = cross(_normal, float3(0, 0, 1));
+    float3 t2 = cross(_normal, float3(0, 1, 0));
+
+
+    return (length(t1) > length(t2)) ? normalize(t1) : normalize(t2);
+}
+float3 calculateTangent2(float3 _normal)
+{
     float3 vec = float3(1.0, 0.0, 0.0);
     float d = dot(vec, _normal);
 
@@ -57,14 +70,6 @@ float3 calculateTangent(float3 _normal)
 
     
     return normalize(vec - d * _normal);
-}
-float3 calculateTangent2(float3 _normal)
-{
-    float3 t1 = cross(_normal, float3(0, 0, 1));
-    float3 t2 = cross(_normal, float3(0, 1, 0));
-
-
-    return (length(t1) > length(t2)) ? normalize(t1) : normalize(t2);
 }
 float CalculateFallOff(float _radius, float3 _lightDir)
 {
@@ -112,17 +117,16 @@ VS_OUTPUT VS(appdata v)
     VS_OUTPUT o;
 
     o.pos = mul(WVP, float4(v.vertex, 1));
-    o.normal = normalize(mul(World, float4(v.normal, 0)));
+    o.normal = mul(World, float4(v.normal, 0));
     o.worldPos = mul(World, float4(v.vertex, 1));
     o.camPos = WCP;
     o.uv = v.uv;
 
-    //v.tangent = calculateTangent(o.normal);
-    v.tangent = calculateTangent2(o.normal);
+    v.tangent = calculateTangent(normalize(o.normal));
 
-    o.tangent = normalize(mul(float4(v.tangent, 0), World));
-    o.binormal = normalize(cross(o.normal, o.tangent));
-    o.tbn = float3x3(o.tangent, o.binormal, o.normal);
+    o.tangent = mul(float4(v.tangent, 0), World);
+    o.binormal = cross(normalize(o.normal), normalize(o.tangent));
+    o.tbn = float3x3(normalize(o.tangent), normalize(o.binormal), normalize(o.normal));
 
     return o;
 }
@@ -133,7 +137,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float3 colNormal = ObjNormal.Sample(ObjSamplerState, float2(-i.uv.x, i.uv.y));
     
     //calculating normal
-    float3 normal = i.normal;
+    float3 normal = normalize(i.normal);
     if (length(colNormal) > 0)
     {
         i.tbn = float3x3(i.tangent, i.binormal, i.normal);

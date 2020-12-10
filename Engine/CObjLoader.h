@@ -1,5 +1,6 @@
 #pragma once
 #include "CObj.h"
+#include "CTerrain.h"
 #include <string>
 #include <d3d11.h>
 
@@ -16,6 +17,7 @@ class CObjLoader
 public:
 	CObj Load(LPCWSTR _fileName);
 	CObj Load(EPrimitives _primitiveType);
+	CObj LoadTerrain(int _width, int _height, int _scale);
 	void SafeFile(std::string _fileName, CObj _obj);
 
 private:
