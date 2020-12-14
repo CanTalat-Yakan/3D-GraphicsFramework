@@ -44,7 +44,7 @@ void GScene::Init()
 	CObj volcano = obj.Load(L"R_Volcano.obj");
 	m_volcano.mesh.Init(volcano);
 
-	CObj terrain = obj.LoadTerrain(100, 100, 100);
+	CObj terrain = obj.LoadTerrain(100, 100, 1);
 	m_water.mesh.Init(terrain);
 #pragma endregion
 
@@ -86,7 +86,7 @@ void GScene::Init()
 
 	m_mat_Terrain.Init(
 		L"S_Terrain.hlsl",
-		L"T_Volcano.png",
+		L"T_Grid.png",
 		L"T_Height.png");
 #pragma endregion
 }
@@ -190,9 +190,9 @@ void GScene::LateUpdate()
 	m_duck2.Update_Render(m_mat_Toon);
 	m_duck3.Update_Render(m_mat_Fresnel);
 
-	m_volcano.Update_Render(m_mat_Terrain);
-	m_water.Update_Render(m_mat_Water);
-	//m_water.Update_Render(m_mat_Terrain);
+	m_volcano.Update_Render(m_mat_Volcano);
+	//m_water.Update_Render(m_mat_Water);
+	m_water.Update_Render(m_mat_Terrain);
 #pragma endregion
 }
 

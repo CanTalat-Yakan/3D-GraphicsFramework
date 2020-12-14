@@ -35,5 +35,6 @@ private:
 	UINT m_vertexStride = 0;
 	UINT m_indexCount = 0; 
 	UINT m_indexStride = 0;
+	bool m_triangles = false;
 };
 

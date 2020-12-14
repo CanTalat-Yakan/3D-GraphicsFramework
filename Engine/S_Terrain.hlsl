@@ -116,11 +116,12 @@ VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
     
-    float height = ObjHeight.SampleLevel(ObjSamplerState, v.uv, 0).r;
-    v.vertex = v.vertex + v.normal * height;
+    float displacement = ObjHeight.SampleLevel(ObjSamplerState, v.uv, 0).r;
+    displacement = (displacement - 0.5) * 10;
+    v.vertex += -v.normal * displacement;
     
-    o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = mul(World, float4(v.normal, 0));
+    o.pos = mul(WVP, float4(v.vertex, 1));
     o.worldPos = mul(World, float4(v.vertex, 1));
     o.camPos = WCP;
     o.uv = v.uv;
@@ -130,39 +131,46 @@ VS_OUTPUT VS(appdata v)
 
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
-    float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
+//    float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
 
     //calculating normal
     float3 normal = normalize(i.normal);
     
     //calculating directionalLight
-    float4 directionalLight =
+    float4 Lighting =
         CalculateDiffuse(
-            normal, 
-            dirLight.direction, 
+            normal,
+            dirLight.direction,
             dirLight.diffuse, dirLight.intensity)
         + CalculateSpecular(
-            normal, 
-            i.worldPos - i.camPos, 
-            dirLight.direction, 
+            normal,
+            i.worldPos - i.camPos,
+            dirLight.direction,
             dirLight.diffuse, dirLight.intensity);
     
     //calculating pointLight
-    float4 PointLight =
+    Lighting +=
         CalculateDiffuse(
-            normal, 
-            i.worldPos - pointLight.position, 
-            pointLight.diffuse, pointLight.intensity, 
+            normal,
+            i.worldPos - pointLight.position,
+            pointLight.diffuse, pointLight.intensity,
             3.5)
         + CalculateSpecular(
-            normal, 
-            i.worldPos - i.camPos, 
-            i.worldPos - pointLight.position, 
+            normal,
+            i.worldPos - i.camPos,
+            i.worldPos - pointLight.position,
             pointLight.diffuse, pointLight.intensity,
             3.5);
 
+    float tileSize = 3;
+    float accuracy = 0.025;
+    
+    float4 colXZ = ObjTexture.Sample(ObjSamplerState, fmod(i.worldPos.xz, tileSize) / tileSize);
+    float4 colYZ = ObjTexture.Sample(ObjSamplerState, fmod(i.worldPos.yz, tileSize) / tileSize);
+    float4 colXY = ObjTexture.Sample(ObjSamplerState, fmod(i.worldPos.xy, tileSize) / tileSize);
 
-    return
-        (directionalLight + PointLight + dirLight.ambient) * col;
-        float4(normal, 1);
+    normal = pow(abs(i.normal), accuracy);
+    normal /= dot(normal, 1);
+
+    return (colXZ * normal.y + colYZ * normal.x + colXY * normal.z) * Lighting;
 }

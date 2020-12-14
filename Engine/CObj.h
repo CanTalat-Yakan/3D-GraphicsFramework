@@ -7,4 +7,5 @@ struct CObj
 {
 	std::vector<CVertex> vertices;
 	std::vector<WORD> indices;
+	bool triangles = false;
 };

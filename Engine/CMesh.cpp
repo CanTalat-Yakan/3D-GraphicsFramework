@@ -4,7 +4,7 @@
 int CMesh::Init(CObj _obj)
 {
 #pragma region //Get Instance of DirectX and Time
-	p_d3d = &p_d3d->GetInstance(); 
+	p_d3d = &p_d3d->GetInstance();
 	p_time = &p_time->GetInstance();
 #pragma endregion
 
@@ -13,6 +13,7 @@ int CMesh::Init(CObj _obj)
 	m_vertexStride = sizeof(CVertex);
 	m_indexCount = _obj.indices.size();
 	m_indexStride = sizeof(WORD);
+	m_triangles = _obj.triangles;
 #pragma endregion
 
 #pragma region //Create Buffer
@@ -30,7 +31,7 @@ void CMesh::Render()
 
 	p_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, &p_vertexBuffer, &m_vertexStride, &offset);
 	p_d3d->getDeviceContext()->IASetIndexBuffer(p_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-	p_d3d->getDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	p_d3d->getDeviceContext()->IASetPrimitiveTopology((m_triangles) ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	p_d3d->getDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
 }
 

@@ -257,6 +257,9 @@ void CObjLoader::readFile(std::ifstream* _fileStream)
 #pragma endregion
 			faceCount++;
 		}
+
+		if (vertexCount == 3)
+			m_obj.triangles = true;
 #pragma endregion
 	}
 }
