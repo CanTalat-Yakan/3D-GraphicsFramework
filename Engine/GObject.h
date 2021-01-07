@@ -1,18 +1,20 @@
 #pragma once
 #include "CTransform.h";
 #include "CMesh.h";
+#include "CMaterial.h"
 
 struct GObject 
 {
 	CTransform transform;
 	CMesh mesh;
+	CMaterial material;
 
 	inline void Release() { mesh.Release(); }
 
-	inline void Update_Render(CMaterial _material)
+	inline void Update_Render()
 	{
 		transform.Update();
-		_material.Render(transform.GetWorldMatrix());
+		material.Render(transform.GetWorldMatrix());
 		mesh.Render();
 	}
 };

@@ -116,23 +116,22 @@ VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
     
-    float displacement = ObjHeight.SampleLevel(ObjSamplerState, v.uv, 0).r;
-    displacement = (displacement - 0.5) * 10;
-    v.vertex += -v.normal * displacement;
-    
     o.normal = mul(World, float4(v.normal, 0));
+
+    float displacement = ObjHeight.SampleLevel(ObjSamplerState, v.uv, 0).r;
+    v.vertex += o.normal * displacement * 10;
+    
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.worldPos = mul(World, float4(v.vertex, 1));
     o.camPos = WCP;
     o.uv = v.uv;
+
 
     return o;
 }
 
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
-//    float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
-
     //calculating normal
     float3 normal = normalize(i.normal);
     
@@ -171,6 +170,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 
     normal = pow(abs(i.normal), accuracy);
     normal /= dot(normal, 1);
+
 
     return (colXZ * normal.y + colYZ * normal.x + colXY * normal.z) * Lighting;
 }

@@ -89,6 +89,31 @@ void GScene::Init()
 		L"T_Grid.png",
 		L"T_Height.png");
 #pragma endregion
+
+
+#pragma region //Pass Material to GameObject
+	m_skyBox.material = m_mat_Sky;
+
+	m_plane.material = m_mat_Standard2;
+
+	m_cube.material = m_mat_Standard3;
+
+	m_sphere.material = m_mat_Standard3;
+	m_sphere2.material = m_mat_Toon;
+	m_sphere3.material = m_mat_Fresnel;
+
+	m_cylinder.material = m_mat_Standard3;
+	m_cylinder2.material = m_mat_Toon;
+	m_cylinder3.material = m_mat_Fresnel;
+
+	m_duck.material = m_mat_Duck;
+	m_duck2.material = m_mat_Toon;
+	m_duck3.material = m_mat_Fresnel;
+
+	m_volcano.material = m_mat_Volcano;
+	//m_water.material = m_mat_Water;
+	m_water.material = m_mat_Terrain;
+#pragma endregion
 }
 
 
@@ -172,27 +197,27 @@ void GScene::Update()
 void GScene::LateUpdate()
 {
 #pragma region //Render Contents
-	m_skyBox.Update_Render(m_mat_Sky);
+	m_skyBox.Update_Render();
 
-	m_plane.Update_Render(m_mat_Standard2);
+	m_plane.Update_Render();
 
-	m_cube.Update_Render(m_mat_Standard3);
+	m_cube.Update_Render();
 
-	m_sphere.Update_Render(m_mat_Standard3);
-	m_sphere2.Update_Render(m_mat_Toon);
-	m_sphere3.Update_Render(m_mat_Fresnel);
+	m_sphere.Update_Render();
+	m_sphere2.Update_Render();
+	m_sphere3.Update_Render();
 
-	m_cylinder.Update_Render(m_mat_Standard3);
-	m_cylinder2.Update_Render(m_mat_Toon);
-	m_cylinder3.Update_Render(m_mat_Fresnel);
+	m_cylinder.Update_Render();
+	m_cylinder2.Update_Render();
+	m_cylinder3.Update_Render();
 
-	m_duck.Update_Render(m_mat_Duck);
-	m_duck2.Update_Render(m_mat_Toon);
-	m_duck3.Update_Render(m_mat_Fresnel);
+	m_duck.Update_Render();
+	m_duck2.Update_Render();
+	m_duck3.Update_Render();
 
-	m_volcano.Update_Render(m_mat_Volcano);
-	//m_water.Update_Render(m_mat_Water);
-	m_water.Update_Render(m_mat_Terrain);
+	//m_volcano.Update_Render();
+	//m_water.Update_Render();
+	m_water.Update_Render();
 #pragma endregion
 }
 

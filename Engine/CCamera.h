@@ -1,5 +1,4 @@
 #pragma once
-#include <d3d9.h>
 #include <DirectXMath.h>
 #include "CTime.h"
 #include "CInput.h"
@@ -38,6 +37,7 @@ private:
 
 	XMVECTOR m_position = { 0, 0, 0};
 	XMFLOAT2 m_mouseRot = { 0, 0};
+	float m_camSpeed = 10;
 
 	XMVECTOR m_front = { 0, 0, 1 };
 	XMVECTOR m_right = { 1, 0, 0 };

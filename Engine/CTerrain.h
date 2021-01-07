@@ -11,6 +11,8 @@ public:
 	CObj Init(int _width, int _height, float _scale = 1.0f)
 	{
 		CObj obj;
+		obj.triangles = false;
+
 		XMFLOAT2 stepSize = { 1.0f / (_width - 1), 1.0f / (_height - 1) };
 		std::vector<WORD> rowStarts;
 
@@ -27,18 +29,21 @@ public:
 		}
 
 		for (int row = 0; row < _width - 1; row++) {
-			obj.indices.push_back(rowStarts[0]);
 			for (int column = 0; column < _height - 1; column++)
 			{
+				if (!obj.triangles)
+					obj.indices.push_back(rowStarts[row] + column);
 				obj.indices.push_back(rowStarts[row] + 1 + column);
 				obj.indices.push_back(rowStarts[row + 1] + column);
 
-				//obj.indices.push_back(rowStarts[row + 1] + column);
-				//obj.indices.push_back(rowStarts[row] + column + 1);
-				//obj.indices.push_back(rowStarts[row + 1] + column + 1);
+				if (obj.triangles)
+					continue;
+
+				obj.indices.push_back(rowStarts[row + 1] + column);
+				obj.indices.push_back(rowStarts[row] + column + 1);
+				obj.indices.push_back(rowStarts[row + 1] + column + 1);
 			}
 		}
-		obj.triangles = true;
 
 		return obj;
 	}
