@@ -26,6 +26,7 @@ public:
 
 	ID3D11Device* getDevice() { return p_d3dDev; }
 	ID3D11DeviceContext* getDeviceContext() { return p_d3dDevCon; }
+	ID3D11BlendState* p_blendState = nullptr;				//Reference to blend stage
 
 private:
 	CDirect() {}

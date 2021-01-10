@@ -20,6 +20,13 @@ struct VS_OUTPUT
 
 Texture2D ObjTexture : register(t0);
 SamplerState ObjSamplerState : register(s0);
+samplerCUBE CubeSamplerState = sampler_state
+{
+    Texture = (ObjTexture);
+    MAGFILTER = LINEAR;
+    MINFILTER = ANISOTROPIC;
+    MIPFILTER = LINEAR;
+};
 
 VS_OUTPUT VS(appdata v)
 {
@@ -27,6 +34,7 @@ VS_OUTPUT VS(appdata v)
     
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = v.normal;
+    o.uv = v.uv;
     o.uv = float2(v.uv.x / 4.0035, v.uv.y / 3.0035);
 
     return o;
@@ -49,9 +57,11 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 
     pos.x *= offset.x;
     pos.y *= offset.y;
-
+    
     float4 col = ObjTexture.Sample(ObjSamplerState, -pos + -i.uv);
-
-
     return col;
+
+    float3 cubeProj = float3(i.uv, 1);
+    float4 blend = texCUBE(CubeSamplerState, cubeProj);
+    return float4(blend.xyz, 1);
 }

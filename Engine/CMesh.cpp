@@ -31,6 +31,7 @@ void CMesh::Render()
 
 	p_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, &p_vertexBuffer, &m_vertexStride, &offset);
 	p_d3d->getDeviceContext()->IASetIndexBuffer(p_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	p_d3d->getDeviceContext()->OMSetBlendState(p_d3d->p_blendState, NULL, 0xFFFFFFFF);
 	p_d3d->getDeviceContext()->IASetPrimitiveTopology((m_triangles) ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	p_d3d->getDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
 }

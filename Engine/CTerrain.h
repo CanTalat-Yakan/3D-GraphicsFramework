@@ -8,7 +8,7 @@ using namespace DirectX;
 struct CTerrain
 {
 public:
-	CObj Init(int _width, int _height, float _scale = 1.0f)
+	CObj Init(int _width, int _height)
 	{
 		CObj obj;
 		obj.triangles = false;
@@ -22,7 +22,7 @@ public:
 			for (int z = 0; z < _height; z++)
 			{
 				obj.vertices.push_back(CVertex(
-					x * (stepSize.x + _scale), 0, z * (stepSize.y + _scale),
+					x * (stepSize.x + 1), 0, z * (stepSize.y + 1),
 					1 - x * stepSize.x, z * stepSize.y,
 					0, -1, 0));
 			}

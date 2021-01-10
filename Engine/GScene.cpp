@@ -4,15 +4,32 @@ void GScene::Init()
 	GetInstances();
 
 #pragma region //Setup Light
+	//Directional Light
 	Lighting->DirectionalLight.direction = { -0.75f, -0.5f, 0.1f };
-	Lighting->DirectionalLight.intensity = 0.9f;
 	Lighting->DirectionalLight.diffuse = { 1.0f, 1.0f, 0.9f, 1.0f };
 	Lighting->DirectionalLight.ambient = { 0.2f, 0.2f, 0.25f, 1.0f };
+	Lighting->DirectionalLight.intensity = 0.9f;
 
+	//green Point Light
 	Lighting->PointLight.diffuse = { 0.2f, 0.6f, 0.0f, 1.0f };
-	Lighting->PointLight.intensity = 0.7f;
 	Lighting->PointLight.position = { 0.0f, 0.5f, 0.0f };
-	//Lighting->PointLight.radius = 3.5f;
+	Lighting->PointLight.intensity = 0.7f;
+	Lighting->PointLight.radius = 3.5f;
+	//red Point Light
+	Lighting->PointLight2.diffuse = { 0.6f, 0.2f, 0.0f, 1.0f };
+	Lighting->PointLight2.position = { 3, 0.25f, 0.5f };
+	Lighting->PointLight2.intensity = 0.7f;
+	Lighting->PointLight2.radius = 5.5f;
+	//blue Point Light
+	Lighting->PointLight3.diffuse = { 0.0f, 0.2f, 0.6f, 1.0f };
+	Lighting->PointLight3.position = { 0.25f, 0.2f, 2.5f };
+	Lighting->PointLight3.intensity = 0.9f;
+	Lighting->PointLight3.radius = 3.5f;
+	//white Point Light
+	Lighting->PointLight4.diffuse = { 0.9f, 0.9f, 0.9f, 1.0f };
+	Lighting->PointLight4.position = { -3.0f, 2.3f, -1.0f };
+	Lighting->PointLight4.intensity = 1.0f;
+	Lighting->PointLight4.radius = 5.5f;
 #pragma endregion
 
 #pragma region //Load Meshes
@@ -44,7 +61,7 @@ void GScene::Init()
 	CObj volcano = obj.Load(L"R_Volcano.obj");
 	m_volcano.mesh.Init(volcano);
 
-	CObj terrain = obj.LoadTerrain(100, 100, 1);
+	CObj terrain = obj.LoadTerrain(300, 300);
 	m_water.mesh.Init(terrain);
 #pragma endregion
 
@@ -70,15 +87,15 @@ void GScene::Init()
 
 	m_mat_Fresnel.Init(
 		L"S_Fresnel.hlsl",
-		L"T_White.png");
+		L"T_Grid.png");
 
 	m_mat_Duck.Init(
 		L"S_Standard.hlsl",
 		L"T_Duck.png");
 
 	m_mat_Volcano.Init(
-		L"S_Standard.hlsl",
-		L"T_Volcano.png");
+		L"S_Terrain.hlsl",
+		L"T_Ground.png");
 
 	m_mat_Water.Init(
 		L"S_Water.hlsl",
@@ -92,27 +109,28 @@ void GScene::Init()
 
 
 #pragma region //Pass Material to GameObject
-	m_skyBox.material = m_mat_Sky;
+	m_skyBox.material = &m_mat_Sky;
 
-	m_plane.material = m_mat_Standard2;
+	m_plane.material = &m_mat_Standard2;
 
-	m_cube.material = m_mat_Standard3;
+	m_cube.material = &m_mat_Standard3;
 
-	m_sphere.material = m_mat_Standard3;
-	m_sphere2.material = m_mat_Toon;
-	m_sphere3.material = m_mat_Fresnel;
+	m_sphere.material = &m_mat_Standard3;
+	m_sphere2.material = &m_mat_Toon;
 
-	m_cylinder.material = m_mat_Standard3;
-	m_cylinder2.material = m_mat_Toon;
-	m_cylinder3.material = m_mat_Fresnel;
+	m_cylinder.material = &m_mat_Standard3;
+	m_cylinder2.material = &m_mat_Toon;
 
-	m_duck.material = m_mat_Duck;
-	m_duck2.material = m_mat_Toon;
-	m_duck3.material = m_mat_Fresnel;
+	m_duck.material = &m_mat_Duck;
+	m_duck2.material = &m_mat_Toon;
 
-	m_volcano.material = m_mat_Volcano;
-	//m_water.material = m_mat_Water;
-	m_water.material = m_mat_Terrain;
+	m_volcano.material = &m_mat_Volcano;
+	m_water.material = &m_mat_Water;
+
+
+	m_sphere3.material = &m_mat_Fresnel;
+	m_cylinder3.material = &m_mat_Fresnel;
+	m_duck3.material = &m_mat_Fresnel;
 #pragma endregion
 }
 
@@ -163,7 +181,8 @@ void GScene::Start()
 	m_volcano.transform.SetRotation(0, 0, 180);
 	m_volcano.transform.SetPosition(0, -10, 0);
 
-	m_water.transform.SetPosition(-50, -10, -50);
+	m_water.transform.SetPosition(-25, -8, -25);
+	m_water.transform.SetScale(0.5f);
 #pragma endregion
 }
 
@@ -190,6 +209,9 @@ void GScene::Update()
 	m_sphere2.transform.SetRotationDeg(0, rot, 0);
 	m_sphere3.transform.SetRotationDeg(0, rot, 0);
 
+	CTransform t;
+	t.SetPosition(rot * Time->getDeltaTime(), 1, rot + 0.1f * Time->getDeltaTime());
+	Lighting->PointLight3.position = t.m_position;
 	//m_terrain.transform.SetRotationDeg(0, 0, rot);
 #pragma endregion
 }
@@ -215,8 +237,7 @@ void GScene::LateUpdate()
 	m_duck2.Update_Render();
 	m_duck3.Update_Render();
 
-	//m_volcano.Update_Render();
-	//m_water.Update_Render();
+	m_volcano.Update_Render();
 	m_water.Update_Render();
 #pragma endregion
 }

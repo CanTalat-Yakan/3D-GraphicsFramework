@@ -1,15 +1,15 @@
 struct DirectionalLight
 {
     float3 direction;
-    float intensity;
     float4 diffuse;
     float4 ambient;
+    float intensity;
 };
 struct PointLight
 {
     float3 position;
-    float intensity;
     float4 diffuse;
+    float intensity;
     float radius;
 };
 
@@ -23,11 +23,14 @@ cbuffer cbLighting : register(b1)
 {
     DirectionalLight dirLight;
     PointLight pointLight;
+    PointLight pointLight2;
+    PointLight pointLight3;
+    PointLight pointLight4;
 };
 cbuffer cbParameter : register(b2)
 {
     float time;
-    float deltaTime;
+    float roughness;
 };
 
 struct appdata
@@ -73,7 +76,7 @@ float3 calculateTangent2(float3 _normal)
 }
 float CalculateFallOff(float _radius, float3 _lightDir)
 {
-    float fallOff = saturate(_radius - length(_lightDir)); //calculating the fallOff acording to the radius of the light
+    float fallOff = max(0, _radius - length(_lightDir)); //calculating the fallOff acording to the radius of the light
 
     //When no radius is applied, then calculate without any radius
     if (_radius < 0)
@@ -100,12 +103,62 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
     float d = saturate(dot(_normal, normalize(_lightDir)) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
 
     float d2 = saturate(dot(normalize(halfVec), _normal)); //calculating the area hit by the specular light
-    d2 = pow(d2, 30); //calculating power 30 to the specular
+    d2 = (1 - roughness) * pow(d2, 30); //calculating power 30 to the specular
     float d3 = saturate(dot(_normal, viewDir)); // calculating the fresnel diffuse
-    d3 = saturate(1 - pow(d3, 0.5)); //calculating power 0.5 to the fresnel
+    d3 = saturate(1 - 2 * pow(d3, 0.5)); //calculating power 0.5 to the fresnel
 
     
     return float4(2 * saturate(d) * (d2 + (d3 * 0.75)) * _diffuse * _intensity);
+}
+float4 CalculateAllPointLights(float3 _normal, float3 _worldPos, float3 _camPos)
+{
+    float4 col =
+        CalculateDiffuse(
+            _normal,
+            _worldPos - pointLight.position,
+            pointLight.diffuse, pointLight.intensity,
+            pointLight.radius)
+        + CalculateSpecular(
+            _normal,
+            _worldPos - _camPos,
+            _worldPos - pointLight.position,
+            pointLight.diffuse, pointLight.intensity,
+            pointLight.radius)
+        + CalculateDiffuse(
+            _normal,
+            _worldPos - pointLight2.position,
+            pointLight2.diffuse, pointLight2.intensity,
+            pointLight2.radius)
+        + CalculateSpecular(
+            _normal,
+            _worldPos - _camPos,
+            _worldPos - pointLight2.position,
+            pointLight2.diffuse, pointLight2.intensity,
+            pointLight2.radius)
+        + CalculateDiffuse(
+            _normal,
+            _worldPos - pointLight3.position,
+            pointLight3.diffuse, pointLight3.intensity,
+            pointLight3.radius)
+        + CalculateSpecular(
+            _normal,
+            _worldPos - _camPos,
+            _worldPos - pointLight3.position,
+            pointLight3.diffuse, pointLight3.intensity,
+            pointLight3.radius)
+        + CalculateDiffuse(
+            _normal,
+            _worldPos - pointLight4.position,
+            pointLight4.diffuse, pointLight4.intensity,
+            pointLight4.radius)
+        + CalculateSpecular(
+            _normal,
+            _worldPos - _camPos,
+            _worldPos - pointLight4.position,
+            pointLight4.diffuse, pointLight4.intensity,
+            pointLight4.radius);
+    
+    return col;
 }
 
 Texture2D ObjTexture : register(t0);
@@ -149,31 +202,19 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //calculating directionalLight
     float4 directionalLight =
         CalculateDiffuse(
-            normal, 
-            dirLight.direction, 
+            normal,
+            dirLight.direction,
             dirLight.diffuse, dirLight.intensity)
         + CalculateSpecular(
-            normal, 
-            i.worldPos - i.camPos, 
-            dirLight.direction, 
+            normal,
+            i.worldPos - i.camPos,
+            dirLight.direction,
             dirLight.diffuse, dirLight.intensity);
     
     //calculating pointLight
-    float4 PointLight =
-        CalculateDiffuse(
-            normal, 
-            i.worldPos - pointLight.position, 
-            pointLight.diffuse, pointLight.intensity, 
-            3.5)
-        + CalculateSpecular(
-            normal, 
-            i.worldPos - i.camPos, 
-            i.worldPos - pointLight.position, 
-            pointLight.diffuse, pointLight.intensity,
-            3.5);
+    float4 PointLights = CalculateAllPointLights(normal, i.worldPos, i.camPos);
 
 
     return
-        (directionalLight + PointLight + dirLight.ambient) * col;
-        float4(normal, 1);
+        (directionalLight + PointLights + dirLight.ambient) * float4(col.rgb, 1);
 }

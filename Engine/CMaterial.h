@@ -63,13 +63,14 @@ private:
 	struct cbLighting
 	{
 		CDirectionalLight dirLight;
-		CPointLight pointLight;
+		CPointLight pointLight, pointLight2, pointLight3, pointLight4;
 	};
 
 	ID3D11Buffer* p_cbParameter;
 	struct cbParameter
 	{
-		double time;
-		double deltaTime;
+		float time;
+		float roughness;
+		XMFLOAT2 pad;
 	};
 };

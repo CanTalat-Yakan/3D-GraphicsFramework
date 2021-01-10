@@ -1,15 +1,15 @@
 struct DirectionalLight
 {
     float3 direction;
-    float intensity;
     float4 diffuse;
     float4 ambient;
+    float intensity;
 };
 struct PointLight
 {
     float3 position;
-    float intensity;
     float4 diffuse;
+    float intensity;
     float radius;
 };
 
@@ -23,11 +23,6 @@ cbuffer cbLighting : register(b1)
 {
     DirectionalLight dirLight;
     PointLight pointLight;
-};
-cbuffer cbParameter : register(b2)
-{
-    float time;
-    float deltaTime;
 };
 
 struct appdata
@@ -49,31 +44,9 @@ struct VS_OUTPUT
     float3 binormal : BINORMAL;
 };
 
-float3 calculateTangent(float3 _normal)
-{
-    float3 vec = float3(1.0, 0.0, 0.0);
-    float d = dot(vec, _normal);
-
-    if (abs(d) < 1.0e-3)
-    {
-        vec = float3(0.0, 1.0, 0.0);
-        d = dot(vec, _normal);
-    }
-
-    
-    return normalize(vec - d * _normal);
-}
-float3 calculateTangent2(float3 _normal)
-{
-    float3 t1 = cross(_normal, float3(0, 0, 1));
-    float3 t2 = cross(_normal, float3(0, 1, 0));
-
-
-    return (length(t1) > length(t2)) ? normalize(t1) : normalize(t2);
-}
 float CalculateFallOff(float _radius, float3 _lightDir)
 {
-    float fallOff = saturate(_radius - length(_lightDir)); //calculating the fallOff acording to the radius of the light
+    float fallOff = max(0, _radius - length(_lightDir)); //calculating the fallOff acording to the radius of the light
 
     //When no radius is applied, then calculate without any radius
     if (_radius < 0)
@@ -116,16 +89,14 @@ VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
     
-    o.normal = mul(World, float4(v.normal, 0));
-
     float displacement = ObjHeight.SampleLevel(ObjSamplerState, v.uv, 0).r;
-    v.vertex += o.normal * displacement * 10;
+    v.vertex += -v.normal * displacement;
     
+    o.normal = mul(World, float4(v.normal, 0));
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.worldPos = mul(World, float4(v.vertex, 1));
     o.camPos = WCP;
     o.uv = v.uv;
-
 
     return o;
 }

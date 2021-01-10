@@ -1,15 +1,15 @@
 struct DirectionalLight
 {
     float3 direction;
-    float intensity;
     float4 diffuse;
     float4 ambient;
+    float intensity;
 };
 struct PointLight
 {
     float3 position;
-    float intensity;
     float4 diffuse;
+    float intensity;
     float radius;
 };
 
@@ -24,10 +24,9 @@ cbuffer cbLighting : register(b1)
     DirectionalLight dirLight;
     PointLight pointLight;
 };
-cbuffer cbParameter : register(b2)
+cbuffer cbParameter : register(b3)
 {
     float time;
-    float deltaTime;
 };
 
 struct appdata
@@ -44,36 +43,11 @@ struct VS_OUTPUT
     float3 camPos : POSITION1;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
-    float3x3 tbn : POSITION2;
-    float3 tangent : TANGENT;
-    float3 binormal : BINORMAL;
 };
 
-float3 calculateTangent(float3 _normal)
-{
-    float3 vec = float3(1.0, 0.0, 0.0);
-    float d = dot(vec, _normal);
-
-    if (abs(d) < 1.0e-3)
-    {
-        vec = float3(0.0, 1.0, 0.0);
-        d = dot(vec, _normal);
-    }
-
-    
-    return normalize(vec - d * _normal);
-}
-float3 calculateTangent2(float3 _normal)
-{
-    float3 t1 = cross(_normal, float3(0, 0, 1));
-    float3 t2 = cross(_normal, float3(0, 1, 0));
-
-
-    return (length(t1) > length(t2)) ? normalize(t1) : normalize(t2);
-}
 float CalculateFallOff(float _radius, float3 _lightDir)
 {
-    float fallOff = saturate(_radius - length(_lightDir)); //calculating the fallOff acording to the radius of the light
+    float fallOff = max(0, _radius - length(_lightDir)); //calculating the fallOff acording to the radius of the light
 
     //When no radius is applied, then calculate without any radius
     if (_radius < 0)
@@ -116,36 +90,27 @@ VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
 
+    float n = noise(time);
+    v.vertex += -v.normal * (sin(v.vertex.x + time) + cos(v.vertex.z + time));
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = mul(World, float4(v.normal, 0));
     o.worldPos = mul(World, float4(v.vertex, 1));
     o.camPos = WCP;
-    o.uv = v.uv;
-
-    //v.tangent = calculateTangent(o.normal);
-    v.tangent = calculateTangent2(o.normal);
-
-    o.tangent = mul(float4(v.tangent, 0), World);
-    o.binormal = cross(normalize(o.normal), normalize(o.tangent));
-    o.tbn = float3x3(normalize(o.tangent), normalize(o.binormal), normalize(o.normal));
+    o.uv = float2(v.uv.x - time * 0.001, v.uv.y + time * 0.001);
 
     return o;
 }
 
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
-    float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
+    float tileSize = 14;
+    float4 col = ObjTexture.Sample(ObjSamplerState, i.uv * tileSize);
+    col *= 0.5;
+    col += float4(0, 0, 0.4, 1);
     float3 colNormal = ObjNormal.Sample(ObjSamplerState, float2(-i.uv.x, i.uv.y));
 
     //calculating normal
     float3 normal = normalize(i.normal);
-    if (length(colNormal) > 0)
-    {
-        i.tbn = float3x3(i.tangent, i.binormal, i.normal);
-        normal = mul(colNormal * 2 - 1, i.tbn);
-        normal = normalize(normal);
-    }
-
     
     //calculating directionalLight
     float4 directionalLight =

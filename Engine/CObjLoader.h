@@ -17,7 +17,7 @@ class CObjLoader
 public:
 	CObj Load(LPCWSTR _fileName);
 	CObj Load(EPrimitives _primitiveType);
-	CObj LoadTerrain(int _width, int _height, int _scale);
+	CObj LoadTerrain(int _width, int _height);
 	void SafeFile(std::string _fileName, CObj _obj);
 
 private:

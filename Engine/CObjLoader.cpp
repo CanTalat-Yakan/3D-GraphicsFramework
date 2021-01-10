@@ -20,11 +20,11 @@ CObj CObjLoader::Load(EPrimitives _primitiveType)
 	return m_obj;
 }
 
-CObj CObjLoader::LoadTerrain(int _width, int _height, int _scale)
+CObj CObjLoader::LoadTerrain(int _width, int _height)
 {
 	CTerrain terrain;
 	
-	return m_obj = terrain.Init(_width, _height, _scale);
+	return m_obj = terrain.Init(_width, _height);
 }
 
 void CObjLoader::loadPrimVertices()

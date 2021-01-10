@@ -108,6 +108,9 @@ void CMaterial::SetLightingBuffer()
 	cbLighting* buffer = reinterpret_cast<cbLighting*>(data.pData);
 	buffer->dirLight = p_lighting->DirectionalLight;
 	buffer->pointLight = p_lighting->PointLight;
+	buffer->pointLight2 = p_lighting->PointLight2;
+	buffer->pointLight3 = p_lighting->PointLight3;
+	buffer->pointLight4 = p_lighting->PointLight4;
 
 	p_d3d->getDeviceContext()->Unmap(p_cbLighting, 0);
 	p_d3d->getDeviceContext()->PSSetConstantBuffers(1, 1, &p_cbLighting);
@@ -120,11 +123,12 @@ void CMaterial::SetParameterBuffer()
 	if (FAILED(hr)) return;
 
 	cbParameter* buffer = reinterpret_cast<cbParameter*>(data.pData);
-	buffer->time = (float)p_time->getTime();
-	buffer->deltaTime = (float)p_time->getDeltaTime();
+	buffer->time = p_time->getTime();
+	buffer->roughness = 1;
 
 	p_d3d->getDeviceContext()->Unmap(p_cbParameter, 0);
 	p_d3d->getDeviceContext()->PSSetConstantBuffers(2, 1, &p_cbParameter);
+	p_d3d->getDeviceContext()->VSSetConstantBuffers(3, 1, &p_cbParameter);
 }
 
 
@@ -192,7 +196,7 @@ int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 	elements[3].Format = DXGI_FORMAT_R32G32B32_FLOAT;
 	elements[3].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
 	elements[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	
+
 	HRESULT hr = p_d3d->getDevice()->CreateInputLayout(elements, 4, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &p_inputLayout);
 	if (FAILED(hr)) return 55;
 
@@ -202,12 +206,12 @@ int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 
 int CMaterial::createBuffer(ID3D11Buffer** _pcb, UINT _cbSize)
 {
-	D3D11_BUFFER_DESC cbDESC = {};
+	D3D11_BUFFER_DESC cbDESC = { 0 };
 	cbDESC.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbDESC.ByteWidth = _cbSize;
 	cbDESC.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cbDESC.MiscFlags = 0;
 	cbDESC.Usage = D3D11_USAGE_DYNAMIC;
+	cbDESC.ByteWidth = _cbSize;
+	cbDESC.MiscFlags = 0;
 
 	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &*_pcb);
 	if (FAILED(hr)) return 50;
@@ -230,7 +234,7 @@ int CMaterial::createTextureAndSampler(LPCWSTR _textureName, ID3D11ShaderResourc
 	sDESC.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	sDESC.MaxAnisotropy = 16;
 	sDESC.MinLOD = 0;
-	sDESC.MaxLOD = D3D11_FLOAT32_MAX;
+	sDESC.MaxLOD = 100; //D3D11_FLOAT32_MAX;
 
 	hr = p_d3d->getDevice()->CreateSamplerState(&sDESC, &p_texture_SS);
 	if (FAILED(hr)) return 54;
