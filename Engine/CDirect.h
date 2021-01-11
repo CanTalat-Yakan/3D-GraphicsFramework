@@ -24,9 +24,9 @@ public:
 	void Clear();
 	void Present();
 
-	ID3D11Device* getDevice() { return p_d3dDev; }
-	ID3D11DeviceContext* getDeviceContext() { return p_d3dDevCon; }
-	ID3D11BlendState* p_blendState = nullptr;				//Reference to blend stage
+	ID3D11Device* GetDevice() { return p_d3dDev; }
+	ID3D11DeviceContext* GetDeviceContext() { return p_d3dDevCon; }
+	void GetRender(ID3D11Buffer* _vertexBuffer, UINT _vertexStride, ID3D11Buffer* _indexBuffer, UINT _indexCount);
 
 private:
 	CDirect() {}
@@ -39,6 +39,7 @@ private:
 	ID3D11RenderTargetView* p_renderTargetView = nullptr;	//Reference to back buffer
 	ID3D11DepthStencilView* p_depthStencilView = nullptr;	//Reference to depth stencil buffer
 	ID3D11RasterizerState* p_rasterizerState = nullptr;		//Reference to rasterizer stage manipulation
+	ID3D11BlendState* p_blendState = nullptr;				//Reference to blend stage
 	D3D11_VIEWPORT m_viewPort = {};							//Hold view port data
 };
 

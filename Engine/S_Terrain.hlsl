@@ -73,7 +73,7 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
     float d = saturate(dot(_normal, normalize(_lightDir)) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
 
     float d2 = saturate(dot(normalize(halfVec), _normal)); //calculating the area hit by the specular light
-    d2 = pow(d2, 30); //calculating power 30 to the specular
+    d2 = 0.1 * pow(d2, 30); //calculating power 30 to the specular
     float d3 = saturate(dot(_normal, viewDir)); // calculating the fresnel diffuse
     d3 = saturate(1 - pow(d3, 0.5)); //calculating power 0.5 to the fresnel
 
@@ -143,5 +143,5 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     normal /= dot(normal, 1);
 
 
-    return (colXZ * normal.y + colYZ * normal.x + colXY * normal.z) * Lighting;
+    return (colXZ * normal.y + colYZ * normal.x + colXY * normal.z) * (float4(Lighting.rgb, 1));
 }

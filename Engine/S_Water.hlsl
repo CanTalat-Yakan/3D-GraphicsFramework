@@ -28,6 +28,10 @@ cbuffer cbParameter : register(b3)
 {
     float time;
 };
+cbuffer cbParameter2 : register(b2)
+{
+    float time2;
+};
 
 struct appdata
 {
@@ -82,6 +86,53 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
     return float4(2 * saturate(d) * (d2 + (d3 * 0.75)) * _diffuse * _intensity);
 }
 
+float rand(float2 n)
+{
+    return frac(sin(dot(n, float2(12.9898, 4.1414))) * 43758.5453);
+}
+float noise(float2 p)
+{
+    float2 ip = floor(p);
+    float2 u = frac(p);
+    u = u * u * (3.0 - 2.0 * u);
+	
+    float res = lerp(
+		lerp(rand(ip), rand(ip + float2(1.0, 0.0)), u.x),
+		lerp(rand(ip + float2(0.0, 1.0)), rand(ip + float2(1.0, 1.0)), u.x), u.y);
+    return res * res;
+}
+
+float3 hash3(float2 p)
+{
+    float3 q = float3(dot(p, float2(127.1, 311.7)),
+				   dot(p, float2(269.5, 183.3)),
+				   dot(p, float2(419.2, 371.9)));
+    return frac(sin(q) * 43758.5453);
+}
+float voronoise(in float2 x, float u, float v)
+{
+    float2 p = floor(x);
+    float2 f = frac(x);
+		
+    float k = 1.0 + 63.0 * pow(1.0 - v, 4.0);
+	
+    float va = 0.0;
+    float wt = 0.0;
+    for (int j = -2; j <= 2; j++)
+        for (int i = -2; i <= 2; i++)
+        {
+            float2 g = float2(float(i), float(j));
+            float3 o = hash3(p + g) * float3(u, u, 1.0);
+            float2 r = g - f + o.xy;
+            float d = dot(r, r);
+            float ww = pow(1.0 - smoothstep(0.0, 1.414, sqrt(d)), k);
+            va += o.z * ww;
+            wt += ww;
+        }
+	
+    return va / wt;
+}
+
 Texture2D ObjTexture : register(t0);
 Texture2D ObjNormal : register(t1);
 SamplerState ObjSamplerState : register(s0);
@@ -90,13 +141,14 @@ VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
 
-    float n = noise(time);
-    v.vertex += -v.normal * (sin(v.vertex.x + time) + cos(v.vertex.z + time));
+    v.vertex += -v.normal *
+        pow(noise(float2((v.vertex.x * 0.2 + time), (v.vertex.z * 0.2 + time))) * 3, 1.3);
+
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = mul(World, float4(v.normal, 0));
     o.worldPos = mul(World, float4(v.vertex, 1));
     o.camPos = WCP;
-    o.uv = float2(v.uv.x - time * 0.001, v.uv.y + time * 0.001);
+    o.uv = float2(v.uv.x - time * 0.005, v.uv.y + time * 0.005);
 
     return o;
 }
@@ -137,9 +189,9 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
             i.worldPos - pointLight.position, 
             pointLight.diffuse, pointLight.intensity,
             3.5);
-
-
+    
+    float4 foam = voronoise(float2((-i.uv.x * 100 + time2), (i.uv.y * 100 + time2)), 1, 1);
+    
     return
-        (directionalLight + PointLight + dirLight.ambient) * col;
-        float4(normal, 1);
+        (directionalLight + PointLight + dirLight.ambient) * float4(col.rgb,0.5);
 }

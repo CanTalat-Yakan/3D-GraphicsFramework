@@ -27,13 +27,7 @@ int CMesh::Init(CObj _obj)
 
 void CMesh::Render()
 {
-	static UINT offset = 0;
-
-	p_d3d->getDeviceContext()->IASetVertexBuffers(0, 1, &p_vertexBuffer, &m_vertexStride, &offset);
-	p_d3d->getDeviceContext()->IASetIndexBuffer(p_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
-	p_d3d->getDeviceContext()->OMSetBlendState(p_d3d->p_blendState, NULL, 0xFFFFFFFF);
-	p_d3d->getDeviceContext()->IASetPrimitiveTopology((m_triangles) ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	p_d3d->getDeviceContext()->DrawIndexed(GetIndexCount(), 0, 0);
+	p_d3d->GetRender(p_vertexBuffer, m_vertexStride, p_indexBuffer, GetIndexCount());
 }
 
 void CMesh::Release()
@@ -57,7 +51,7 @@ int CMesh::initVertexBuffer(CVertex _vertices[], UINT _byteWidth)
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _vertices;
 
-	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&desc, &data, &p_vertexBuffer);
+	HRESULT hr = p_d3d->GetDevice()->CreateBuffer(&desc, &data, &p_vertexBuffer);
 	if (FAILED(hr)) return 30;
 
 	return 0;
@@ -72,7 +66,7 @@ int CMesh::initIndexBuffer(WORD _indices[], UINT _byteWidth)
 	D3D11_SUBRESOURCE_DATA data = {};
 	data.pSysMem = _indices;
 
-	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&desc, &data, &p_indexBuffer);
+	HRESULT hr = p_d3d->GetDevice()->CreateBuffer(&desc, &data, &p_indexBuffer);
 	if (FAILED(hr)) return 30;
 
 	return 0;

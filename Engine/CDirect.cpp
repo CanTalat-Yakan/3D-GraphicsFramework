@@ -137,6 +137,17 @@ void CDirect::Present()
 	p_d3dSwapChain->Present(0, 0);
 }
 
+void CDirect::GetRender(ID3D11Buffer* _vertexBuffer, UINT _vertexStride, ID3D11Buffer* _indexBuffer, UINT _indexCount)
+{
+	static UINT offset = 0;
+
+	p_d3dDevCon->IASetVertexBuffers(0, 1, &_vertexBuffer, &_vertexStride, &offset);
+	p_d3dDevCon->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R16_UINT, 0);
+	p_d3dDevCon->OMSetBlendState(p_blendState, NULL, 0xFFFFFFFF);
+	p_d3dDevCon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	p_d3dDevCon->DrawIndexed(_indexCount, 0, 0);
+}
+
 void CDirect::Release()
 {
 	p_rasterizerState->Release();

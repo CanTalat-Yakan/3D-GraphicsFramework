@@ -18,8 +18,8 @@ void CTime::Update()
     m_time += m_deltaTime;
     m_fps = roundf(1 / m_deltaTime);
 
-    std::wstring output = TEXT("deltaTime: ") + std::to_wstring(m_fps) + TEXT("\n");
-    output = TEXT("Time: ") + std::to_wstring(m_time) + TEXT("\n");
+    std::wstring output = TEXT("deltaTime: ") + std::to_wstring(m_deltaTime) + TEXT("\n");
+    //output = TEXT("Time: ") + std::to_wstring(m_time) + TEXT("\n");
 
     OutputDebugString(output.c_str());
 }

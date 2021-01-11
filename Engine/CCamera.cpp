@@ -20,7 +20,7 @@ void CCamera::Update()
 	float tmpSpeed = 0.01f;
 	if ((tmpSpeed *= m_input->getMouseState().lZ) != 0)
 		m_camSpeed = (m_camSpeed + tmpSpeed < 0.1f) ? 0.1f : m_camSpeed + tmpSpeed;
-	float movementspeed = p_time->getDeltaTime() * m_camSpeed;							//mouseWheel input
+	float movementspeed = p_time->GetDeltaTime() * m_camSpeed;							//mouseWheel input
 	if (m_input->getKeyboardState(DIK_LSHIFT) & 0x80) movementspeed *= 2;				//movementspeed up
 	if (m_input->getKeyboardState(DIK_LCONTROL) & 0x80) movementspeed *= 0.2f;			//movementspeed down
 	if (m_input->getKeyboardState(DIK_A) & 0x80) m_position += movementspeed * m_right; //horizontal keyboard input

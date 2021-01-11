@@ -59,9 +59,10 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     pos.y *= offset.y;
     
     float4 col = ObjTexture.Sample(ObjSamplerState, -pos + -i.uv);
-    return col;
+    return float4(col.rgb, 1);
 
     float3 cubeProj = float3(i.uv, 1);
     float4 blend = texCUBE(CubeSamplerState, cubeProj);
+
     return float4(blend.xyz, 1);
 }

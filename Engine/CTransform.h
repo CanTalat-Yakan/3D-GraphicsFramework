@@ -21,7 +21,9 @@ struct CTransform
 	inline void SetScale(XMFLOAT3 _scale) { m_scale = _scale; }
 	inline void SetScale(float _x) { SetScale(_x, _x, _x); }
 	inline void SetRotation(float _x, float _y, float _z) { SetRotationDeg(XMConvertToRadians(_x), XMConvertToRadians(_y), XMConvertToRadians(_z)); }
-	inline void SetRotationDeg(float _x, float _y, float _z) { SetRotation(XMQuaternionMultiply(GetRotation(), XMQuaternionRotationRollPitchYaw(_x, _y, _z))); }
+	inline void SetRotationAdditive(float _x, float _y, float _z) { SetRotation(XMConvertToRadians(_x + m_rotation.x), XMConvertToRadians(_y + m_rotation.y), XMConvertToRadians(_z + m_rotation.z)); }
+	inline void SetRotationDeg(float _x, float _y, float _z) { SetRotation(XMQuaternionRotationRollPitchYaw(_x, _y, _z)); }
+	inline void SetRotationDegAdditive(float _x, float _y, float _z) { SetRotation(XMQuaternionMultiply(GetRotation(), XMQuaternionRotationRollPitchYaw(_x, _y, _z))); }
 	inline void SetRotation(float _x) { SetRotation(_x, _x, _x); }
 	inline void SetRotationDeg(float _x) { SetRotationDeg(_x, _x, _x); }
 	inline void SetRotation(XMFLOAT4 _rot) { m_rotation = _rot; }

@@ -40,17 +40,17 @@ int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName, LPCWSTR _normalTe
 
 void CMaterial::Render(XMMATRIX _worldMatrix)
 {
-	p_d3d->getDeviceContext()->IASetInputLayout(p_inputLayout);
-	p_d3d->getDeviceContext()->VSSetShader(p_vertexShader, nullptr, 0);
-	p_d3d->getDeviceContext()->PSSetShader(p_pixelShader, nullptr, 0);
+	p_d3d->GetDeviceContext()->IASetInputLayout(p_inputLayout);
+	p_d3d->GetDeviceContext()->VSSetShader(p_vertexShader, nullptr, 0);
+	p_d3d->GetDeviceContext()->PSSetShader(p_pixelShader, nullptr, 0);
 
 	setMatrixBuffer(_worldMatrix);
 	SetLightingBuffer();
 	SetParameterBuffer();
 
-	p_d3d->getDeviceContext()->PSSetShaderResources(0, 1, &p_texture_SRV);
-	p_d3d->getDeviceContext()->PSSetShaderResources(1, 1, &p_normalTexture_SRV);
-	p_d3d->getDeviceContext()->PSSetSamplers(0, 1, &p_texture_SS);
+	p_d3d->GetDeviceContext()->PSSetShaderResources(0, 1, &p_texture_SRV);
+	p_d3d->GetDeviceContext()->PSSetShaderResources(1, 1, &p_normalTexture_SRV);
+	p_d3d->GetDeviceContext()->PSSetSamplers(0, 1, &p_texture_SS);
 }
 
 void CMaterial::Release()
@@ -87,7 +87,7 @@ void CMaterial::Release()
 void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbMatrix, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	HRESULT hr = p_d3d->GetDeviceContext()->Map(p_cbMatrix, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 
 	cbMatrix* buffer = reinterpret_cast<cbMatrix*>(data.pData);
@@ -95,14 +95,14 @@ void CMaterial::setMatrixBuffer(XMMATRIX _worldMatrix)
 	buffer->World = _worldMatrix;
 	buffer->WCP = p_camera->GetCamPosFloat3();
 
-	p_d3d->getDeviceContext()->Unmap(p_cbMatrix, 0);
-	p_d3d->getDeviceContext()->VSSetConstantBuffers(0, 1, &p_cbMatrix);
+	p_d3d->GetDeviceContext()->Unmap(p_cbMatrix, 0);
+	p_d3d->GetDeviceContext()->VSSetConstantBuffers(0, 1, &p_cbMatrix);
 }
 
 void CMaterial::SetLightingBuffer()
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbLighting, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	HRESULT hr = p_d3d->GetDeviceContext()->Map(p_cbLighting, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 
 	cbLighting* buffer = reinterpret_cast<cbLighting*>(data.pData);
@@ -112,23 +112,23 @@ void CMaterial::SetLightingBuffer()
 	buffer->pointLight3 = p_lighting->PointLight3;
 	buffer->pointLight4 = p_lighting->PointLight4;
 
-	p_d3d->getDeviceContext()->Unmap(p_cbLighting, 0);
-	p_d3d->getDeviceContext()->PSSetConstantBuffers(1, 1, &p_cbLighting);
+	p_d3d->GetDeviceContext()->Unmap(p_cbLighting, 0);
+	p_d3d->GetDeviceContext()->PSSetConstantBuffers(1, 1, &p_cbLighting);
 }
 
 void CMaterial::SetParameterBuffer()
 {
 	D3D11_MAPPED_SUBRESOURCE data = {};
-	HRESULT hr = p_d3d->getDeviceContext()->Map(p_cbParameter, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
+	HRESULT hr = p_d3d->GetDeviceContext()->Map(p_cbParameter, 0, D3D11_MAP_WRITE_DISCARD, 0, &data);
 	if (FAILED(hr)) return;
 
 	cbParameter* buffer = reinterpret_cast<cbParameter*>(data.pData);
-	buffer->time = p_time->getTime();
-	buffer->roughness = 1;
+	buffer->time = p_time->GetTime();
+	buffer->roughness = 0.1f;
 
-	p_d3d->getDeviceContext()->Unmap(p_cbParameter, 0);
-	p_d3d->getDeviceContext()->PSSetConstantBuffers(2, 1, &p_cbParameter);
-	p_d3d->getDeviceContext()->VSSetConstantBuffers(3, 1, &p_cbParameter);
+	p_d3d->GetDeviceContext()->Unmap(p_cbParameter, 0);
+	p_d3d->GetDeviceContext()->PSSetConstantBuffers(2, 1, &p_cbParameter);
+	p_d3d->GetDeviceContext()->VSSetConstantBuffers(3, 1, &p_cbParameter);
 }
 
 
@@ -146,7 +146,7 @@ int CMaterial::createVertexShader(LPCWSTR _shaderName)
 
 	if (FAILED(hr)) return 50;
 
-	hr = p_d3d->getDevice()->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &p_vertexShader);
+	hr = p_d3d->GetDevice()->CreateVertexShader(pVS_Buffer->GetBufferPointer(), pVS_Buffer->GetBufferSize(), NULL, &p_vertexShader);
 	if (FAILED(hr)) return 53;
 
 	int error = createInputLayout(pVS_Buffer);
@@ -164,7 +164,7 @@ int CMaterial::createPixelShader(LPCWSTR _shaderName)
 	HRESULT hr = D3DX11CompileFromFile(_shaderName, 0, 0, "PS", "ps_4_0", 0, 0, 0, &pPS_Buffer, 0, 0);
 	if (FAILED(hr)) return 57;
 
-	hr = p_d3d->getDevice()->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &p_pixelShader);
+	hr = p_d3d->GetDevice()->CreatePixelShader(pPS_Buffer->GetBufferPointer(), pPS_Buffer->GetBufferSize(), NULL, &p_pixelShader);
 	if (FAILED(hr)) return 59;
 
 	pPS_Buffer->Release();
@@ -197,7 +197,7 @@ int CMaterial::createInputLayout(ID3DBlob* _pBlob)
 	elements[3].InputSlot = D3D11_INPUT_PER_VERTEX_DATA;
 	elements[3].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
 
-	HRESULT hr = p_d3d->getDevice()->CreateInputLayout(elements, 4, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &p_inputLayout);
+	HRESULT hr = p_d3d->GetDevice()->CreateInputLayout(elements, 4, _pBlob->GetBufferPointer(), _pBlob->GetBufferSize(), &p_inputLayout);
 	if (FAILED(hr)) return 55;
 
 	return 0;
@@ -213,7 +213,7 @@ int CMaterial::createBuffer(ID3D11Buffer** _pcb, UINT _cbSize)
 	cbDESC.ByteWidth = _cbSize;
 	cbDESC.MiscFlags = 0;
 
-	HRESULT hr = p_d3d->getDevice()->CreateBuffer(&cbDESC, nullptr, &*_pcb);
+	HRESULT hr = p_d3d->GetDevice()->CreateBuffer(&cbDESC, nullptr, &*_pcb);
 	if (FAILED(hr)) return 50;
 
 	return 0;
@@ -222,7 +222,7 @@ int CMaterial::createBuffer(ID3D11Buffer** _pcb, UINT _cbSize)
 int CMaterial::createTextureAndSampler(LPCWSTR _textureName, ID3D11ShaderResourceView** _texture_SRV)
 {
 	// create texture
-	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(p_d3d->getDevice(), _textureName, NULL, NULL, *&_texture_SRV, NULL);
+	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(p_d3d->GetDevice(), _textureName, NULL, NULL, *&_texture_SRV, NULL);
 	if (FAILED(hr)) return 56;
 
 	// create sampler state
@@ -236,7 +236,7 @@ int CMaterial::createTextureAndSampler(LPCWSTR _textureName, ID3D11ShaderResourc
 	sDESC.MinLOD = 0;
 	sDESC.MaxLOD = 100; //D3D11_FLOAT32_MAX;
 
-	hr = p_d3d->getDevice()->CreateSamplerState(&sDESC, &p_texture_SS);
+	hr = p_d3d->GetDevice()->CreateSamplerState(&sDESC, &p_texture_SS);
 	if (FAILED(hr)) return 54;
 
 	return 0;

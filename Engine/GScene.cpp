@@ -61,7 +61,7 @@ void GScene::Init()
 	CObj volcano = obj.Load(L"R_Volcano.obj");
 	m_volcano.mesh.Init(volcano);
 
-	CObj terrain = obj.LoadTerrain(300, 300);
+	CObj terrain = obj.LoadTerrain(100, 100);
 	m_water.mesh.Init(terrain);
 #pragma endregion
 
@@ -197,22 +197,21 @@ void GScene::EarlyUpdate()
 void GScene::Update()
 {
 #pragma region //Update Contents Transforms
-	float rot = Time->getDeltaTime();
+	float rot = Time->GetDeltaTime();
 
-	m_cube.transform.SetRotationDeg(0, rot, 0);
+	m_cube.transform.SetRotationDegAdditive(0, rot, 0);
 
-	m_cylinder.transform.SetRotationDeg(0, rot, 0);
-	m_cylinder2.transform.SetRotationDeg(0, rot, 0);
-	m_cylinder3.transform.SetRotationDeg(0, rot, 0);
+	m_cylinder.transform.SetRotationDegAdditive(0, rot, 0);
+	m_cylinder2.transform.SetRotationDegAdditive(0, rot, 0);
+	m_cylinder3.transform.SetRotationDegAdditive(0, rot, 0);
 
-	m_sphere.transform.SetRotationDeg(0, rot, 0);
-	m_sphere2.transform.SetRotationDeg(0, rot, 0);
-	m_sphere3.transform.SetRotationDeg(0, rot, 0);
+	m_sphere.transform.SetRotationDegAdditive(0, rot, 0);
+	m_sphere2.transform.SetRotationDegAdditive(0, rot, 0);
+	m_sphere3.transform.SetRotationDegAdditive(0, rot, 0);
 
 	CTransform t;
-	t.SetPosition(rot * Time->getDeltaTime(), 1, rot + 0.1f * Time->getDeltaTime());
+	t.SetPosition(sin(Time->GetTime()) * 2, sin(Time->GetTime() * 2) + 1, cos(Time->GetTime()) * 2);
 	Lighting->PointLight3.position = t.m_position;
-	//m_terrain.transform.SetRotationDeg(0, 0, rot);
 #pragma endregion
 }
 

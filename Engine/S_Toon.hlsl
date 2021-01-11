@@ -159,12 +159,12 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float4 directionalLight =
         CalculateDiffuse(
             normal,
-            dirLight.direction, 
+            dirLight.direction,
             dirLight.diffuse, dirLight.intensity)
         + CalculateSpecular(
             normal,
             i.worldPos - i.camPos,
-            dirLight.direction, 
+            dirLight.direction,
             dirLight.diffuse, dirLight.intensity);
     
     //calculating pointLight
@@ -173,7 +173,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //calculate outline
     float d = saturate(dot(normal, normalize(i.worldPos - i.camPos)));
     d = (d < 0.25) ? -8 : 0;
-    float4 outline = d * dirLight.diffuse;
+    float4 outline = float4(d * dirLight.diffuse.rgb, 1);
 
 
     return (directionalLight + PointLights + outline + dirLight.ambient) * col;
