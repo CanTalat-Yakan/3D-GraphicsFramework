@@ -23,7 +23,7 @@ void GScene::Init()
 	//blue Point Light
 	Lighting->PointLight3.diffuse = { 0.0f, 0.2f, 0.6f, 1.0f };
 	Lighting->PointLight3.position = { 0.25f, 0.2f, 2.5f };
-	Lighting->PointLight3.intensity = 0.9f;
+	Lighting->PointLight3.intensity = 2.9f;
 	Lighting->PointLight3.radius = 3.5f;
 	//white Point Light
 	Lighting->PointLight4.diffuse = { 0.9f, 0.9f, 0.9f, 1.0f };
