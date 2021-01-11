@@ -18,7 +18,7 @@ struct VS_OUTPUT
     float3 normal : NORMAL;
 };
 
-Texture2D ObjTexture : register(t0);
+Texture2D SkyBoxTexture : register(t3);
 SamplerState ObjSamplerState : register(s0);
 samplerCUBE CubeSamplerState = sampler_state
 {
@@ -58,7 +58,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     pos.x *= offset.x;
     pos.y *= offset.y;
     
-    float4 col = ObjTexture.Sample(ObjSamplerState, -pos + -i.uv);
+    float4 col = SkyBoxTexture.Sample(ObjSamplerState, -pos + -i.uv);
     return float4(col.rgb, 1);
 
     float3 cubeProj = float3(i.uv, 1);

@@ -27,9 +27,6 @@ struct VS_OUTPUT
     float3 worldPos : POSITION;
 };
 
-Texture2D ObjTexture : register(t0);
-SamplerState ObjSamplerState : register(s0);
-
 VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;

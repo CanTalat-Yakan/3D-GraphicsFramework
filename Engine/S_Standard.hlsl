@@ -16,6 +16,8 @@ struct Parameters
 {
     float4 diffuse;
     float roughness;
+    float metalic;
+    float opacity;
 };
 
 cbuffer cbMatrix : register(b0)
@@ -108,7 +110,15 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
     float d = saturate(dot(_normal, normalize(_lightDir)) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
 
     float d2 = saturate(dot(normalize(halfVec), _normal)); //calculating the area hit by the specular light
-    d2 = (1 - params.roughness) * pow(d2, 30 + (20 * (1 - 2 * params.roughness))); //calculating power 30 to the specular
+
+
+    d2 =                                        //calculating power 30 to the specular
+        (1 - params.roughness) *                //calculating the specular according to roughness 1 => no specular
+        (1 + params.metalic * 9) *              //calculating the factor of the specular according to the metalic 1 => factor 9
+        pow(d2,                                 //calculating the power of the specular to make it the step smoother or more harsh
+            90 - (70 * (params.roughness)));    //base 90 to -70 roughness 1 => power 20 (smoother)
+
+
     float d3 = saturate(dot(_normal, viewDir)); // calculating the fresnel diffuse
     d3 = saturate(1 - 2 * pow(d3, 0.5)); //calculating power 0.5 to the fresnel
 
@@ -165,9 +175,32 @@ float4 CalculateAllPointLights(float3 _normal, float3 _worldPos, float3 _camPos)
     
     return col;
 }
+float2 ReflectUV(float3 t3)
+{
+    float2 t2;
+    t3 = normalize(t3) / sqrt(2.0);
+    float3 q3 = abs(t3);
+    if ((q3.x >= q3.y) && (q3.x >= q3.z))
+    {
+        t2.x = 0.5 - t3.z / t3.x;
+        t2.y = 0.5 - t3.y / q3.x;
+    }
+    else if ((q3.y >= q3.x) && (q3.y >= q3.z))
+    {
+        t2.x = 0.5 + t3.x / q3.y;
+        t2.y = 0.5 + t3.z / t3.y;
+    }
+    else
+    {
+        t2.x = 0.5 + t3.x / t3.z;
+        t2.y = 0.5 - t3.y / q3.z;
+    }
+    return t2;
+}
 
 Texture2D ObjTexture : register(t0);
 Texture2D ObjNormal : register(t1);
+Texture2D ObjSkyBox : register(t3);
 SamplerState ObjSamplerState : register(s0);
 
 VS_OUTPUT VS(appdata v)
@@ -203,7 +236,13 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
         normal = normalize(normal);
     }
 
-    
+    float4 colReflect = ObjSkyBox.Sample(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normal)));
+    colReflect *= saturate(pow(params.metalic, 5)) * 0.1f;
+    float3 viewDir = normalize(i.worldPos - i.camPos);
+    float d = saturate(dot(normal, viewDir));
+    float4 fresnel = saturate(1 - 5 * pow(d, 1 + params.metalic)) * params.metalic;
+    colReflect *= 1 + fresnel;
+
     //calculating directionalLight
     float4 directionalLight =
         CalculateDiffuse(
@@ -217,9 +256,17 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
             dirLight.diffuse, dirLight.intensity);
     
     //calculating pointLight
-    float4 PointLights = CalculateAllPointLights(normal, i.worldPos, i.camPos);
+    float4 PointLights =
+        + CalculateSpecular(
+            normal,
+            i.worldPos - i.camPos,
+            i.worldPos - pointLight4.position,
+            pointLight4.diffuse, pointLight4.intensity,
+            pointLight4.radius);
 
+    PointLights = CalculateAllPointLights(normal, i.worldPos, i.camPos);
 
     return
-        (directionalLight + PointLights + dirLight.ambient) * float4(col.rgb, 1);
+        (directionalLight + PointLights + dirLight.ambient) * float4(col.rgb * params.diffuse.rgb + colReflect.rgb, 1 - params.opacity);
+        //float4(PointLights.rgb, 1);
 }

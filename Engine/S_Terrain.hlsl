@@ -82,7 +82,7 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
 }
 
 Texture2D ObjTexture : register(t0);
-Texture2D ObjHeight : register(t1);
+Texture2D ObjHeight : register(t2);
 SamplerState ObjSamplerState : register(s0);
 
 VS_OUTPUT VS(appdata v)

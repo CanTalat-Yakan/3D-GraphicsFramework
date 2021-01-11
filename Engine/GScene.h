@@ -17,7 +17,7 @@ private:
 	GObject m_skyBox = {};
 	GObject m_plane = {};
 	GObject m_cube = {};
-	GObject m_sphere, m_sphere2, m_sphere3 = {};
+	GObject m_sphere, m_sphere2, m_sphere3, m_sphere4 , m_sphere5 = {};
 	GObject m_cylinder, m_cylinder2, m_cylinder3 = {};
 	GObject m_duck, m_duck2, m_duck3 = {};
 	GObject m_volcano = {};
@@ -25,9 +25,9 @@ private:
 	GObject m_pointLightVisualizer = {};
 
 	CMaterial m_mat_Sky = {};
-	CMaterial m_mat_Standard, m_mat_Standard2, m_mat_Standard3 = {};
+	CMaterial m_mat_Plane, m_mat_Grid, m_mat_Normal = {};
 	CMaterial m_mat_Toon = {};
-	CMaterial m_mat_Fresnel = {};
+	CMaterial m_mat_Bubble = {};
 	CMaterial m_mat_Duck = {};
 	CMaterial m_mat_Volcano = {};
 	CMaterial m_mat_Water = {};

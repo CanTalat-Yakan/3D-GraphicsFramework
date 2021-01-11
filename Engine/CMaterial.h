@@ -23,6 +23,7 @@ public:
 	int SetColourTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_colour_Texture_SRV) > 0) return error;}
 	int SetNormalTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_normal_Texture_SRV) > 0) return error;}
 	int SetHeightTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_height_Texture_SRV) > 0) return error;}
+	int SetSkyBoxTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_skyBox_Texture_SRV) > 0) return error;}
 
 private:
 	CDirect* p_d3d;
@@ -53,6 +54,7 @@ private:
 	ID3D11ShaderResourceView* p_colour_Texture_SRV = nullptr;
 	ID3D11ShaderResourceView* p_normal_Texture_SRV = nullptr;
 	ID3D11ShaderResourceView* p_height_Texture_SRV = nullptr;
+	ID3D11ShaderResourceView* p_skyBox_Texture_SRV = nullptr;
 	ID3D11SamplerState* p_texture_SS = nullptr;
 
 	// constant buffer

@@ -171,32 +171,34 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //calculating directionalLight
     float4 directionalLight =
         CalculateDiffuse(
-            normal, 
-            dirLight.direction, 
+            normal,
+            dirLight.direction,
             dirLight.diffuse, dirLight.intensity)
         + CalculateSpecular(
-            normal, 
-            i.worldPos - i.camPos, 
-            dirLight.direction, 
+            normal,
+            i.worldPos - i.camPos,
+            dirLight.direction,
             dirLight.diffuse, dirLight.intensity);
     
     //calculating pointLight
     float4 PointLight =
         CalculateDiffuse(
-            normal, 
-            i.worldPos - pointLight.position, 
-            pointLight.diffuse, pointLight.intensity, 
+            normal,
+            i.worldPos - pointLight.position,
+            pointLight.diffuse, pointLight.intensity,
             3.5)
         + CalculateSpecular(
-            normal, 
-            i.worldPos - i.camPos, 
-            i.worldPos - pointLight.position, 
+            normal,
+            i.worldPos - i.camPos,
+            i.worldPos - pointLight.position,
             pointLight.diffuse, pointLight.intensity,
             3.5);
     
     //float4 foam = voronoise(float2((-i.uv.x * 100 + time2), (i.uv.y * 100 + time2)), 1, 1);
-    float4 foam = float4(1,1,1,1) * i.vPos.y;
+    float range = (pow(i.vPos.y, 0.5) - 0.8);
+    float4 foam = float4(float3(1, 1, 1) * range, 1);
+    float4 deep = float4(float3(0.2, 0.2, 0.5) * pow(saturate(1 - range), 1.8), 1);
 
     return
-        (directionalLight + PointLight + dirLight.ambient) * float4(col.rgb, 0.5) + foam;
+        (directionalLight + PointLight + dirLight.ambient) * float4(col.rgb, 0.5) + foam + deep;
 }

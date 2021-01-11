@@ -34,7 +34,9 @@ void GScene::Init()
 
 #pragma region //Setup Params
 	Params->Parameters.diffuse = { 0.5f, 0.5f, 0.5f, 1 };
-	Params->Parameters.roughness = sin(Time->GetTime());
+	Params->Parameters.roughness = 0.5f;
+	Params->Parameters.metalic = 0.5f;
+	Params->Parameters.opacity = 0;
 #pragma endregion
 
 #pragma region //Load Meshes
@@ -52,6 +54,8 @@ void GScene::Init()
 	m_sphere.mesh.Init(sphere);
 	m_sphere2.mesh.Init(sphere);
 	m_sphere3.mesh.Init(sphere);
+	m_sphere4.mesh.Init(sphere);
+	m_sphere5.mesh.Init(sphere);
 	m_pointLightVisualizer.mesh.Init(sphere);
 
 	CObj cylinder = obj.Load(L"R_Cylinder_Hollow.obj");
@@ -73,21 +77,24 @@ void GScene::Init()
 
 #pragma region //Setup Materials
 	m_mat_Sky.Init(L"S_SkyBox.hlsl");
-	m_mat_Sky.SetColourTexture(L"T_SkyBox.png");
+	m_mat_Sky.SetSkyBoxTexture(L"T_SkyBox.png");
 
-	m_mat_Standard.Init(L"S_Standard.hlsl");
-	m_mat_Standard.SetColourTexture(L"T_Gray.png");
-	m_mat_Standard2.Init(L"S_Standard.hlsl");
-	m_mat_Standard2.SetColourTexture(L"T_Proto2.png");
-	m_mat_Standard3.Init(L"S_Standard.hlsl");
-	m_mat_Standard3.SetColourTexture(L"T_Proto4.png");
-	m_mat_Standard3.SetNormalTexture(L"T_NormalDebug2.png");
+	m_mat_Plane.Init(L"S_Standard.hlsl");
+	m_mat_Plane.SetColourTexture(L"T_Proto2.png");
+
+	m_mat_Grid.Init(L"S_Standard.hlsl");
+	m_mat_Grid.SetColourTexture(L"T_Proto4.png");
+	m_mat_Grid.SetSkyBoxTexture(L"T_Grid.png");
+
+	m_mat_Normal.Init(L"S_Standard.hlsl");
+	m_mat_Normal.SetColourTexture(L"T_Proto4.png");
+	m_mat_Normal.SetNormalTexture(L"T_NormalDebug2.png");
 
 	m_mat_Toon.Init(L"S_Toon.hlsl");
 	m_mat_Toon.SetColourTexture(L"T_Proto4.png");
 
-	m_mat_Fresnel.Init(L"S_Bubble.hlsl");
-	m_mat_Fresnel.SetColourTexture(L"T_Grid.png");
+	m_mat_Bubble.Init(L"S_Bubble.hlsl");
+	m_mat_Bubble.SetSkyBoxTexture(L"T_Grid.png");
 
 	m_mat_Duck.Init(L"S_Standard.hlsl");
 	m_mat_Duck.SetColourTexture(L"T_Duck.png");
@@ -109,26 +116,27 @@ void GScene::Init()
 #pragma region //Pass Material to GameObject
 	m_skyBox.material = &m_mat_Sky;
 
-	m_plane.material = &m_mat_Standard2;
+	m_cube.material = &m_mat_Normal;
 
-	m_cube.material = &m_mat_Standard3;
+	m_plane.material = &m_mat_Grid;
+	m_sphere.material = &m_mat_Grid;
+	m_sphere4.material = &m_mat_Grid;
+	m_sphere5.material = &m_mat_Grid;
+	m_cylinder.material = &m_mat_Grid;
 
-	m_sphere.material = &m_mat_Standard3;
 	m_sphere2.material = &m_mat_Toon;
-
-	m_cylinder.material = &m_mat_Standard3;
 	m_cylinder2.material = &m_mat_Toon;
-
-	m_duck.material = &m_mat_Duck;
 	m_duck2.material = &m_mat_Toon;
 
+	m_duck.material = &m_mat_Duck;
+
 	m_volcano.material = &m_mat_Volcano;
+
 	m_water.material = &m_mat_Water;
 
-
-	m_sphere3.material = &m_mat_Fresnel;
-	m_cylinder3.material = &m_mat_Fresnel;
-	m_duck3.material = &m_mat_Fresnel;
+	m_sphere3.material = &m_mat_Bubble;
+	m_cylinder3.material = &m_mat_Bubble;
+	m_duck3.material = &m_mat_Bubble;
 
 	m_pointLightVisualizer.material = &m_mat_Unlit;
 #pragma endregion
@@ -157,9 +165,11 @@ void GScene::Start()
 	m_sphere.transform.SetScale(1.5f);
 	//m_sphere.transform.SetScale(0.25f);
 	m_sphere.transform.SetPosition(2, 1.5f, 0);
-	m_sphere2.transform = m_sphere3.transform = m_sphere.transform;
+	m_sphere2.transform = m_sphere3.transform = m_sphere4.transform = m_sphere5.transform = m_sphere.transform;
 	m_sphere2.transform.m_position.z += 2;
 	m_sphere3.transform.m_position.z += 4;
+	m_sphere4.transform.m_position.z -= 2;
+	m_sphere5.transform.m_position.z -= 4;
 
 	m_pointLightVisualizer.transform.SetScale(0.1f);
 
@@ -210,10 +220,15 @@ void GScene::Update()
 	m_sphere.transform.SetRotationDegAdditive(0, rot, 0);
 	m_sphere2.transform.SetRotationDegAdditive(0, rot, 0);
 	m_sphere3.transform.SetRotationDegAdditive(0, rot, 0);
+	m_sphere4.transform.SetRotationDegAdditive(0, rot, 0);
+	m_sphere5.transform.SetRotationDegAdditive(0, rot, 0);
 
 	CTransform t;
-	t.SetPosition(sin(Time->GetTime()) * 2, sin(Time->GetTime() * 2) + 1, cos(Time->GetTime()) * 2);
+	t.SetPosition(sin(Time->GetTime()) * 2, sin(Time->GetTime() * 2) + 1.1f, cos(Time->GetTime()) * 2);
 	Lighting->PointLight3.position = t.m_position;
+
+	t.SetPosition(-2.65f, sin(Time->GetTime() * 2) + 1.2f, -1.0f);
+	Lighting->PointLight4.position = t.m_position;
 #pragma endregion
 }
 
@@ -232,9 +247,13 @@ void GScene::LateUpdate()
 	m_pointLightVisualizer.transform.SetPosition(Lighting->PointLight4.position);
 	Params->Parameters.diffuse = { Lighting->PointLight4.diffuse };
 	m_pointLightVisualizer.Update_Render();
+
 #pragma endregion
 
 #pragma region //Render Contents
+	Params->Parameters.diffuse = { 1, 1, 1, 1 };
+	Params->Parameters.roughness = 0;
+	Params->Parameters.metalic = 0;
 	m_skyBox.Update_Render();
 
 	m_plane.Update_Render();
@@ -244,11 +263,20 @@ void GScene::LateUpdate()
 	m_sphere.Update_Render();
 	m_sphere2.Update_Render();
 	m_sphere3.Update_Render();
+	Params->Parameters.roughness = 0.5f + 0.5f * sin(Time->GetTime() * 2);
+	m_sphere4.Update_Render();
+	Params->Parameters.roughness = 0;
+	Params->Parameters.metalic = 0.5f + 0.5f * sin(Time->GetTime() * 2);
+	Params->Parameters.diffuse = { 1, 1, 0.8f, 1 };
+	m_sphere5.Update_Render();
+	Params->Parameters.metalic = 0;
+	Params->Parameters.diffuse = { 1, 1, 1, 1 };
 
 	m_cylinder.Update_Render();
 	m_cylinder2.Update_Render();
 	m_cylinder3.Update_Render();
 
+	Params->Parameters.diffuse = { 0.5f, 0.5f, 0.5f, 1 };
 	m_duck.Update_Render();
 	m_duck2.Update_Render();
 	m_duck3.Update_Render();
@@ -267,6 +295,8 @@ void GScene::Release()
 	m_sphere.Release();
 	m_sphere2.Release();
 	m_sphere3.Release();
+	m_sphere4.Release();
+	m_sphere5.Release();
 	m_cylinder.Release();
 	m_cylinder2.Release();
 	m_cylinder3.Release();
@@ -275,12 +305,17 @@ void GScene::Release()
 	m_duck3.Release();
 	m_volcano.Release();
 	m_water.Release();
+	m_pointLightVisualizer.Release();
 
 	m_mat_Sky.Release();
-	m_mat_Standard.Release();
-	m_mat_Standard2.Release();
-	m_mat_Standard3.Release();
+	m_mat_Plane.Release();
+	m_mat_Grid.Release();
+	m_mat_Normal.Release();
 	m_mat_Toon.Release();
-	m_mat_Fresnel.Release();
+	m_mat_Bubble.Release();
 	m_mat_Duck.Release();
+	m_mat_Volcano.Release();
+	m_mat_Water.Release();
+	m_mat_Terrain.Release();
+	m_mat_Unlit.Release();
 }

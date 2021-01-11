@@ -58,7 +58,7 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
     
     return float4(2 * saturate(d) * (d2 + (d3 * 0.75)) * _diffuse * _intensity);
 }
-float2 mycubemap(float3 t3)
+float2 ReflectUV(float3 t3)
 {
     float2 t2;
     t3 = normalize(t3) / sqrt(2.0);
@@ -80,20 +80,8 @@ float2 mycubemap(float3 t3)
     }
     return t2;
 }
-float2 reflectUV(float3 t3)
-{
-    float2 t2;
-    t3 = normalize(t3) / sqrt(2.0);
-    float3 q3 = abs(t3);
-    if ((q3.x >= q3.y) && (q3.x >= q3.z))
-    {
-        t2.x = 0.5 + t3.x / t3.z;
-        t2.y = 0.5 - t3.y / q3.z;
-    }
-    return t2;
-}
 
-Texture2D ObjTexture : register(t0);
+Texture2D SkyBoxTexture : register(t3);
 SamplerState ObjSamplerState : register(s0);
 
 VS_OUTPUT VS(appdata v)
@@ -115,14 +103,15 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float3 normal = normalize(i.normal);
     
     //float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
-    float4 col = ObjTexture.SampleLevel(ObjSamplerState, mycubemap(reflect(-i.worldPos - i.camPos, normal)), 2);
+    //float4 col = ObjTexture.SampleLevel(ObjSamplerState, mycubemap(reflect(-i.worldPos - i.camPos, normal)), 2);
+    float4 col = SkyBoxTexture.Sample(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normal)));
     //float4 col = texCUBElod(ObjTexture, float4(i.uv, 0));
     //float4 col2 = SAMPLE_TEXTURECUBE_LOD(ObjTexture, ObjSamplerState, reflect(-i.worldPos - i.camPos, normal), 0);
 	
      
     //calculating directionalLight
     float4 directionalLight =
-        +CalculateSpecular(
+        CalculateSpecular(
             normal,
             i.worldPos - i.camPos,
             dirLight.direction,

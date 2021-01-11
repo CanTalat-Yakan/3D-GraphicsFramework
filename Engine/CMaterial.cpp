@@ -37,6 +37,7 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 	p_d3d->GetDeviceContext()->PSSetShaderResources(0, 1, &p_colour_Texture_SRV);
 	p_d3d->GetDeviceContext()->PSSetShaderResources(1, 1, &p_normal_Texture_SRV);
 	p_d3d->GetDeviceContext()->PSSetShaderResources(2, 1, &p_height_Texture_SRV);
+	p_d3d->GetDeviceContext()->PSSetShaderResources(3, 1, &p_skyBox_Texture_SRV);
 	p_d3d->GetDeviceContext()->PSSetSamplers(0, 1, &p_texture_SS);
 }
 
@@ -53,6 +54,10 @@ void CMaterial::Release()
 	if (p_height_Texture_SRV)
 		p_height_Texture_SRV->Release();
 	p_height_Texture_SRV = nullptr;
+
+	if (p_skyBox_Texture_SRV)
+		p_skyBox_Texture_SRV->Release();
+	p_skyBox_Texture_SRV = nullptr;
 
 	if (p_texture_SS)
 		p_texture_SS->Release();

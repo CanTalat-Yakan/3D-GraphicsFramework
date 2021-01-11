@@ -12,13 +12,13 @@ int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	GScene mainScene = {};
 	mainScene.Init();
 	GScene2 secondScene = {};
-	secondScene.Init();
+	//secondScene.Init();
 #pragma endregion
 
 	mainScene.Awake();
 	mainScene.Start();
-	secondScene.Awake();
-	secondScene.Start();
+	//secondScene.Awake();
+	//secondScene.Start();
 
 	while (engine.p_window->Run())
 	{
@@ -29,16 +29,16 @@ int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 		mainScene.EarlyUpdate();
 		mainScene.Update();
 		mainScene.LateUpdate();
-		secondScene.EarlyUpdate();
-		secondScene.Update();
-		secondScene.LateUpdate();
+		//secondScene.EarlyUpdate();
+		//secondScene.Update();
+		//secondScene.LateUpdate();
 
 		engine.p_d3d->Present();
 	}
 
 #pragma region //Release
 	mainScene.Release();
-	secondScene.Release();
+	//secondScene.Release();
 	engine.Release();
 #pragma endregion
 

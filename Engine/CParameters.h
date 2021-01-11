@@ -7,7 +7,9 @@ struct SParameters
 {
 	XMFLOAT4 diffuse;
 	float roughness;
-	XMFLOAT3 pad;
+	float metalic;
+	float opacity;
+	float pad;
 };
 
 class CParameters
