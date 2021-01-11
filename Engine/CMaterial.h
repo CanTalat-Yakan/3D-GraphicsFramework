@@ -1,5 +1,6 @@
 #pragma once
 #include "CLighting.h"
+#include "CParameters.h"
 #include "CDirect.h"
 #include "CCamera.h"
 #include "CTime.h"
@@ -15,16 +16,19 @@ using namespace DirectX;
 class CMaterial
 {
 public:
-	int Init(LPCWSTR _shaderName, LPCWSTR _textureName);
-	int Init(LPCWSTR _shaderName, LPCWSTR _textureName, LPCWSTR _normalTextureName);
+	int Init(LPCWSTR _shaderName);
 	void Render(XMMATRIX _worldMatrix);
 	void Release();
 
+	int SetColourTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_colour_Texture_SRV) > 0) return error;}
+	int SetNormalTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_normal_Texture_SRV) > 0) return error;}
+	int SetHeightTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_height_Texture_SRV) > 0) return error;}
 
 private:
 	CDirect* p_d3d;
 	CCamera* p_camera;
 	CLighting* p_lighting;
+	CParameters* p_params;
 	CTime* p_time;
 
 
@@ -46,8 +50,9 @@ private:
 	ID3D11InputLayout* p_inputLayout = nullptr;
 
 	// texture
-	ID3D11ShaderResourceView* p_texture_SRV = nullptr;
-	ID3D11ShaderResourceView* p_normalTexture_SRV = nullptr;
+	ID3D11ShaderResourceView* p_colour_Texture_SRV = nullptr;
+	ID3D11ShaderResourceView* p_normal_Texture_SRV = nullptr;
+	ID3D11ShaderResourceView* p_height_Texture_SRV = nullptr;
 	ID3D11SamplerState* p_texture_SS = nullptr;
 
 	// constant buffer
@@ -62,15 +67,15 @@ private:
 	ID3D11Buffer* p_cbLighting;
 	struct cbLighting
 	{
-		CDirectionalLight dirLight;
-		CPointLight pointLight, pointLight2, pointLight3, pointLight4;
+		SDirectionalLight dirLight;
+		SPointLight pointLight, pointLight2, pointLight3, pointLight4;
 	};
 
 	ID3D11Buffer* p_cbParameter;
 	struct cbParameter
 	{
 		float time;
-		float roughness;
-		XMFLOAT2 pad;
+		XMFLOAT3 pad;
+		SParameters params;
 	};
 };

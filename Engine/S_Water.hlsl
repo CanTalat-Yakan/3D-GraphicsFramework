@@ -12,6 +12,11 @@ struct PointLight
     float intensity;
     float radius;
 };
+struct Parameters
+{
+    float4 diffuse;
+    float roughness;
+};
 
 cbuffer cbMatrix : register(b0)
 {
@@ -27,10 +32,7 @@ cbuffer cbLighting : register(b1)
 cbuffer cbParameter : register(b3)
 {
     float time;
-};
-cbuffer cbParameter2 : register(b2)
-{
-    float time2;
+    Parameters params;
 };
 
 struct appdata
@@ -45,6 +47,7 @@ struct VS_OUTPUT
     float4 pos : SV_POSITION;
     float3 worldPos : POSITION;
     float3 camPos : POSITION1;
+    float3 vPos : POSITION2;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
 };
@@ -142,14 +145,15 @@ VS_OUTPUT VS(appdata v)
     VS_OUTPUT o;
 
     v.vertex += -v.normal *
-        pow(noise(float2((v.vertex.x * 0.2 + time), (v.vertex.z * 0.2 + time))) * 3, 1.3);
+        pow(noise(float2((v.vertex.x * 0.2 + time), (v.vertex.z * 0.2 + time))) * 3, 1);
 
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = mul(World, float4(v.normal, 0));
     o.worldPos = mul(World, float4(v.vertex, 1));
     o.camPos = WCP;
     o.uv = float2(v.uv.x - time * 0.005, v.uv.y + time * 0.005);
-
+    o.vPos = v.vertex;
+    
     return o;
 }
 
@@ -190,8 +194,9 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
             pointLight.diffuse, pointLight.intensity,
             3.5);
     
-    float4 foam = voronoise(float2((-i.uv.x * 100 + time2), (i.uv.y * 100 + time2)), 1, 1);
-    
+    //float4 foam = voronoise(float2((-i.uv.x * 100 + time2), (i.uv.y * 100 + time2)), 1, 1);
+    float4 foam = float4(1,1,1,1) * i.vPos.y;
+
     return
-        (directionalLight + PointLight + dirLight.ambient) * float4(col.rgb,0.5);
+        (directionalLight + PointLight + dirLight.ambient) * float4(col.rgb, 0.5) + foam;
 }

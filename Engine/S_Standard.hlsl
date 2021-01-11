@@ -12,6 +12,11 @@ struct PointLight
     float intensity;
     float radius;
 };
+struct Parameters
+{
+    float4 diffuse;
+    float roughness;
+};
 
 cbuffer cbMatrix : register(b0)
 {
@@ -30,7 +35,7 @@ cbuffer cbLighting : register(b1)
 cbuffer cbParameter : register(b2)
 {
     float time;
-    float roughness;
+    Parameters params;
 };
 
 struct appdata
@@ -103,7 +108,7 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
     float d = saturate(dot(_normal, normalize(_lightDir)) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
 
     float d2 = saturate(dot(normalize(halfVec), _normal)); //calculating the area hit by the specular light
-    d2 = (1 - roughness) * pow(d2, 30); //calculating power 30 to the specular
+    d2 = (1 - params.roughness) * pow(d2, 30 + (20 * (1 - 2 * params.roughness))); //calculating power 30 to the specular
     float d3 = saturate(dot(_normal, viewDir)); // calculating the fresnel diffuse
     d3 = saturate(1 - 2 * pow(d3, 0.5)); //calculating power 0.5 to the fresnel
 

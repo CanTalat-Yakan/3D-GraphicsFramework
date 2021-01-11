@@ -2,13 +2,14 @@
 #include "CCamera.h"
 #include <d3dcompiler.h>
 
-int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
+int CMaterial::Init(LPCWSTR _shaderName)
 {
 #pragma region //Get Instances of DirectX and Camera
 	p_d3d = &p_d3d->GetInstance();
 	p_camera = &p_camera->GetInstance();
 	p_lighting = &p_lighting->GetInstance();
 	p_time = &p_time->GetInstance();
+	p_params = &p_params->GetInstance();
 #pragma endregion
 
 #pragma region //Create Material
@@ -18,21 +19,6 @@ int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName)
 	if (error = createBuffer(&p_cbMatrix, sizeof(cbMatrix)) > 0) return error;
 	if (error = createBuffer(&p_cbLighting, sizeof(cbLighting)) > 0) return error;
 	if (error = createBuffer(&p_cbParameter, sizeof(cbParameter)) > 0) return error;
-	if (error = createTextureAndSampler(_textureName, &p_texture_SRV) > 0) return error;
-#pragma endregion
-
-	return 0;
-}
-
-int CMaterial::Init(LPCWSTR _shaderName, LPCWSTR _textureName, LPCWSTR _normalTextureName)
-{
-#pragma region Use previous complete init method
-	Init(_shaderName, _textureName);
-#pragma endregion
-
-#pragma region Add additional Textures
-	int error = 0;
-	if (error = createTextureAndSampler(_normalTextureName, &p_normalTexture_SRV) > 0) return error;
 #pragma endregion
 
 	return 0;
@@ -48,20 +34,25 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 	SetLightingBuffer();
 	SetParameterBuffer();
 
-	p_d3d->GetDeviceContext()->PSSetShaderResources(0, 1, &p_texture_SRV);
-	p_d3d->GetDeviceContext()->PSSetShaderResources(1, 1, &p_normalTexture_SRV);
+	p_d3d->GetDeviceContext()->PSSetShaderResources(0, 1, &p_colour_Texture_SRV);
+	p_d3d->GetDeviceContext()->PSSetShaderResources(1, 1, &p_normal_Texture_SRV);
+	p_d3d->GetDeviceContext()->PSSetShaderResources(2, 1, &p_height_Texture_SRV);
 	p_d3d->GetDeviceContext()->PSSetSamplers(0, 1, &p_texture_SS);
 }
 
 void CMaterial::Release()
 {
-	if (p_texture_SRV)
-		p_texture_SRV->Release();
-	p_texture_SRV = nullptr;
+	if (p_colour_Texture_SRV)
+		p_colour_Texture_SRV->Release();
+	p_colour_Texture_SRV = nullptr;
 
-	if (p_normalTexture_SRV)
-		p_normalTexture_SRV->Release();
-	p_normalTexture_SRV = nullptr;
+	if (p_normal_Texture_SRV)
+		p_normal_Texture_SRV->Release();
+	p_normal_Texture_SRV = nullptr;
+
+	if (p_height_Texture_SRV)
+		p_height_Texture_SRV->Release();
+	p_height_Texture_SRV = nullptr;
 
 	if (p_texture_SS)
 		p_texture_SS->Release();
@@ -124,7 +115,7 @@ void CMaterial::SetParameterBuffer()
 
 	cbParameter* buffer = reinterpret_cast<cbParameter*>(data.pData);
 	buffer->time = p_time->GetTime();
-	buffer->roughness = 0.1f;
+	buffer->params = p_params->Parameters;
 
 	p_d3d->GetDeviceContext()->Unmap(p_cbParameter, 0);
 	p_d3d->GetDeviceContext()->PSSetConstantBuffers(2, 1, &p_cbParameter);

@@ -3,7 +3,7 @@
 
 using namespace DirectX;
 
-struct CDirectionalLight
+struct SDirectionalLight
 {
 	XMFLOAT3 direction;
 	float pad;
@@ -12,7 +12,7 @@ struct CDirectionalLight
 	float intensity;
 	XMFLOAT3 pad2;
 };
-struct CPointLight
+struct SPointLight
 {
 	XMFLOAT3 position;
 	float pad;
@@ -29,8 +29,8 @@ public:
 	CLighting(CLighting const&) = delete;
 	void operator=(CLighting const&) = delete;
 
-	CDirectionalLight DirectionalLight;
-	CPointLight PointLight, PointLight2, PointLight3, PointLight4;
+	SDirectionalLight DirectionalLight;
+	SPointLight PointLight, PointLight2, PointLight3, PointLight4;
 
 private:
 	CLighting() {}

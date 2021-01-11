@@ -21,11 +21,13 @@ public:
 	CCamera* Camera = {};
 	CTime* Time = {};
 	CLighting* Lighting = {};
+	CParameters* Params = {};
 
 	inline void GetInstances() 
 	{
 		Camera = &Camera->GetInstance();
 		Time = &Time->GetInstance();
 		Lighting = &Lighting->GetInstance();
+		Params = &Params->GetInstance();
 	}
 };

@@ -160,6 +160,7 @@
     <ClCompile Include="CTime.cpp" />
     <ClCompile Include="CWindow.cpp" />
     <ClCompile Include="GScene.cpp" />
+    <ClCompile Include="GScene2.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +175,7 @@
     <ClInclude Include="CMaterial.h" />
     <ClInclude Include="CMesh.h" />
     <ClInclude Include="CObjLoader.h" />
+    <ClInclude Include="CParameters.h" />
     <ClInclude Include="CTerrain.h" />
     <ClInclude Include="CTime.h" />
     <ClInclude Include="CTransform.h" />
@@ -182,6 +184,7 @@
     <ClInclude Include="CObj.h" />
     <ClInclude Include="GObject.h" />
     <ClInclude Include="GScene.h" />
+    <ClInclude Include="GScene2.h" />
     <ClInclude Include="IMono.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

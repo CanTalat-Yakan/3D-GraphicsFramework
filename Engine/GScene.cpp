@@ -27,9 +27,14 @@ void GScene::Init()
 	Lighting->PointLight3.radius = 3.5f;
 	//white Point Light
 	Lighting->PointLight4.diffuse = { 0.9f, 0.9f, 0.9f, 1.0f };
-	Lighting->PointLight4.position = { -3.0f, 2.3f, -1.0f };
+	Lighting->PointLight4.position = { -2.65f, 2.3f, -1.0f };
 	Lighting->PointLight4.intensity = 1.0f;
 	Lighting->PointLight4.radius = 5.5f;
+#pragma endregion
+
+#pragma region //Setup Params
+	Params->Parameters.diffuse = { 0.5f, 0.5f, 0.5f, 1 };
+	Params->Parameters.roughness = sin(Time->GetTime());
 #pragma endregion
 
 #pragma region //Load Meshes
@@ -47,6 +52,7 @@ void GScene::Init()
 	m_sphere.mesh.Init(sphere);
 	m_sphere2.mesh.Init(sphere);
 	m_sphere3.mesh.Init(sphere);
+	m_pointLightVisualizer.mesh.Init(sphere);
 
 	CObj cylinder = obj.Load(L"R_Cylinder_Hollow.obj");
 	m_cylinder.mesh.Init(cylinder);
@@ -66,47 +72,39 @@ void GScene::Init()
 #pragma endregion
 
 #pragma region //Setup Materials
-	m_mat_Sky.Init(
-		L"S_SkyBox.hlsl",
-		L"T_SkyBox.png");
+	m_mat_Sky.Init(L"S_SkyBox.hlsl");
+	m_mat_Sky.SetColourTexture(L"T_SkyBox.png");
 
-	m_mat_Standard.Init(
-		L"S_Standard.hlsl",
-		L"T_Gray.png");
-	m_mat_Standard2.Init(
-		L"S_Standard.hlsl",
-		L"T_Proto2.png");
-	m_mat_Standard3.Init(
-		L"S_Standard.hlsl",
-		L"T_Proto4.png",
-		L"T_NormalDebug2.png");
+	m_mat_Standard.Init(L"S_Standard.hlsl");
+	m_mat_Standard.SetColourTexture(L"T_Gray.png");
+	m_mat_Standard2.Init(L"S_Standard.hlsl");
+	m_mat_Standard2.SetColourTexture(L"T_Proto2.png");
+	m_mat_Standard3.Init(L"S_Standard.hlsl");
+	m_mat_Standard3.SetColourTexture(L"T_Proto4.png");
+	m_mat_Standard3.SetNormalTexture(L"T_NormalDebug2.png");
 
-	m_mat_Toon.Init(
-		L"S_Toon.hlsl",
-		L"T_Proto4.png");
+	m_mat_Toon.Init(L"S_Toon.hlsl");
+	m_mat_Toon.SetColourTexture(L"T_Proto4.png");
 
-	m_mat_Fresnel.Init(
-		L"S_Fresnel.hlsl",
-		L"T_Grid.png");
+	m_mat_Fresnel.Init(L"S_Bubble.hlsl");
+	m_mat_Fresnel.SetColourTexture(L"T_Grid.png");
 
-	m_mat_Duck.Init(
-		L"S_Standard.hlsl",
-		L"T_Duck.png");
+	m_mat_Duck.Init(L"S_Standard.hlsl");
+	m_mat_Duck.SetColourTexture(L"T_Duck.png");
 
-	m_mat_Volcano.Init(
-		L"S_Terrain.hlsl",
-		L"T_Ground.png");
+	m_mat_Volcano.Init(L"S_Terrain.hlsl");
+	m_mat_Volcano.SetColourTexture(L"T_Ground.png");
 
-	m_mat_Water.Init(
-		L"S_Water.hlsl",
-		L"T_Grid.png");
+	m_mat_Water.Init(L"S_Water.hlsl");
+	m_mat_Water.SetColourTexture(L"T_Grid.png");
 
-	m_mat_Terrain.Init(
-		L"S_Terrain.hlsl",
-		L"T_Grid.png",
-		L"T_Height.png");
+	m_mat_Terrain.Init(L"S_Terrain.hlsl");
+	m_mat_Terrain.SetColourTexture(L"T_Grid.png");
+	m_mat_Terrain.SetHeightTexture(L"T_Height.png");
+
+	m_mat_Unlit.Init(L"S_Unlit.hlsl");
+	m_mat_Unlit.SetColourTexture(L"T_Grid.png");
 #pragma endregion
-
 
 #pragma region //Pass Material to GameObject
 	m_skyBox.material = &m_mat_Sky;
@@ -131,6 +129,8 @@ void GScene::Init()
 	m_sphere3.material = &m_mat_Fresnel;
 	m_cylinder3.material = &m_mat_Fresnel;
 	m_duck3.material = &m_mat_Fresnel;
+
+	m_pointLightVisualizer.material = &m_mat_Unlit;
 #pragma endregion
 }
 
@@ -160,6 +160,8 @@ void GScene::Start()
 	m_sphere2.transform = m_sphere3.transform = m_sphere.transform;
 	m_sphere2.transform.m_position.z += 2;
 	m_sphere3.transform.m_position.z += 4;
+
+	m_pointLightVisualizer.transform.SetScale(0.1f);
 
 	m_cylinder.transform.SetRotation(90, 0, 0);
 	m_cylinder.transform.SetScale(0.3f);
@@ -217,6 +219,21 @@ void GScene::Update()
 
 void GScene::LateUpdate()
 {
+#pragma region //Visualize PointLights
+	m_pointLightVisualizer.transform.SetPosition(Lighting->PointLight.position);
+	Params->Parameters.diffuse = { Lighting->PointLight.diffuse };
+	m_pointLightVisualizer.Update_Render();
+	m_pointLightVisualizer.transform.SetPosition(Lighting->PointLight2.position);
+	Params->Parameters.diffuse = { Lighting->PointLight2.diffuse };
+	m_pointLightVisualizer.Update_Render();
+	m_pointLightVisualizer.transform.SetPosition(Lighting->PointLight3.position);
+	Params->Parameters.diffuse = { Lighting->PointLight3.diffuse };
+	m_pointLightVisualizer.Update_Render();
+	m_pointLightVisualizer.transform.SetPosition(Lighting->PointLight4.position);
+	Params->Parameters.diffuse = { Lighting->PointLight4.diffuse };
+	m_pointLightVisualizer.Update_Render();
+#pragma endregion
+
 #pragma region //Render Contents
 	m_skyBox.Update_Render();
 
