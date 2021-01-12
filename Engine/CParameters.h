@@ -1,13 +1,18 @@
 #pragma once
 #include <DirectXMath.h>
+//#include <D3DX11.h>
 
 using namespace DirectX;
 
+struct SEnvironment 
+{
+	//LPCWSTR skyBox;
+};
 struct SParameters
 {
 	XMFLOAT4 diffuse;
 	float roughness;
-	float metalic;
+	float metallic;
 	float opacity;
 	float pad;
 };
@@ -20,6 +25,7 @@ public:
 	void operator=(CParameters const&) = delete;
 
 	SParameters Parameters;
+	SEnvironment Environment;
 
 private:
 	CParameters() {}

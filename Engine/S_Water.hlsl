@@ -16,6 +16,8 @@ struct Parameters
 {
     float4 diffuse;
     float roughness;
+    float metallic;
+    float opacity;
 };
 
 cbuffer cbMatrix : register(b0)
@@ -81,12 +83,21 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
     float d = saturate(dot(_normal, normalize(_lightDir)) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
 
     float d2 = saturate(dot(normalize(halfVec), _normal)); //calculating the area hit by the specular light
-    d2 = pow(d2, 30); //calculating power 30 to the specular
-    float d3 = saturate(dot(_normal, viewDir)); // calculating the fresnel diffuse
-    d3 = saturate(1 - pow(d3, 0.5)); //calculating power 0.5 to the fresnel
+
+
+    d2 = //calculating power 30 to the specular
+        (1 - params.roughness) * //calculating the specular according to roughness 1 => no specular
+        (1 + params.metallic * 2) * //calculating the factor of the specular according to the metalic 1 => factor 9
+        pow(d2, //calculating the power of the specular to make it the step smoother or more harsh
+            params.metallic * 800 + //makes the spec sharper with metalic
+            90 - (70 * (params.metallic))) - //base 90 to -70 roughness 1 => power 20 (smoother)
+            (params.metallic * 0.5); //makes the spec smaller with metalic
+
+    float d3 = saturate(dot(_normal, normalize(viewDir + _lightDir))); // calculating the fresnel diffuse
+    d3 = (1 - params.roughness) * saturate(1 - pow(d3, 0.5 + 0.5 * params.metallic)); //calculating power 0.5 to the fresnel
 
     
-    return float4(2 * saturate(d) * (d2 + (d3 * 0.75)) * _diffuse * _intensity);
+    return float4(2 * saturate(d * (d2 + d3)) * _diffuse * _intensity);
 }
 
 float rand(float2 n)
@@ -136,9 +147,6 @@ float voronoise(in float2 x, float u, float v)
     return va / wt;
 }
 
-Texture2D ObjTexture : register(t0);
-Texture2D ObjNormal : register(t1);
-SamplerState ObjSamplerState : register(s0);
 
 VS_OUTPUT VS(appdata v)
 {
@@ -157,13 +165,20 @@ VS_OUTPUT VS(appdata v)
     return o;
 }
 
+Texture2D ObjTexture : register(t0);
+SamplerState ObjSamplerState : register(s0);
+
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
-    float tileSize = 14;
-    float4 col = ObjTexture.Sample(ObjSamplerState, i.uv * tileSize);
-    col *= 0.5;
-    col += float4(0, 0, 0.4, 1);
-    float3 colNormal = ObjNormal.Sample(ObjSamplerState, float2(-i.uv.x, i.uv.y));
+    float tiling = 14;
+    float4 col = ObjTexture.Sample(ObjSamplerState, tiling * i.uv);
+    
+    
+    //float3 base = float3(0.02, 0.12, 0.17); //(5, 30, 42)
+    float3 base = float3(0.22, 0.32, 0.37); //(5, 30, 42)
+    float3 light = float3(0.38, 0.56, 0.56); //(96, 142, 142);
+
+    col *= float4(0.58, 0.76, 0.76, 1);
 
     //calculating normal
     float3 normal = normalize(i.normal);
@@ -180,25 +195,13 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
             dirLight.direction,
             dirLight.diffuse, dirLight.intensity);
     
-    //calculating pointLight
-    float4 PointLight =
-        CalculateDiffuse(
-            normal,
-            i.worldPos - pointLight.position,
-            pointLight.diffuse, pointLight.intensity,
-            3.5)
-        + CalculateSpecular(
-            normal,
-            i.worldPos - i.camPos,
-            i.worldPos - pointLight.position,
-            pointLight.diffuse, pointLight.intensity,
-            3.5);
-    
     //float4 foam = voronoise(float2((-i.uv.x * 100 + time2), (i.uv.y * 100 + time2)), 1, 1);
-    float range = (pow(i.vPos.y, 0.5) - 0.8);
-    float4 foam = float4(float3(1, 1, 1) * range, 1);
-    float4 deep = float4(float3(0.2, 0.2, 0.5) * pow(saturate(1 - range), 1.8), 1);
+    float range = (pow(i.vPos.y, 0.25) - 1);
+    float4 foam = float4(float3(1, 1, 1) * range, 0.6);
+    //float4 deep = float4(float3(0.2, 0.2, 0.5) * pow(saturate(1 - range), 1.8), 1);
+    float4 deep = float4(0.2 + base * pow(saturate(1 - range), 1.8), 0.2);
 
-    return
-        (directionalLight + PointLight + dirLight.ambient) * float4(col.rgb, 0.5) + foam + deep;
+    //return float4((directionalLight + dirLight.ambient).rgb * col.rgb + (foam + deep).rgb, 1);
+    return (directionalLight + dirLight.ambient) * float4(col.rgb, 0.1) + foam + deep;
+    //return float4((directionalLight + dirLight.ambient).rgb * base + (range + light), 1);
 }

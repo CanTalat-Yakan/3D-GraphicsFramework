@@ -32,11 +32,13 @@ void GScene::Init()
 	Lighting->PointLight4.radius = 5.5f;
 #pragma endregion
 
-#pragma region //Setup Params
+#pragma region //Setup Params Default
 	Params->Parameters.diffuse = { 0.5f, 0.5f, 0.5f, 1 };
 	Params->Parameters.roughness = 0.5f;
-	Params->Parameters.metalic = 0.5f;
+	Params->Parameters.metallic = 0.5f;
 	Params->Parameters.opacity = 0;
+
+	//Params->Environment.skyBox = L"T_SkyBox.png";
 #pragma endregion
 
 #pragma region //Load Meshes
@@ -56,6 +58,7 @@ void GScene::Init()
 	m_sphere3.mesh.Init(sphere);
 	m_sphere4.mesh.Init(sphere);
 	m_sphere5.mesh.Init(sphere);
+	m_sphere6.mesh.Init(sphere);
 	m_pointLightVisualizer.mesh.Init(sphere);
 
 	CObj cylinder = obj.Load(L"R_Cylinder_Hollow.obj");
@@ -102,12 +105,12 @@ void GScene::Init()
 	m_mat_Volcano.Init(L"S_Terrain.hlsl");
 	m_mat_Volcano.SetColourTexture(L"T_Ground.png");
 
-	m_mat_Water.Init(L"S_Water.hlsl");
-	m_mat_Water.SetColourTexture(L"T_Grid.png");
-
 	m_mat_Terrain.Init(L"S_Terrain.hlsl");
 	m_mat_Terrain.SetColourTexture(L"T_Grid.png");
 	m_mat_Terrain.SetHeightTexture(L"T_Height.png");
+
+	m_mat_Water.Init(L"S_Water.hlsl");
+	m_mat_Water.SetColourTexture(L"T_Grid.png");
 
 	m_mat_Unlit.Init(L"S_Unlit.hlsl");
 	m_mat_Unlit.SetColourTexture(L"T_Grid.png");
@@ -122,6 +125,7 @@ void GScene::Init()
 	m_sphere.material = &m_mat_Grid;
 	m_sphere4.material = &m_mat_Grid;
 	m_sphere5.material = &m_mat_Grid;
+	m_sphere6.material = &m_mat_Grid;
 	m_cylinder.material = &m_mat_Grid;
 
 	m_sphere2.material = &m_mat_Toon;
@@ -157,6 +161,8 @@ void GScene::Start()
 	m_skyBox.transform.SetRotation(0, 180, 0);
 	m_skyBox.transform.SetScale(-1000);
 
+	m_pointLightVisualizer.transform.SetScale(0.1f);
+
 	m_plane.transform.SetPosition(0, 0, 2);
 
 	m_cube.transform.SetPosition(0, 1.5f, 0);
@@ -165,13 +171,14 @@ void GScene::Start()
 	m_sphere.transform.SetScale(1.5f);
 	//m_sphere.transform.SetScale(0.25f);
 	m_sphere.transform.SetPosition(2, 1.5f, 0);
-	m_sphere2.transform = m_sphere3.transform = m_sphere4.transform = m_sphere5.transform = m_sphere.transform;
+	m_sphere2.transform = m_sphere3.transform = m_sphere4.transform = 
+		m_sphere5.transform = m_sphere6.transform = m_sphere.transform;
 	m_sphere2.transform.m_position.z += 2;
 	m_sphere3.transform.m_position.z += 4;
 	m_sphere4.transform.m_position.z -= 2;
 	m_sphere5.transform.m_position.z -= 4;
+	m_sphere6.transform.m_position.z -= 6;
 
-	m_pointLightVisualizer.transform.SetScale(0.1f);
 
 	m_cylinder.transform.SetRotation(90, 0, 0);
 	m_cylinder.transform.SetScale(0.3f);
@@ -218,10 +225,8 @@ void GScene::Update()
 	m_cylinder3.transform.SetRotationDegAdditive(0, rot, 0);
 
 	m_sphere.transform.SetRotationDegAdditive(0, rot, 0);
-	m_sphere2.transform.SetRotationDegAdditive(0, rot, 0);
-	m_sphere3.transform.SetRotationDegAdditive(0, rot, 0);
-	m_sphere4.transform.SetRotationDegAdditive(0, rot, 0);
-	m_sphere5.transform.SetRotationDegAdditive(0, rot, 0);
+	m_sphere2.transform.m_rotation = m_sphere3.transform.m_rotation = m_sphere4.transform.m_rotation = 
+		m_sphere5.transform.m_rotation = m_sphere6.transform.m_rotation = m_sphere.transform.m_rotation;
 
 	CTransform t;
 	t.SetPosition(sin(Time->GetTime()) * 2, sin(Time->GetTime() * 2) + 1.1f, cos(Time->GetTime()) * 2);
@@ -253,7 +258,7 @@ void GScene::LateUpdate()
 #pragma region //Render Contents
 	Params->Parameters.diffuse = { 1, 1, 1, 1 };
 	Params->Parameters.roughness = 0;
-	Params->Parameters.metalic = 0;
+	Params->Parameters.metallic = 0;
 	m_skyBox.Update_Render();
 
 	m_plane.Update_Render();
@@ -266,10 +271,12 @@ void GScene::LateUpdate()
 	Params->Parameters.roughness = 0.5f + 0.5f * sin(Time->GetTime() * 2);
 	m_sphere4.Update_Render();
 	Params->Parameters.roughness = 0;
-	Params->Parameters.metalic = 0.5f + 0.5f * sin(Time->GetTime() * 2);
+	Params->Parameters.metallic = 0.5f + 0.5f * sin(Time->GetTime() * 2);
 	Params->Parameters.diffuse = { 1, 1, 0.8f, 1 };
 	m_sphere5.Update_Render();
-	Params->Parameters.metalic = 0;
+	Params->Parameters.roughness = 0.5f + 0.5f * sin(Time->GetTime());
+	m_sphere6.Update_Render();
+	Params->Parameters.metallic = 0;
 	Params->Parameters.diffuse = { 1, 1, 1, 1 };
 
 	m_cylinder.Update_Render();
@@ -297,6 +304,7 @@ void GScene::Release()
 	m_sphere3.Release();
 	m_sphere4.Release();
 	m_sphere5.Release();
+	m_sphere6.Release();
 	m_cylinder.Release();
 	m_cylinder2.Release();
 	m_cylinder3.Release();

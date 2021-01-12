@@ -16,7 +16,7 @@ struct Parameters
 {
     float4 diffuse;
     float roughness;
-    float metalic;
+    float metallic;
     float opacity;
 };
 
@@ -114,15 +114,17 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
 
     d2 =                                        //calculating power 30 to the specular
         (1 - params.roughness) *                //calculating the specular according to roughness 1 => no specular
-        (1 + params.metalic * 9) *              //calculating the factor of the specular according to the metalic 1 => factor 9
+        (1 + params.metallic * 2) * //calculating the factor of the specular according to the metalic 1 => factor 9
         pow(d2,                                 //calculating the power of the specular to make it the step smoother or more harsh
-            90 - (70 * (params.roughness)));    //base 90 to -70 roughness 1 => power 20 (smoother)
+            params.metallic * 800 + //makes the spec sharper with metalic
+            90 - (70 * (params.roughness))) -   //base 90 to -70 roughness 1 => power 20 (smoother)
+            (params.metallic * 0.5); //makes the spec smaller with metalic
 
-    float d3 = saturate(dot(_normal, viewDir)); // calculating the fresnel diffuse
-    d3 = saturate(1 - 2 * pow(d3, 0.5)); //calculating power 0.5 to the fresnel
+    float d3 = saturate(dot(_normal, normalize(viewDir + _lightDir))); // calculating the fresnel diffuse
+    d3 = (1 - params.roughness) * saturate(1 - pow(d3, 0.5 + 0.5 * params.metallic)); //calculating power 0.5 to the fresnel
 
     
-    return float4(saturate(2 * saturate(d) * (d2 + (d3 * 0.75)) * _diffuse * _intensity));
+    return float4(2 * saturate(d * (d2 + d3)) * _diffuse * _intensity);
 }
 float4 CalculateAllPointLights(float3 _normal, float3 _worldPos, float3 _camPos)
 {
@@ -198,10 +200,10 @@ float2 ReflectUV(float3 t3)
 }
 float4 CalculateReflection(float4 _col, float3 _normal, float3 _viewDir)
 {
-    _col *= saturate(pow(params.metalic, 5)) * 0.15f;
+    _col *= saturate(pow(params.metallic, 5)) * 0.15f;
     float3 viewDir = normalize(_viewDir);
     float d = saturate(dot(_normal, viewDir));
-    float4 fresnel = saturate(1 - 5 * pow(d, 1 + params.metalic)) * params.metalic;
+    float4 fresnel = saturate(1 - 5 * pow(d, 1 + params.metallic)) * params.metallic;
     return _col * (1 + fresnel);
 }
 
@@ -243,7 +245,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
         normal = normalize(normal);
     }
 
-    float4 colReflect = ObjSkyBox.Sample(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normal)));
+    float4 colReflect = ObjSkyBox.SampleLevel(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normal)), params.roughness * 10);
     colReflect = CalculateReflection(colReflect, normal, i.worldPos - i.camPos);
 
     //calculating directionalLight

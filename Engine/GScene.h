@@ -17,7 +17,7 @@ private:
 	GObject m_skyBox = {};
 	GObject m_plane = {};
 	GObject m_cube = {};
-	GObject m_sphere, m_sphere2, m_sphere3, m_sphere4 , m_sphere5 = {};
+	GObject m_sphere, m_sphere2, m_sphere3, m_sphere4, m_sphere5, m_sphere6 = {};
 	GObject m_cylinder, m_cylinder2, m_cylinder3 = {};
 	GObject m_duck, m_duck2, m_duck3 = {};
 	GObject m_volcano = {};

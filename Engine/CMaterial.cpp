@@ -12,14 +12,19 @@ int CMaterial::Init(LPCWSTR _shaderName)
 	p_params = &p_params->GetInstance();
 #pragma endregion
 
-#pragma region //Create Material
+#pragma region //Create SkyBox Texture
 	int error = 0;
+	//if (error = createTextureAndSampler(L"T_SkyBox.png", &p_skyBox_Texture_SRV) > 0) return error;
+#pragma endregion
+
+#pragma region //Create Material
 	if (error = createVertexShader(_shaderName) > 0) return error;
 	if (error = createPixelShader(_shaderName) > 0) return error;
 	if (error = createBuffer(&p_cbMatrix, sizeof(cbMatrix)) > 0) return error;
 	if (error = createBuffer(&p_cbLighting, sizeof(cbLighting)) > 0) return error;
 	if (error = createBuffer(&p_cbParameter, sizeof(cbParameter)) > 0) return error;
 #pragma endregion
+
 
 	return 0;
 }
