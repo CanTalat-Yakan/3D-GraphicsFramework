@@ -195,7 +195,7 @@ void GS(triangle VS_OUTPUT i[3], inout TriangleStream<VS_OUTPUT> os)
         os.Append(t);
     }
     
-    os.RestartStrip();
+    //os.RestartStrip();
 }
 
 float4 PS(VS_OUTPUT i) : SV_TARGET

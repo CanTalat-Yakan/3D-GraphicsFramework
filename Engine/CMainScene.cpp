@@ -60,6 +60,9 @@ void CScene::Init()
 	m_sphere4.mesh.Init(sphere);
 	m_sphere5.mesh.Init(sphere);
 	m_sphere6.mesh.Init(sphere);
+	m_sphere7.mesh.Init(sphere);
+	m_sphere8.mesh.Init(sphere);
+	m_sphere9.mesh.Init(sphere);
 	m_pointLightVisualizer.mesh.Init(sphere);
 
 	CObj cylinder = obj.Load(L"R_Cylinder_Hollow.obj");
@@ -125,6 +128,9 @@ void CScene::Init()
 	m_sphere4.material = &m_mat_Grid;
 	m_sphere5.material = &m_mat_Grid;
 	m_sphere6.material = &m_mat_Grid;
+	m_sphere7.material = &m_mat_Grid;
+	m_sphere8.material = &m_mat_Grid;
+	m_sphere9.material = &m_mat_Grid;
 	m_cylinder.material = &m_mat_Grid;
 
 	m_sphere2.material = &m_mat_Toon;
@@ -171,12 +177,26 @@ void CScene::Start()
 	//m_sphere.transform.SetScale(0.25f);
 	m_sphere.transform.SetPosition(2, 1.5f, 0);
 	m_sphere2.transform = m_sphere3.transform = m_sphere4.transform = 
-		m_sphere5.transform = m_sphere6.transform = m_sphere.transform;
+		m_sphere5.transform = m_sphere6.transform = m_sphere7.transform = 
+		m_sphere8.transform = m_sphere9.transform = m_sphere.transform;
 	m_sphere2.transform.m_position.z += 2;
 	m_sphere3.transform.m_position.z += 4;
+
 	m_sphere4.transform.m_position.z -= 2;
-	m_sphere5.transform.m_position.z -= 4;
-	m_sphere6.transform.m_position.z -= 6;
+	m_sphere4.transform.m_position.x -= 2;
+	m_sphere7.transform.m_position.z -= 2;
+	m_sphere7.transform.m_position.x -= 2;
+	m_sphere7.transform.m_position.y += 2;
+
+	m_sphere5.transform.m_position.z -= 2;
+	m_sphere8.transform.m_position.z -= 2;
+	m_sphere8.transform.m_position.y += 2;
+
+	m_sphere6.transform.m_position.x += 2;
+	m_sphere6.transform.m_position.z -= 2;
+	m_sphere9.transform.m_position.z -= 2;
+	m_sphere9.transform.m_position.x += 2;
+	m_sphere9.transform.m_position.y += 2;
 
 
 	m_cylinder.transform.SetRotation(90, 0, 0);
@@ -222,7 +242,8 @@ void CScene::Update()
 
 	m_sphere.transform.SetRotationDegAdditive(0, rot, 0);
 	m_sphere2.transform.m_rotation = m_sphere3.transform.m_rotation = m_sphere4.transform.m_rotation = 
-		m_sphere5.transform.m_rotation = m_sphere6.transform.m_rotation = m_sphere.transform.m_rotation;
+		m_sphere5.transform.m_rotation = m_sphere6.transform.m_rotation = m_sphere7.transform.m_rotation = 
+		m_sphere8.transform.m_rotation = m_sphere9.transform.m_rotation = m_sphere.transform.m_rotation;
 
 	CTransform t;
 	t.SetPosition(sin(Time->GetTime()) * 2, sin(Time->GetTime() * 2) + 1.1f, cos(Time->GetTime()) * 2);
@@ -263,6 +284,14 @@ void CScene::LateUpdate()
 	m_sphere.Update_Render();
 	m_sphere2.Update_Render();
 	m_sphere3.Update_Render();
+	Params->Parameters.roughness = 1;
+	m_sphere7.Update_Render();
+	Params->Parameters.roughness = 0;
+	Params->Parameters.metallic = 1;
+	m_sphere8.Update_Render();
+	Params->Parameters.roughness = 1;
+	m_sphere9.Update_Render();
+	Params->Parameters.metallic = 0;
 	Params->Parameters.roughness = 0.5f + 0.5f * sin(Time->GetTime() * 2);
 	m_sphere4.Update_Render();
 	Params->Parameters.metallic = 0.5f + 0.5f * sin(Time->GetTime() * 2);
@@ -270,6 +299,7 @@ void CScene::LateUpdate()
 	Params->Parameters.roughness = 0;
 	m_sphere5.Update_Render();
 	Params->Parameters.metallic = 0;
+
 	Params->Parameters.diffuse = { 1, 1, 1, 1 };
 
 	m_cylinder.Update_Render();
@@ -298,6 +328,9 @@ void CScene::Release()
 	m_sphere4.Release();
 	m_sphere5.Release();
 	m_sphere6.Release();
+	m_sphere7.Release();
+	m_sphere8.Release();
+	m_sphere9.Release();
 	m_cylinder.Release();
 	m_cylinder2.Release();
 	m_cylinder3.Release();
