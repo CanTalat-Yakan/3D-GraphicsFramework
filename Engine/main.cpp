@@ -1,6 +1,5 @@
 #include <windows.h>
-#include "GScene.h"
-#include "GScene2.h"
+#include "CScene.h"
 #include "CEngine.h"
 
 int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdLine, INT _nCmdShow)
@@ -9,16 +8,12 @@ int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 	CEngine engine = {};
 	engine.Init(_hInstance, _nCmdShow);
 
-	GScene mainScene = {};
+	CScene mainScene = {};
 	mainScene.Init();
-	GScene2 secondScene = {};
-	//secondScene.Init();
 #pragma endregion
 
 	mainScene.Awake();
 	mainScene.Start();
-	//secondScene.Awake();
-	//secondScene.Start();
 
 	while (engine.p_window->Run())
 	{
@@ -29,16 +24,12 @@ int WINAPI WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdL
 		mainScene.EarlyUpdate();
 		mainScene.Update();
 		mainScene.LateUpdate();
-		//secondScene.EarlyUpdate();
-		//secondScene.Update();
-		//secondScene.LateUpdate();
 
 		engine.p_d3d->Present();
 	}
 
 #pragma region //Release
 	mainScene.Release();
-	//secondScene.Release();
 	engine.Release();
 #pragma endregion
 

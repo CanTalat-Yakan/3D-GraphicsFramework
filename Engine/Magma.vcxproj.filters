@@ -42,13 +42,10 @@
     <ClCompile Include="CObjLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CLighting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GScene2.cpp">
+    <ClCompile Include="CMainScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,9 +80,6 @@
     <ClInclude Include="CObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GScene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IMono.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -104,10 +98,10 @@
     <ClInclude Include="CTerrain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GScene2.h">
+    <ClInclude Include="CParameters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CParameters.h">
+    <ClInclude Include="CScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

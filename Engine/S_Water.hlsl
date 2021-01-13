@@ -148,12 +148,17 @@ float voronoise(in float2 x, float u, float v)
 }
 
 
+Texture2D ObjTexture : register(t0);
+SamplerState ObjSamplerState : register(s0);
+
 VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
 
-    v.vertex += -v.normal *
-        pow(noise(float2((v.vertex.x * 0.2 + time), (v.vertex.z * 0.2 + time))) * 3, 1);
+    v.vertex += float3(
+        sin((cos(v.vertex.x * 0.2 + time) + v.vertex.x * 0.2) + time), 
+        pow(noise(float2((v.vertex.x * 0.2 + time), (v.vertex.z * 0.2 + time))) * 3, 1) + sin((v.vertex.x * 0.2 + v.vertex.z * 0.2) + time),
+        sin((cos(v.vertex.z * 0.2 - time) + v.vertex.z * 0.2) - time));
 
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = mul(World, float4(v.normal, 0));
@@ -165,8 +170,28 @@ VS_OUTPUT VS(appdata v)
     return o;
 }
 
-Texture2D ObjTexture : register(t0);
-SamplerState ObjSamplerState : register(s0);
+[maxvertexcount(3)]
+void GS(triangle VS_OUTPUT i[3], inout TriangleStream<VS_OUTPUT> os)
+{
+    VS_OUTPUT t = (VS_OUTPUT) 0;
+    
+    float3 normal = normalize(cross(
+        i[2].worldPos.xyz - i[0].worldPos.xyz,
+        i[1].worldPos.xyz - i[0].worldPos.xyz));
+
+    for (int j = 0; j < 3; j++)
+    {
+        t.normal = normal;
+        t.pos = i[j].pos;
+        t.worldPos = i[j].worldPos;
+        t.camPos = i[j].camPos;
+        t.uv = i[j].uv;
+        t.vPos = i[j].vPos;
+        os.Append(t);
+    }
+    
+    os.RestartStrip();
+}
 
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
@@ -197,11 +222,13 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     
     //float4 foam = voronoise(float2((-i.uv.x * 100 + time2), (i.uv.y * 100 + time2)), 1, 1);
     float range = (pow(i.vPos.y, 0.25) - 1);
-    float4 foam = float4(float3(1, 1, 1) * range, 0.6);
+    //float4 foam = float4(float3(1, 1, 1) * range, 0.6);
+    float4 detail = float4(base + saturate((light * range)).rgb, 0.2 + 2 * saturate(range));
     //float4 deep = float4(float3(0.2, 0.2, 0.5) * pow(saturate(1 - range), 1.8), 1);
-    float4 deep = float4(0.2 + base * pow(saturate(1 - range), 1.8), 0.2);
+    float4 deep = float4(base, 0.1);
+    //float4 deep = float4(0.2 + base * pow(saturate(1 - range), 1.8), 0.1);
 
     //return float4((directionalLight + dirLight.ambient).rgb * col.rgb + (foam + deep).rgb, 1);
-    return (directionalLight + dirLight.ambient) * float4(col.rgb, 0.1) + foam + deep;
+    return (directionalLight + dirLight.ambient) * float4(col.rgb, 0.1) + detail;
     //return float4((directionalLight + dirLight.ambient).rgb * base + (range + light), 1);
 }

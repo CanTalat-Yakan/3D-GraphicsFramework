@@ -159,8 +159,7 @@
     <ClCompile Include="CObjLoader.cpp" />
     <ClCompile Include="CTime.cpp" />
     <ClCompile Include="CWindow.cpp" />
-    <ClCompile Include="GScene.cpp" />
-    <ClCompile Include="GScene2.cpp" />
+    <ClCompile Include="CMainScene.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -183,8 +182,7 @@
     <ClInclude Include="CWindow.h" />
     <ClInclude Include="CObj.h" />
     <ClInclude Include="GObject.h" />
-    <ClInclude Include="GScene.h" />
-    <ClInclude Include="GScene2.h" />
+    <ClInclude Include="CScene.h" />
     <ClInclude Include="IMono.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

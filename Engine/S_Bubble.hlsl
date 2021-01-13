@@ -102,11 +102,12 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //normalize normal
     float3 normal = normalize(i.normal);
     
-    //float4 col = ObjTexture.Sample(ObjSamplerState, i.uv);
+    //float4 col = SkyBoxTexture.Sample(ObjSamplerState, i.uv);
     //float4 col = ObjTexture.SampleLevel(ObjSamplerState, mycubemap(reflect(-i.worldPos - i.camPos, normal)), 2);
-    float4 col = SkyBoxTexture.Sample(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normal)));
+    //float4 col = SkyBoxTexture.Sample(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normal)));
     //float4 col = texCUBElod(ObjTexture, float4(i.uv, 0));
     //float4 col2 = SAMPLE_TEXTURECUBE_LOD(ObjTexture, ObjSamplerState, reflect(-i.worldPos - i.camPos, normal), 0);
+    float4 col = SkyBoxTexture.Sample(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normalize(i.normal))));
 	
      
     //calculating directionalLight
@@ -114,8 +115,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
         CalculateSpecular(
             normal,
             i.worldPos - i.camPos,
-            dirLight.direction,
-            dirLight.diffuse, dirLight.intensity);
+            dirLight.direction, dirLight.diffuse, dirLight.intensity);
     
     
     //calculate fresnel

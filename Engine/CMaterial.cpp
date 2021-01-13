@@ -19,12 +19,12 @@ int CMaterial::Init(LPCWSTR _shaderName)
 
 #pragma region //Create Material
 	if (error = createVertexShader(_shaderName) > 0) return error;
+	if (error = createGeometryShader(_shaderName) > 0) return error;
 	if (error = createPixelShader(_shaderName) > 0) return error;
 	if (error = createBuffer(&p_cbMatrix, sizeof(cbMatrix)) > 0) return error;
 	if (error = createBuffer(&p_cbLighting, sizeof(cbLighting)) > 0) return error;
 	if (error = createBuffer(&p_cbParameter, sizeof(cbParameter)) > 0) return error;
 #pragma endregion
-
 
 	return 0;
 }
@@ -33,6 +33,7 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 {
 	p_d3d->GetDeviceContext()->IASetInputLayout(p_inputLayout);
 	p_d3d->GetDeviceContext()->VSSetShader(p_vertexShader, nullptr, 0);
+	p_d3d->GetDeviceContext()->GSSetShader(p_geometryShader, nullptr, 0);
 	p_d3d->GetDeviceContext()->PSSetShader(p_pixelShader, nullptr, 0);
 
 	setMatrixBuffer(_worldMatrix);
@@ -41,7 +42,7 @@ void CMaterial::Render(XMMATRIX _worldMatrix)
 
 	p_d3d->GetDeviceContext()->PSSetShaderResources(0, 1, &p_colour_Texture_SRV);
 	p_d3d->GetDeviceContext()->PSSetShaderResources(1, 1, &p_normal_Texture_SRV);
-	p_d3d->GetDeviceContext()->PSSetShaderResources(2, 1, &p_height_Texture_SRV);
+	p_d3d->GetDeviceContext()->VSSetShaderResources(2, 1, &p_height_Texture_SRV);
 	p_d3d->GetDeviceContext()->PSSetShaderResources(3, 1, &p_skyBox_Texture_SRV);
 	p_d3d->GetDeviceContext()->PSSetSamplers(0, 1, &p_texture_SS);
 }
@@ -50,36 +51,40 @@ void CMaterial::Release()
 {
 	if (p_colour_Texture_SRV)
 		p_colour_Texture_SRV->Release();
-	p_colour_Texture_SRV = nullptr;
-
 	if (p_normal_Texture_SRV)
 		p_normal_Texture_SRV->Release();
-	p_normal_Texture_SRV = nullptr;
-
 	if (p_height_Texture_SRV)
 		p_height_Texture_SRV->Release();
-	p_height_Texture_SRV = nullptr;
-
 	if (p_skyBox_Texture_SRV)
 		p_skyBox_Texture_SRV->Release();
-	p_skyBox_Texture_SRV = nullptr;
-
 	if (p_texture_SS)
 		p_texture_SS->Release();
-	p_texture_SS = nullptr;
+	if (p_geometryShader)
+		p_geometryShader->Release();
+	if (p_vertexShader)
+		p_vertexShader->Release();
+	if (p_pixelShader)
+		p_pixelShader->Release();
 
-	p_vertexShader->Release();
-	p_vertexShader = nullptr;
-	p_pixelShader->Release();
+	p_colour_Texture_SRV = nullptr;
+	p_normal_Texture_SRV = nullptr;
+	p_height_Texture_SRV = nullptr;
+	p_skyBox_Texture_SRV = nullptr;
+	p_texture_SS = nullptr;
 	p_pixelShader = nullptr;
+	p_vertexShader = nullptr;
+	p_geometryShader = nullptr;
+
 	p_inputLayout->Release();
 	p_inputLayout = nullptr;
+
 	p_cbMatrix->Release();
 	p_cbMatrix = nullptr;
 	p_cbLighting->Release();
 	p_cbLighting = nullptr;
 	p_cbParameter->Release();
 	p_cbParameter = nullptr;
+
 	p_d3d = nullptr;
 	p_camera = nullptr;
 }
@@ -170,6 +175,24 @@ int CMaterial::createPixelShader(LPCWSTR _shaderName)
 
 	pPS_Buffer->Release();
 	pPS_Buffer = nullptr;
+
+	return 0;
+}
+
+int CMaterial::createGeometryShader(LPCWSTR _shaderName)
+{
+	if (!withGS)
+		return 0;
+
+	ID3DBlob* pGS_Buffer = {};
+	HRESULT hr = D3DX11CompileFromFile(_shaderName, 0, 0, "GS", "gs_4_0", 0, 0, 0, &pGS_Buffer, 0, 0);
+	if (FAILED(hr)) return 61;
+
+	hr = p_d3d->GetDevice()->CreateGeometryShader(pGS_Buffer->GetBufferPointer(), pGS_Buffer->GetBufferSize(), NULL, &p_geometryShader);
+	if (FAILED(hr)) return 62;
+
+	pGS_Buffer->Release();
+	pGS_Buffer = nullptr;
 
 	return 0;
 }

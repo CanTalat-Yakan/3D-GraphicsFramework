@@ -24,7 +24,7 @@ public:
 	int SetNormalTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_normal_Texture_SRV) > 0) return error;}
 	int SetHeightTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_height_Texture_SRV) > 0) return error;}
 	int SetSkyBoxTexture(LPCWSTR _textureName) { int error; if (error = createTextureAndSampler(_textureName, &p_skyBox_Texture_SRV) > 0) return error;}
-
+	bool withGS = false;
 private:
 	CDirect* p_d3d;
 	CCamera* p_camera;
@@ -35,6 +35,7 @@ private:
 
 	int createVertexShader(LPCWSTR _shaderName);
 	int createPixelShader(LPCWSTR _shaderName);
+	int createGeometryShader(LPCWSTR _shaderName);
 	int createInputLayout(ID3DBlob* _pBlob);
 	int createBuffer(ID3D11Buffer** _pcb, UINT _cbSize);
 	int createTextureAndSampler(LPCWSTR _textureName, ID3D11ShaderResourceView** _texture_SRV);
@@ -46,6 +47,7 @@ private:
 	// shader
 	ID3D11VertexShader* p_vertexShader = nullptr;
 	ID3D11PixelShader* p_pixelShader = nullptr;
+	ID3D11GeometryShader* p_geometryShader = nullptr;
 
 	// input layout
 	ID3D11InputLayout* p_inputLayout = nullptr;

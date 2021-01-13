@@ -1,5 +1,6 @@
-#include "GScene.h"
-void GScene::Init()
+#include "CScene.h"
+
+void CScene::Init()
 {
 	GetInstances();
 
@@ -74,13 +75,14 @@ void GScene::Init()
 	CObj volcano = obj.Load(L"R_Volcano.obj");
 	m_volcano.mesh.Init(volcano);
 
-	CObj terrain = obj.LoadTerrain(100, 100);
+	CObj terrain = obj.LoadTerrain(200, 200);
 	m_water.mesh.Init(terrain);
+	m_terrain.mesh.Init(terrain);
 #pragma endregion
 
 #pragma region //Setup Materials
 	m_mat_Sky.Init(L"S_SkyBox.hlsl");
-	m_mat_Sky.SetSkyBoxTexture(L"T_SkyBox.png");
+	m_mat_Sky.SetSkyBoxTexture(L"T_SkyBox2.png");
 
 	m_mat_Plane.Init(L"S_Standard.hlsl");
 	m_mat_Plane.SetColourTexture(L"T_Proto2.png");
@@ -105,12 +107,14 @@ void GScene::Init()
 	m_mat_Volcano.Init(L"S_Terrain.hlsl");
 	m_mat_Volcano.SetColourTexture(L"T_Ground.png");
 
+	m_mat_Terrain.withGS = true;
 	m_mat_Terrain.Init(L"S_Terrain.hlsl");
-	m_mat_Terrain.SetColourTexture(L"T_Grid.png");
 	m_mat_Terrain.SetHeightTexture(L"T_Height.png");
+	m_mat_Terrain.SetColourTexture(L"T_Ground.png");
 
+	m_mat_Water.withGS = true;
 	m_mat_Water.Init(L"S_Water.hlsl");
-	m_mat_Water.SetColourTexture(L"T_Grid.png");
+	m_mat_Water.SetColourTexture(L"T_Water.png");
 
 	m_mat_Unlit.Init(L"S_Unlit.hlsl");
 	m_mat_Unlit.SetColourTexture(L"T_Grid.png");
@@ -138,6 +142,8 @@ void GScene::Init()
 
 	m_water.material = &m_mat_Water;
 
+	m_terrain.material = &m_mat_Terrain;
+
 	m_sphere3.material = &m_mat_Bubble;
 	m_cylinder3.material = &m_mat_Bubble;
 	m_duck3.material = &m_mat_Bubble;
@@ -147,7 +153,7 @@ void GScene::Init()
 }
 
 
-void GScene::Awake()
+void CScene::Awake()
 {
 #pragma region //Setup Camera Transform
 	Camera->SetPosition(0, 2, -5);
@@ -155,7 +161,7 @@ void GScene::Awake()
 #pragma endregion
 }
 
-void GScene::Start()
+void CScene::Start()
 {
 #pragma region //Setup Contents Transforms
 	m_skyBox.transform.SetRotation(0, 180, 0);
@@ -202,18 +208,21 @@ void GScene::Start()
 
 	m_water.transform.SetPosition(-25, -8, -25);
 	m_water.transform.SetScale(0.5f);
+
+	m_terrain.transform.SetPosition(-25, -10, -25);
+	m_terrain.transform.SetScale(0.5f);
 #pragma endregion
 }
 
 
-void GScene::EarlyUpdate()
+void CScene::EarlyUpdate()
 {
 #pragma region //Parent Camera to Skybox
 	m_skyBox.transform.SetPosition(Camera->GetCamPosFloat3());
 #pragma endregion
 }
 
-void GScene::Update()
+void CScene::Update()
 {
 #pragma region //Update Contents Transforms
 	float rot = Time->GetDeltaTime();
@@ -237,7 +246,7 @@ void GScene::Update()
 #pragma endregion
 }
 
-void GScene::LateUpdate()
+void CScene::LateUpdate()
 {
 #pragma region //Visualize PointLights
 	m_pointLightVisualizer.transform.SetPosition(Lighting->PointLight.position);
@@ -252,7 +261,6 @@ void GScene::LateUpdate()
 	m_pointLightVisualizer.transform.SetPosition(Lighting->PointLight4.position);
 	Params->Parameters.diffuse = { Lighting->PointLight4.diffuse };
 	m_pointLightVisualizer.Update_Render();
-
 #pragma endregion
 
 #pragma region //Render Contents
@@ -270,12 +278,10 @@ void GScene::LateUpdate()
 	m_sphere3.Update_Render();
 	Params->Parameters.roughness = 0.5f + 0.5f * sin(Time->GetTime() * 2);
 	m_sphere4.Update_Render();
-	Params->Parameters.roughness = 0;
 	Params->Parameters.metallic = 0.5f + 0.5f * sin(Time->GetTime() * 2);
-	Params->Parameters.diffuse = { 1, 1, 0.8f, 1 };
-	m_sphere5.Update_Render();
-	Params->Parameters.roughness = 0.5f + 0.5f * sin(Time->GetTime());
 	m_sphere6.Update_Render();
+	Params->Parameters.roughness = 0;
+	m_sphere5.Update_Render();
 	Params->Parameters.metallic = 0;
 	Params->Parameters.diffuse = { 1, 1, 1, 1 };
 
@@ -289,12 +295,13 @@ void GScene::LateUpdate()
 	m_duck3.Update_Render();
 
 	m_volcano.Update_Render();
+	m_terrain.Update_Render();
 	m_water.Update_Render();
 #pragma endregion
 }
 
 
-void GScene::Release()
+void CScene::Release()
 {
 	m_skyBox.Release();
 	m_plane.Release();
@@ -312,6 +319,7 @@ void GScene::Release()
 	m_duck2.Release();
 	m_duck3.Release();
 	m_volcano.Release();
+	m_terrain.Release();
 	m_water.Release();
 	m_pointLightVisualizer.Release();
 
