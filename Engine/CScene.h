@@ -20,7 +20,6 @@ private:
 	GObject m_sphere, m_sphere2, m_sphere3, m_sphere4, m_sphere5, m_sphere6 = {};
 	GObject m_cylinder, m_cylinder2, m_cylinder3 = {};
 	GObject m_duck, m_duck2, m_duck3 = {};
-	GObject m_volcano = {};
 	GObject m_water = {};
 	GObject m_terrain = {};
 	GObject m_pointLightVisualizer = {};
@@ -30,7 +29,6 @@ private:
 	CMaterial m_mat_Toon = {};
 	CMaterial m_mat_Bubble = {};
 	CMaterial m_mat_Duck = {};
-	CMaterial m_mat_Volcano = {};
 	CMaterial m_mat_Water = {};
 	CMaterial m_mat_Terrain = {};
 	CMaterial m_mat_Unlit = {};

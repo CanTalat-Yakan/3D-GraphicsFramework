@@ -72,9 +72,6 @@ void CScene::Init()
 	m_duck2.mesh.Init(duck);
 	m_duck3.mesh.Init(duck);
 
-	CObj volcano = obj.Load(L"R_Volcano.obj");
-	m_volcano.mesh.Init(volcano);
-
 	CObj terrain = obj.LoadTerrain(200, 200);
 	m_water.mesh.Init(terrain);
 	m_terrain.mesh.Init(terrain);
@@ -104,9 +101,6 @@ void CScene::Init()
 	m_mat_Duck.Init(L"S_Standard.hlsl");
 	m_mat_Duck.SetColourTexture(L"T_Duck.png");
 
-	m_mat_Volcano.Init(L"S_Terrain.hlsl");
-	m_mat_Volcano.SetColourTexture(L"T_Ground.png");
-
 	m_mat_Terrain.withGS = true;
 	m_mat_Terrain.Init(L"S_Terrain.hlsl");
 	m_mat_Terrain.SetHeightTexture(L"T_Height.png");
@@ -114,6 +108,7 @@ void CScene::Init()
 
 	m_mat_Water.withGS = true;
 	m_mat_Water.Init(L"S_Water.hlsl");
+	m_mat_Water.SetHeightTexture(L"T_Height.png");
 	m_mat_Water.SetColourTexture(L"T_Water.png");
 
 	m_mat_Unlit.Init(L"S_Unlit.hlsl");
@@ -137,8 +132,6 @@ void CScene::Init()
 	m_duck2.material = &m_mat_Toon;
 
 	m_duck.material = &m_mat_Duck;
-
-	m_volcano.material = &m_mat_Volcano;
 
 	m_water.material = &m_mat_Water;
 
@@ -202,15 +195,9 @@ void CScene::Start()
 	m_duck3.transform.m_position.x += 3;
 	m_duck3.transform.m_position.z += 6;
 
-	m_volcano.transform.SetScale(0.0001, 0.0001, 0.0001);
-	m_volcano.transform.SetRotation(0, 0, 180);
-	m_volcano.transform.SetPosition(0, -10, 0);
+	m_water.transform.SetPosition(-100, -13, -100);
 
-	m_water.transform.SetPosition(-25, -8, -25);
-	m_water.transform.SetScale(0.5f);
-
-	m_terrain.transform.SetPosition(-25, -10, -25);
-	m_terrain.transform.SetScale(0.5f);
+	m_terrain.transform.SetPosition(-100, -15, -100);
 #pragma endregion
 }
 
@@ -294,7 +281,6 @@ void CScene::LateUpdate()
 	m_duck2.Update_Render();
 	m_duck3.Update_Render();
 
-	m_volcano.Update_Render();
 	m_terrain.Update_Render();
 	m_water.Update_Render();
 #pragma endregion
@@ -318,7 +304,6 @@ void CScene::Release()
 	m_duck.Release();
 	m_duck2.Release();
 	m_duck3.Release();
-	m_volcano.Release();
 	m_terrain.Release();
 	m_water.Release();
 	m_pointLightVisualizer.Release();
@@ -330,7 +315,6 @@ void CScene::Release()
 	m_mat_Toon.Release();
 	m_mat_Bubble.Release();
 	m_mat_Duck.Release();
-	m_mat_Volcano.Release();
 	m_mat_Water.Release();
 	m_mat_Terrain.Release();
 	m_mat_Unlit.Release();

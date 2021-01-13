@@ -149,16 +149,21 @@ float voronoise(in float2 x, float u, float v)
 
 
 Texture2D ObjTexture : register(t0);
+Texture2D ObjHeight : register(t2);
 SamplerState ObjSamplerState : register(s0);
 
 VS_OUTPUT VS(appdata v)
 {
     VS_OUTPUT o;
-
-    v.vertex += float3(
-        sin((cos(v.vertex.x * 0.2 + time) + v.vertex.x * 0.2) + time), 
+    
+    float displacement = ObjHeight.SampleLevel(ObjSamplerState, v.uv, 0).r;
+    
+    v.vertex += (1 - displacement) * float3(
+        sin((cos(v.vertex.x * 0.2 + time) + v.vertex.x * 0.2) + time),
         pow(noise(float2((v.vertex.x * 0.2 + time), (v.vertex.z * 0.2 + time))) * 3, 1) + sin((v.vertex.x * 0.2 + v.vertex.z * 0.2) + time),
         sin((cos(v.vertex.z * 0.2 - time) + v.vertex.z * 0.2) - time));
+
+    v.vertex -= float3(0, 1, 0) * displacement * 25;
 
     o.pos = mul(WVP, float4(v.vertex, 1));
     o.normal = mul(World, float4(v.normal, 0));
