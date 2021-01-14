@@ -20,7 +20,7 @@ void CScene::Init()
 	Lighting->PointLight2.diffuse = { 0.6f, 0.2f, 0.0f, 1.0f };
 	Lighting->PointLight2.position = { 3, 0.25f, 0.5f };
 	Lighting->PointLight2.intensity = 0.7f;
-	Lighting->PointLight2.radius = 5.5f;
+	Lighting->PointLight2.radius = 4.5f;
 	//blue Point Light
 	Lighting->PointLight3.diffuse = { 0.0f, 0.2f, 0.6f, 1.0f };
 	Lighting->PointLight3.position = { 0.25f, 0.2f, 2.5f };
@@ -30,7 +30,7 @@ void CScene::Init()
 	Lighting->PointLight4.diffuse = { 0.9f, 0.9f, 0.9f, 1.0f };
 	Lighting->PointLight4.position = { -2.65f, 2.3f, -1.0f };
 	Lighting->PointLight4.intensity = 1.0f;
-	Lighting->PointLight4.radius = 5.5f;
+	Lighting->PointLight4.radius = 2.5f;
 #pragma endregion
 
 #pragma region //Setup Params Default
@@ -91,6 +91,7 @@ void CScene::Init()
 	m_mat_Grid.SetColourTexture(L"T_Proto4.png");
 	m_mat_Grid.SetSkyBoxTexture(L"T_Grid.png");
 
+	m_mat_Normal.withGS = true;
 	m_mat_Normal.Init(L"S_Standard.hlsl");
 	m_mat_Normal.SetColourTexture(L"T_Proto4.png");
 	m_mat_Normal.SetNormalTexture(L"T_NormalDebug2.png");
@@ -311,8 +312,12 @@ void CScene::LateUpdate()
 	m_duck2.Update_Render();
 	m_duck3.Update_Render();
 
+	Params->Parameters.roughness = 0.3;
 	m_terrain.Update_Render();
+	Params->Parameters.roughness = 0;
+	Params->Parameters.metallic = 0.3;
 	m_water.Update_Render();
+	Params->Parameters.metallic = 0;
 #pragma endregion
 }
 

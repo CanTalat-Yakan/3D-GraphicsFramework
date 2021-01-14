@@ -83,19 +83,28 @@ float4 CalculateDiffuse(float3 _normal, float3 _lightDir, float4 _diffuse, float
 }
 float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, float4 _diffuse, float _intensity, float _radius = -1)
 {
-    float3 viewDir = normalize(_viewDir); //calculating the direction in which the camera targets
-    float3 halfVec = viewDir + _lightDir; //the half Vector between the view Dir and the light
+    float3 viewDir = normalize(_viewDir);
+    float3 reflectedLightDir = normalize(reflect(_lightDir, _normal));
+    float3 halfVec = normalize(viewDir + _lightDir); //the half Vector between the view Dir and the reflected light
     float fallOff = CalculateFallOff(_radius, _lightDir);
-    
-    float d = saturate(dot(_normal, normalize(_lightDir)) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
 
-    float d2 = saturate(dot(normalize(halfVec), _normal)); //calculating the area hit by the specular light
-    d2 = 0.1 * pow(d2, 30); //calculating power 30 to the specular
-    float d3 = saturate(dot(_normal, viewDir)); // calculating the fresnel diffuse
-    d3 = saturate(1 - pow(d3, 0.5)); //calculating power 0.5 to the fresnel
+    float d = saturate(dot(_lightDir, _normal) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
+    float d2 = dot(-reflectedLightDir, viewDir); //calculating the area hit by the specular light
+    float d3 = saturate(dot(_normal, viewDir)); //calculating the fresnel
+
+    //Specular
+    d2 = fallOff *
+         (1 - params.roughness) * //calculating the specular according to roughness 1 => no specular
+         pow(d2, //calculating the power of the specular to make it the step smoother or more harsh
+             90 - (70 * (params.roughness))); //base 90 to -70 roughness 1 => power 20 (smoother)
+
+    //Fresnel
+    d3 = fallOff *
+         (1 - params.roughness) * //with roughness no fresnel
+         saturate(1 - pow(d3, 0.5)); //Base fresnel Power
 
     
-    return float4(2 * saturate(d) * (d2 + (d3 * 0.75)) * _diffuse * _intensity);
+    return float4(2 * saturate(d * (max(d2, (d3 * 0.75)))) * _diffuse * _intensity);
 }
 float4 CalculateAllPointLights(float3 _normal, float3 _worldPos, float3 _camPos)
 {
