@@ -46,11 +46,13 @@ float CalculateFallOff(float _radius, float3 _lightDir)
 float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, float4 _diffuse, float _intensity, float _radius = -1)
 {
     float3 viewDir = normalize(_viewDir);
-    float3 reflectedLightDir = normalize(reflect(_lightDir, _normal));
-    float3 halfVec = normalize(viewDir + _lightDir); //the half Vector between the view Dir and the reflected light
+    float3 lightDir = normalize(_lightDir);
+
+    float3 reflectedLightDir = normalize(reflect(lightDir, _normal));
+    float3 halfVec = normalize(viewDir + lightDir); //the half Vector between the view Dir and the reflected light
     float fallOff = CalculateFallOff(_radius, _lightDir);
 
-    float d = saturate(dot(_lightDir, _normal) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
+    float d = saturate(dot(lightDir, _normal) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
     float d2 = dot(-reflectedLightDir, viewDir); //calculating the area hit by the specular light
     float d3 = saturate(dot(_normal, viewDir)); //calculating the fresnel
 
@@ -107,11 +109,6 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //normalize normal
     float3 normal = normalize(i.normal);
     
-    //float4 col = SkyBoxTexture.Sample(ObjSamplerState, i.uv);
-    //float4 col = ObjTexture.SampleLevel(ObjSamplerState, mycubemap(reflect(-i.worldPos - i.camPos, normal)), 2);
-    //float4 col = SkyBoxTexture.Sample(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normal)));
-    //float4 col = texCUBElod(ObjTexture, float4(i.uv, 0));
-    //float4 col2 = SAMPLE_TEXTURECUBE_LOD(ObjTexture, ObjSamplerState, reflect(-i.worldPos - i.camPos, normal), 0);
     float4 col = SkyBoxTexture.Sample(ObjSamplerState, ReflectUV(reflect(-i.worldPos - i.camPos, normalize(i.normal))));
 	
      
@@ -126,8 +123,8 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     //calculate fresnel
     float3 viewDir = normalize(i.worldPos - i.camPos);
     float d = saturate(dot(normal, viewDir));
-    float4 fresnel = 1 - 5 * pow(d, 1.4);
+    float4 fresnel = saturate(1 - 5 * pow(d, 1.4));
 
 
-    return (saturate(float4(fresnel.rgb, 0.1)) + directionalLight) * float4(dirLight.diffuse.rgb, 0.2) + float4(col.rgb, 0.4);
+    return (float4(fresnel.rgb, 0.6) + float4(dirLight.diffuse.rgb, 0.2)) * float4(col.rgb, 0.4) + directionalLight;
 }

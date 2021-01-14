@@ -249,9 +249,7 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
 
     float4 pointLights = CalculateAllPointLights(normal, i.worldPos, i.camPos);
 
-    return
-        float4(
+    return float4(
             ((directionalLight + dirLight.ambient) * (col * params.diffuse + colReflect) + (pointLights * 0.382)).rgb, 
             1 - params.opacity);
-    float4(normal.rgb, 1);
 }

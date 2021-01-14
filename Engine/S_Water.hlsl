@@ -52,6 +52,7 @@ struct VS_OUTPUT
     float3 vPos : POSITION2;
     float2 uv : TEXCOORD;
     float3 normal : NORMAL;
+    float colH : POSITION3;
 };
 
 float CalculateFallOff(float _radius, float3 _lightDir)
@@ -77,11 +78,13 @@ float4 CalculateDiffuse(float3 _normal, float3 _lightDir, float4 _diffuse, float
 float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, float4 _diffuse, float _intensity, float _radius = -1)
 {
     float3 viewDir = normalize(_viewDir);
-    float3 reflectedLightDir = normalize(reflect(_lightDir, _normal));
-    float3 halfVec = normalize(viewDir + _lightDir); //the half Vector between the view Dir and the reflected light
+    float3 lightDir = normalize(_lightDir);
+
+    float3 reflectedLightDir = normalize(reflect(lightDir, _normal));
+    float3 halfVec = normalize(viewDir + lightDir); //the half Vector between the view Dir and the reflected light
     float fallOff = CalculateFallOff(_radius, _lightDir);
 
-    float d = saturate(dot(_lightDir, _normal) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
+    float d = saturate(dot(lightDir, _normal) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
     float d2 = dot(-reflectedLightDir, viewDir); //calculating the area hit by the specular light
     float d3 = saturate(dot(_normal, viewDir)); //calculating the fresnel
 
@@ -102,7 +105,7 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
                           0.5 * params.metallic * (1 - d3))); //additional fresnel power with metallic
 
     
-    return float4(2 * saturate(d * (max(d2, (d3 * 0.75)))) * _diffuse * _intensity);
+    return float4(saturate(d * (max(d2, (d3 * 0.75)))) * _diffuse * _intensity);
 }
 
 float rand(float2 n)
@@ -120,37 +123,6 @@ float noise(float2 p)
 		lerp(rand(ip + float2(0.0, 1.0)), rand(ip + float2(1.0, 1.0)), u.x), u.y);
     return res * res;
 }
-float3 hash3(float2 p)
-{
-    float3 q = float3(dot(p, float2(127.1, 311.7)),
-				   dot(p, float2(269.5, 183.3)),
-				   dot(p, float2(419.2, 371.9)));
-    return frac(sin(q) * 43758.5453);
-}
-float voronoise(in float2 x, float u, float v)
-{
-    float2 p = floor(x);
-    float2 f = frac(x);
-		
-    float k = 1.0 + 63.0 * pow(1.0 - v, 4.0);
-	
-    float va = 0.0;
-    float wt = 0.0;
-    for (int j = -2; j <= 2; j++)
-        for (int i = -2; i <= 2; i++)
-        {
-            float2 g = float2(float(i), float(j));
-            float3 o = hash3(p + g) * float3(u, u, 1.0);
-            float2 r = g - f + o.xy;
-            float d = dot(r, r);
-            float ww = pow(1.0 - smoothstep(0.0, 1.414, sqrt(d)), k);
-            va += o.z * ww;
-            wt += ww;
-        }
-	
-    return va / wt;
-}
-
 
 Texture2D ObjTexture : register(t0);
 Texture2D ObjHeight : register(t2);
@@ -161,7 +133,6 @@ VS_OUTPUT VS(appdata v)
     VS_OUTPUT o;
     
     float displacement = ObjHeight.SampleLevel(ObjSamplerState, v.uv, 0).r;
-    
     v.vertex += (1 - displacement) * float3(
         sin((cos(v.vertex.x * 0.2 + time) + v.vertex.x * 0.2) + time),
         pow(noise(float2((v.vertex.x * 0.2 + time), (v.vertex.z * 0.2 + time))) * 3, 1) + sin((v.vertex.x * 0.2 + v.vertex.z * 0.2) + time),
@@ -175,6 +146,7 @@ VS_OUTPUT VS(appdata v)
     o.camPos = WCP;
     o.uv = float2(v.uv.x - time * 0.005, v.uv.y + time * 0.005);
     o.vPos = v.vertex;
+    o.colH = displacement;
     
     return o;
 }
@@ -196,26 +168,26 @@ void GS(triangle VS_OUTPUT i[3], inout TriangleStream<VS_OUTPUT> os)
         t.camPos = i[j].camPos;
         t.uv = i[j].uv;
         t.vPos = i[j].vPos;
+        t.colH = i[j].colH;
         os.Append(t);
     }
     
-    //os.RestartStrip();
+    os.RestartStrip();
 }
 
 float4 PS(VS_OUTPUT i) : SV_TARGET
 {
+    //calculating normal
+    float3 normal = normalize(i.normal);
+
     float tiling = 14;
     float4 col = ObjTexture.Sample(ObjSamplerState, tiling * i.uv);
+    //base color for gray foam texture
+    col *= float4(0.58, 0.76, 0.76, 1); 
     
-    
-    //float3 base = float3(0.02, 0.12, 0.17); //(5, 30, 42)
     float3 base = float3(0.22, 0.32, 0.37); //(5, 30, 42)
     float3 light = float3(0.38, 0.56, 0.56); //(96, 142, 142);
 
-    col *= float4(0.58, 0.76, 0.76, 1);
-
-    //calculating normal
-    float3 normal = normalize(i.normal);
     
     //calculating directionalLight
     float4 directionalLight =
@@ -229,15 +201,10 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
             dirLight.direction,
             dirLight.diffuse, dirLight.intensity);
     
-    //float4 foam = voronoise(float2((-i.uv.x * 100 + time2), (i.uv.y * 100 + time2)), 1, 1);
-    float range = (pow(i.vPos.y, 0.25) - 1);
-    //float4 foam = float4(float3(1, 1, 1) * range, 0.6);
-    float4 detail = float4(base + saturate((light * range)).rgb, 0.2 + 2 * saturate(range));
-    //float4 deep = float4(float3(0.2, 0.2, 0.5) * pow(saturate(1 - range), 1.8), 1);
-    float4 deep = float4(base, 0.1);
-    //float4 deep = float4(0.2 + base * pow(saturate(1 - range), 1.8), 0.1);
+    float range = (pow(i.vPos.y, 0.25) - 1); //the foam range from the vertexPos
+    float4 detail = float4(base + saturate((light * range)).rgb, 0.2 + 2 * saturate(range)); //foam detail with base col
+    float alpha = 99 * pow(i.colH, 2) - 0.1; //alpha value from heightmap
 
-    //return float4((directionalLight + dirLight.ambient).rgb * col.rgb + (foam + deep).rgb, 1);
-    return (directionalLight + dirLight.ambient) * float4(col.rgb, 0.1) + detail;
-    //return float4((directionalLight + dirLight.ambient).rgb * base + (range + light), 1);
+    
+    return (directionalLight + dirLight.ambient) * float4(col.rgb, 0.1 - alpha) + detail;
 }
