@@ -56,10 +56,6 @@ struct VS_OUTPUT
     float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
 };
-struct GS_OUTPUT
-{
-    float3 normal : NORMAL;
-};
 
 float CalculateFallOff(float _radius, float3 _lightDir)
 {
@@ -112,47 +108,39 @@ float4 CalculateAllPointLights(float3 _normal, float3 _worldPos, float3 _camPos)
         CalculateDiffuse(
             _normal,
             _worldPos - pointLight.position,
-            pointLight.diffuse, pointLight.intensity,
-            pointLight.radius)
+            pointLight.diffuse, pointLight.intensity, pointLight.radius)
         + CalculateSpecular(
             _normal,
             _worldPos - _camPos,
             _worldPos - pointLight.position,
-            pointLight.diffuse, pointLight.intensity,
-            pointLight.radius)
+            pointLight.diffuse, pointLight.intensity, pointLight.radius)
         + CalculateDiffuse(
             _normal,
             _worldPos - pointLight2.position,
-            pointLight2.diffuse, pointLight2.intensity,
-            pointLight2.radius)
+            pointLight2.diffuse, pointLight2.intensity, pointLight2.radius)
         + CalculateSpecular(
             _normal,
             _worldPos - _camPos,
             _worldPos - pointLight2.position,
-            pointLight2.diffuse, pointLight2.intensity,
-            pointLight2.radius)
+            pointLight2.diffuse, pointLight2.intensity, pointLight2.radius)
         + CalculateDiffuse(
             _normal,
             _worldPos - pointLight3.position,
-            pointLight3.diffuse, pointLight3.intensity,
-            pointLight3.radius)
+            pointLight3.diffuse, pointLight3.intensity, pointLight3.radius)
         + CalculateSpecular(
             _normal,
             _worldPos - _camPos,
             _worldPos - pointLight3.position,
-            pointLight3.diffuse, pointLight3.intensity,
-            pointLight3.radius)
+            pointLight3.diffuse, pointLight3.intensity, pointLight3.radius)
         + CalculateDiffuse(
             _normal,
             _worldPos - pointLight4.position,
-            pointLight4.diffuse, pointLight4.intensity,
-            pointLight4.radius)
+            pointLight4.diffuse, pointLight4.intensity, pointLight4.radius)
         + CalculateSpecular(
             _normal,
             _worldPos - _camPos,
             _worldPos - pointLight4.position,
-            pointLight4.diffuse, pointLight4.intensity,
-            pointLight4.radius);
+            pointLight4.diffuse, pointLight4.intensity, pointLight4.radius);
     
     return col;
 }

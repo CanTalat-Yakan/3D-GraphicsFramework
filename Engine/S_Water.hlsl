@@ -120,7 +120,6 @@ float noise(float2 p)
 		lerp(rand(ip + float2(0.0, 1.0)), rand(ip + float2(1.0, 1.0)), u.x), u.y);
     return res * res;
 }
-
 float3 hash3(float2 p)
 {
     float3 q = float3(dot(p, float2(127.1, 311.7)),

@@ -80,11 +80,13 @@ float4 CalculateDiffuse(float3 _normal, float3 _lightDir, float4 _diffuse, float
 float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, float4 _diffuse, float _intensity, float _radius = -1)
 {
     float3 viewDir = normalize(_viewDir);
-    float3 reflectedLightDir = normalize(reflect(_lightDir, _normal));
-    float3 halfVec = normalize(viewDir + _lightDir); //the half Vector between the view Dir and the reflected light
+    float3 lightDir = normalize(_lightDir);
+
+    float3 reflectedLightDir = normalize(reflect(lightDir, _normal));
+    float3 halfVec = normalize(viewDir + lightDir); //the half Vector between the view Dir and the reflected light
     float fallOff = CalculateFallOff(_radius, _lightDir);
 
-    float d = saturate(dot(_lightDir, _normal) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
+    float d = saturate(dot(lightDir, _normal) * fallOff); //calculating the dot product of the lightDir and the surface normal with fallOff
     float d2 = dot(-reflectedLightDir, viewDir); //calculating the area hit by the specular light
     float d3 = saturate(dot(_normal, viewDir)); //calculating the fresnel
 
@@ -105,7 +107,7 @@ float4 CalculateSpecular(float3 _normal, float3 _viewDir, float3 _lightDir, floa
                           0.5 * params.metallic * (1 - d3))); //additional fresnel power with metallic
 
     
-    return float4(2 * saturate(d * (max(d2, (d3 * 0.75)))) * _diffuse * _intensity);
+    return float4(saturate(d * (max(d2, (d3 * 0.75)))) * _diffuse * _intensity);
 }
 float4 CalculateAllPointLights(float3 _normal, float3 _worldPos, float3 _camPos)
 {
@@ -113,47 +115,39 @@ float4 CalculateAllPointLights(float3 _normal, float3 _worldPos, float3 _camPos)
         CalculateDiffuse(
             _normal,
             _worldPos - pointLight.position,
-            pointLight.diffuse, pointLight.intensity,
-            pointLight.radius)
+            pointLight.diffuse, pointLight.intensity, pointLight.radius)
         + CalculateSpecular(
             _normal,
             _worldPos - _camPos,
             _worldPos - pointLight.position,
-            pointLight.diffuse, pointLight.intensity,
-            pointLight.radius)
+            pointLight.diffuse, pointLight.intensity, pointLight.radius)
         + CalculateDiffuse(
             _normal,
             _worldPos - pointLight2.position,
-            pointLight2.diffuse, pointLight2.intensity,
-            pointLight2.radius)
+            pointLight2.diffuse, pointLight2.intensity, pointLight2.radius)
         + CalculateSpecular(
             _normal,
             _worldPos - _camPos,
             _worldPos - pointLight2.position,
-            pointLight2.diffuse, pointLight2.intensity,
-            pointLight2.radius)
+            pointLight2.diffuse, pointLight2.intensity, pointLight2.radius)
         + CalculateDiffuse(
             _normal,
             _worldPos - pointLight3.position,
-            pointLight3.diffuse, pointLight3.intensity,
-            pointLight3.radius)
+            pointLight3.diffuse, pointLight3.intensity, pointLight3.radius)
         + CalculateSpecular(
             _normal,
             _worldPos - _camPos,
             _worldPos - pointLight3.position,
-            pointLight3.diffuse, pointLight3.intensity,
-            pointLight3.radius)
+            pointLight3.diffuse, pointLight3.intensity, pointLight3.radius)
         + CalculateDiffuse(
             _normal,
             _worldPos - pointLight4.position,
-            pointLight4.diffuse, pointLight4.intensity,
-            pointLight4.radius)
+            pointLight4.diffuse, pointLight4.intensity, pointLight4.radius)
         + CalculateSpecular(
             _normal,
             _worldPos - _camPos,
             _worldPos - pointLight4.position,
-            pointLight4.diffuse, pointLight4.intensity,
-            pointLight4.radius);
+            pointLight4.diffuse, pointLight4.intensity, pointLight4.radius);
     
     return col;
 }
@@ -161,7 +155,8 @@ float2 ReflectUV(float3 t3)
 {
     float2 t2;
     t3 = normalize(t3) / sqrt(2.0);
-    float3 q3 = abs(t3);
+    //float3 q3 = abs(t3);
+    float3 q3 = t3;
     if ((q3.x >= q3.y) && (q3.x >= q3.z))
     {
         t2.x = 0.5 - t3.z / t3.x;
@@ -255,6 +250,8 @@ float4 PS(VS_OUTPUT i) : SV_TARGET
     float4 pointLights = CalculateAllPointLights(normal, i.worldPos, i.camPos);
 
     return
-        (directionalLight + pointLights + dirLight.ambient) * float4(col.rgb * params.diffuse.rgb + colReflect.rgb, 1 - params.opacity);
+        float4(
+            ((directionalLight + dirLight.ambient) * (col * params.diffuse + colReflect) + (pointLights * 0.382)).rgb, 
+            1 - params.opacity);
     float4(normal.rgb, 1);
 }

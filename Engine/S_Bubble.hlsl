@@ -5,6 +5,7 @@ struct DirectionalLight
     float4 ambient;
     float intensity;
 };
+
 cbuffer cbMatrix : register(b0)
 {
     float4x4 WVP;

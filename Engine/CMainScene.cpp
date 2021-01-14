@@ -124,7 +124,8 @@ void CScene::Init()
 
 	m_cube.material = &m_mat_Normal;
 
-	m_plane.material = &m_mat_Grid;
+	m_plane.material = &m_mat_Plane;
+
 	m_sphere.material = &m_mat_Grid;
 	m_sphere4.material = &m_mat_Grid;
 	m_sphere5.material = &m_mat_Grid;
