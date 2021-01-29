@@ -155,9 +155,9 @@ float2 ReflectUV(float3 t3)
 {
     float2 t2;
     t3 = normalize(t3) / sqrt(2.0);
-    //float3 q3 = abs(t3);
-    float3 q3 = t3;
-    if ((q3.x >= q3.y) && (q3.x >= q3.z))
+    float3 q3 = abs(t3);
+    
+	if ((q3.x >= q3.y) && (q3.x >= q3.z))
     {
         t2.x = 0.5 - t3.z / t3.x;
         t2.y = 0.5 - t3.y / q3.x;

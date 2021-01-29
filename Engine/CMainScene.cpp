@@ -283,6 +283,13 @@ void CScene::LateUpdate()
 
 	m_cube.Update_Render();
 
+	Params->Parameters.roughness = 0.3;
+	m_terrain.Update_Render();
+	Params->Parameters.roughness = 0;
+	Params->Parameters.metallic = 0.3;
+	m_water.Update_Render();
+	Params->Parameters.metallic = 0;
+
 	m_sphere.Update_Render();
 	m_sphere2.Update_Render();
 	m_sphere3.Update_Render();
@@ -312,13 +319,6 @@ void CScene::LateUpdate()
 	m_duck.Update_Render();
 	m_duck2.Update_Render();
 	m_duck3.Update_Render();
-
-	Params->Parameters.roughness = 0.3;
-	m_terrain.Update_Render();
-	Params->Parameters.roughness = 0;
-	Params->Parameters.metallic = 0.3;
-	m_water.Update_Render();
-	Params->Parameters.metallic = 0;
 #pragma endregion
 }
 
