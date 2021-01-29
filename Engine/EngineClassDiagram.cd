@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="CCamera" Collapsed="true">
-    <Position X="3" Y="1.75" Width="1.5" />
+    <Position X="4" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ACQAAQAAAGIAAAAAACAAAAACBgTAAghQAgAjABACAAA=</HashCode>
       <FileName>CCamera.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CDirect" Collapsed="true">
-    <Position X="3" Y="0.75" Width="1.5" />
+    <Position X="4" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAEAADAAAAEAAAAANAAAghhAAAAiABBgQAA=</HashCode>
       <FileName>CDirect.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CEngine" Collapsed="true">
-    <Position X="3" Y="3" Width="1.5" />
+    <Position X="4" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAQAAAAAAAQAAAAAAAAAgAAAADAAAACABAAAAA=</HashCode>
       <FileName>CEngine.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CInput" Collapsed="true">
-    <Position X="3" Y="2" Width="1.5" />
+    <Position X="4" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAQAAAAAAAAAEQAAAAAADAAAAAhAAAAiABAJEAA=</HashCode>
       <FileName>CInput.h</FileName>
@@ -37,23 +37,6 @@
   </Class>
   <Class Name="CMaterial" Collapsed="true">
     <Position X="7.5" Y="3.25" Width="1.5" />
-    <NestedTypes>
-      <Struct Name="CMaterial::cbMatrix" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>CMaterial.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-      <Struct Name="CMaterial::cbLighting" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>CMaterial.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-      <Struct Name="CMaterial::cbParameter" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>CMaterial.h</NewMemberFileName>
-        </TypeIdentifier>
-      </Struct>
-    </NestedTypes>
     <TypeIdentifier>
       <HashCode>AqAAACCSAyABAAhQICAAAAAQggCAAggAAFACARgAAAU=</HashCode>
       <FileName>CMaterial.h</FileName>
@@ -67,7 +50,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="CObjLoader" Collapsed="true">
-    <Position X="10" Y="1.75" Width="1.5" />
+    <Position X="10" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AACEgIBAAAQAAAAAAAAAAgEAAAAAAAAABAAAAAAAgAA=</HashCode>
       <FileName>CObjLoader.h</FileName>
@@ -81,28 +64,28 @@
     </TypeIdentifier>
   </Class>
   <Class Name="CTime" Collapsed="true">
-    <Position X="3" Y="2.25" Width="1.5" />
+    <Position X="4" Y="4" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ARQAEAAAAAAAAQAAAAACCAAABAAAAAAAAIAiABAAAAA=</HashCode>
       <FileName>CTime.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CWindow" Collapsed="true">
-    <Position X="3" Y="1" Width="1.5" />
+    <Position X="4" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACAAAAgAAkAAAAAABAAAAAgAAAQiABAAAAY=</HashCode>
       <FileName>CWindow.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CScene" Collapsed="true">
-    <Position X="9.5" Y="4.75" Width="1.5" />
+    <Position X="9" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAgBBACAAEAgEACUgIAI4AACAAAAQAKAKDBAEAEA=</HashCode>
       <FileName>CScene.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="MonoBehaviour" Collapsed="true">
-    <Position X="11.75" Y="4.75" Width="1.5" />
+    <Position X="11.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQCAAIAACAAEAAAAAQAIAAABAAAAAAAAAACABAAAUA=</HashCode>
       <FileName>IMono.h</FileName>
@@ -151,7 +134,7 @@
     </TypeIdentifier>
   </Struct>
   <Struct Name="CVertex" Collapsed="true">
-    <Position X="10" Y="0.75" Width="1.5" />
+    <Position X="10.75" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAACAIgAAAAAAAAAAAIAAgAAAAA=</HashCode>
       <FileName>CVertex.h</FileName>
@@ -172,7 +155,7 @@
     </TypeIdentifier>
   </Struct>
   <Enum Name="EPrimitives" Collapsed="true">
-    <Position X="10" Y="1.5" Width="1.5" />
+    <Position X="10" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAgAAAAAAAAIAQAAAAAAAAAAAAAAAYAAAAAAAA=</HashCode>
       <FileName>CObjLoader.h</FileName>
